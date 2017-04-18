@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="event_container">
-    event
+  <div class="">
+    data_entry
   </div>
 </template>
 

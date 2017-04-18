@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="sample_container">
-    sample
+  <div class="">
+    data_entry
   </div>
 </template>
 

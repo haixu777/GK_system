@@ -82,6 +82,7 @@ devMiddleware.waitUntilValid(() => {
   _resolve()
 })
 
+/*
 app.get('/fetchControl', (req, res, next) => {
   res.json({
     success: true,
@@ -169,6 +170,7 @@ app.get('/fetchControl', (req, res, next) => {
     ]
   })
 })
+*/
 
 var server = app.listen(port)
 

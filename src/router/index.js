@@ -1,8 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Sample from '@/components/Sample'
-import Control from '@/components/Control'
-import Events from '@/components/Event'
+
+import Login from '@/components/Login'
+import Home from '@/components/Home'
+
+import Sample from './routesMap/sample'
+import Events from './routesMap/event'
+import Control from './routesMap/control'
 
 Vue.use(Router)
 
@@ -10,22 +14,20 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: { name: 'sample' }
+      redirect: { name: 'login' }
     },
     {
-      path: '/sample',
-      name: 'sample',
-      component: Sample
+      path: '/login',
+      name: 'login',
+      component: Login
     },
     {
-      path: '/control',
-      name: 'control',
-      component: Control
+      path: '/home',
+      name: 'home',
+      component: Home
     },
-    {
-      path: '/event',
-      name: 'event',
-      component: Events
-    }
+    Sample,
+    Control,
+    Events
   ]
 })

@@ -5,7 +5,12 @@ import App from './App'
 import router from './router'
 import Axios from 'axios'
 
+Axios.defaults.baseURL = 'http://localhost:3000'
 Vue.prototype.$axios = Axios
+
+import { Tree, Button } from 'element-ui'
+Vue.use(Tree)
+Vue.use(Button)
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
