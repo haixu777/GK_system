@@ -129,7 +129,7 @@ export default {
     }
   },
   mounted () {
-    this.fetchEventsTree()
+    // this.fetchEventsTree()
   }
 }
 </script>

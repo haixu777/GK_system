@@ -1,22 +1,18 @@
 <template lang="html">
   <div class="calendar clearfix">
-    <Modal
-      v-model="modal"
-      :closable="false"
-      @on-ok="handleMonthSelect"
-      title="月份选择">
-      <ul class="month_container clearfix">
-        <li v-for="i in 12" @click=" activeMonth = i ">
-          <Card :class="activeMonth === i ? 'active':''">
-            <p>{{ i }}</p>
-          </Card>
-        </li>
-      </ul>
-    </Modal>
 
     <!-- <Button type="primary" shape="circle" icon="calendar"></Button> -->
-    <div class="clearfix">
-      <Button type="primary" icon="calendar" style="float: right;" @click="modal = true">月份选择</Button>
+    <div class="" style="text-align: right;">
+      <Date-picker
+        type="daterange"
+        confirm
+        placement="bottom-end"
+        placeholder="选择日期"
+        style="width: 200px;display: inline-block"
+        v-model="date"
+        :options="date_options"
+        @on-ok="handleMonthSelect">
+      </Date-picker>
     </div>
     <Table stripe :columns="columns" :data="tableData" size="small" border></Table>
     <br>
@@ -70,8 +66,8 @@
           </Panel>
           <Panel name="sample">
             取证样本
-            <div slot="content">
-              sample
+            <div slot="content" class="clearfix">
+              <Table :columns="sample_columns" :data="sample_tableData" border size="small"></Table>
             </div>
           </Panel>
           <Panel name="control">
@@ -92,8 +88,9 @@
 export default {
   data () {
     return {
-      modal: true,
+      modal: false,
       activeMonth: '',
+      date: '',
       modal_detail: false,
       collapse: '',
       control_columns: [
@@ -106,6 +103,25 @@ export default {
         { sample_type: '文本', control_time: '2016年12月4日 08:30:44', control_descript: '描述xxx' },
         { sample_type: '文本', control_time: '2017年4月15日 04:03:10', control_descript: '描述xxx' },
         { sample_type: '文本', control_time: '2017年9月11日 12:12:10', control_descript: '描述xxx' }
+      ],
+      sample_columns: [
+        { title: '名称', key: 'sample_title' },
+        { title: '取证时间', key: 'forensic_data' },
+        {
+          title: '操作',
+          key: 'action',
+          render () {
+            return `
+              <i-button type="ghost" size="small">
+                <a target="_blank" href="${require('/Users/haixu/Desktop/avatar1.png')}">查看</a>
+              </i-button>
+            `
+          }
+        }
+      ],
+      sample_tableData: [
+        { sample_title: 'test.png', forensic_data: '2016年8月11日 12:33:10' },
+        { sample_title: 'test.png', forensic_data: '2016年8月11日 12:33:10' }
       ],
       columns: [
         { title: '日期', key: 'day' },
@@ -128,13 +144,43 @@ export default {
         { day: 26, name: 'xx事件e', descript: 'xx描述', harm_level: 0.2 },
         { day: 30, name: 'xx事件f', descript: 'xx描述', harm_level: 0.6 }
       ],
-      totalItem: 100
+      totalItem: 100,
+      date_options: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            value () {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              return [start, end]
+            }
+          },
+          {
+            text: '最近一个月',
+            value () {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              return [start, end]
+            }
+          },
+          {
+            text: '最近三个月',
+            value () {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              return [start, end]
+            }
+          }
+        ]
+      }
     }
   },
   methods: {
     handleMonthSelect () {
-      this.modal = false
-      console.log(this.activeMonth)
+      console.log(this.date)
     },
     handleToDetails () {
       this.modal_detail = true
@@ -174,6 +220,8 @@ export default {
     text-align: left;
     .timeline {
       display: inline-block;
+    }
+    .sample_container {
     }
   }
 </style>
