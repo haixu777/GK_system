@@ -1,24 +1,30 @@
 <template lang="html">
-  <div class="tree">
-    <el-tree
-      :data="treeData"
-      :props="defaultProps"
-      style="min-width: 120px;"
-      :highlight-current="true">
-    </el-tree>
+  <div class="tree" style="text-align: left;">
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    data: {
+      required: true,
+      type: Array
+    },
+    defaultProps: {
+      type: Object
+    },
+    filterText: {
+      type: String
+    },
+    filterNode: {
+      type: Array
+    }
+  },
   data () {
     return {
-      treeData: [],
-      defaultProps: {
-        children: 'children',
-        label: 'name'
-      }
     }
+  },
+  watch: {
   },
   methods: {
     fetchEventsTree () {
@@ -31,7 +37,7 @@ export default {
     }
   },
   mounted () {
-    this.fetchEventsTree()
+    // this.fetchEventsTree()
   }
 }
 </script>

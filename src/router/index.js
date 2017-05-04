@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import iView from 'iview'
 
 import Login from '@/components/Login'
 import Home from '@/components/Home'
@@ -10,7 +11,7 @@ import Control from './routesMap/control'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -31,3 +32,14 @@ export default new Router({
     Events
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  iView.LoadingBar.start()
+  next()
+})
+
+router.afterEach((to, from, next) => {
+  iView.LoadingBar.finish()
+})
+
+module.exports = router

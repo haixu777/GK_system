@@ -28,10 +28,12 @@ export default {
   text-align: center;
   color: #2c3e50;
   /*background: url('./assets/bg.jpg');*/
-  height: 100%;
 }
 .clearfix {
   overflow:auto;
   _height:1%
+}
+* {
+  -box-sizing: inherit !important;
 }
 </style>
