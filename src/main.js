@@ -7,15 +7,21 @@ import Axios from 'axios'
 import fullCalendar from 'vue-fullcalendar'
 import jsPlumb from 'jsplumb'
 
-Axios.defaults.baseURL = 'http://localhost:3000'
 Vue.prototype.$axios = Axios
 
-import { Tree, Button, Cascader, Table, TableColumn, Pagination } from 'element-ui'
+if (process.env.NODE_ENV === 'development') {
+  Axios.defaults.baseURL = 'http://localhost:3000'
+}
+
+import { Tree, Button, Cascader, Table, TableColumn, Pagination, Form, FormItem, Loading } from 'element-ui'
 Vue.use(Tree)
 Vue.use(Button)
 Vue.use(Cascader)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Form)
+Vue.use(FormItem)
+Vue.use(Loading)
 Vue.use(jsPlumb)
 Vue.use(Pagination)
 
