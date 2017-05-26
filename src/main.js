@@ -13,7 +13,19 @@ if (process.env.NODE_ENV === 'development') {
   Axios.defaults.baseURL = 'http://localhost:3000'
 }
 
-import { Tree, Button, Cascader, Table, TableColumn, Pagination, Form, FormItem, Loading } from 'element-ui'
+import {
+  Tree,
+  Button,
+  Cascader,
+  Table,
+  TableColumn,
+  Pagination,
+  Form,
+  FormItem,
+  Loading,
+  Upload
+} from 'element-ui'
+
 Vue.use(Tree)
 Vue.use(Button)
 Vue.use(Cascader)
@@ -24,6 +36,7 @@ Vue.use(FormItem)
 Vue.use(Loading)
 Vue.use(jsPlumb)
 Vue.use(Pagination)
+Vue.use(Upload)
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
