@@ -1,9 +1,12 @@
 <template lang="html">
   <div class="auto_extract_container">
-    <Radio-group v-model="check" type="button" @on-change="handleCheck" size="small" v-if="false">
-      <Radio label="0">未校验</Radio>
-      <Radio label="1">已校验</Radio>
-    </Radio-group>
+    <i-button
+      type="primary"
+      icon="plus"
+      size="small"
+      @click="handleAdd">
+      管控记录添加
+    </i-button>
     <Table
       :columns="columns"
       :data="tableData"
@@ -36,6 +39,9 @@
           <Form-item label="范围">
             <Input v-model="control_item.range"></Input>
           </Form-item>
+          <Form-item label="操作">
+            <Input v-model="control_item.operation"></Input>
+          </Form-item>
           <Form-item label="事件">
             <Select v-model="control_item.eventId" style="width:200px" filterable>
               <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
@@ -61,8 +67,17 @@
         <Button :type="control_item.check ? 'warning' : 'success'"
           size="large"
           long
-          @click="confirmCheck">
-            {{control_item.check ? '取消校验' : '确认校验'}}
+          v-if="control_item.id"
+          @click="updateControlToServer">
+            <!-- {{control_item.check ? '取消校验' : '确认校验'}} -->
+            确认
+        </Button>
+        <Button type="success"
+          size="large"
+          long
+          v-else
+          @click="addControlToServer">
+            确认添加
         </Button>
       </div>
     </Modal>
@@ -117,8 +132,9 @@ export default {
           key: 'action',
           render (row, column, index) {
             return `
-              <i-button type="primary" size="small" @click="handleControlDetail(row)">查看</i-button>
+              <i-button type="primary" size="small" @click="handleControlDetail(row)">编辑</i-button>
               <i-button type="error" size="small" @click="handleDel(row)" v-if="${!(row.check)}">删除</i-button>
+              <i-button type="success" size="small" @click="handleSubmit(row)">提交</i-button>
             `
           }
         }
@@ -127,7 +143,6 @@ export default {
       perItem: 15,
       currentPage: 1,
       totalItem: null,
-      check: 0,
       sort_key: 'control_time',
       sort_order: 'desc',
       modal: false,
@@ -138,7 +153,8 @@ export default {
         range: '',
         time: '',
         event: '',
-        sample_type: ''
+        sample_type: '',
+        operation: ''
       },
       eventList: []
     }
@@ -184,7 +200,8 @@ export default {
           time: new Date(this.control_item.time),
           event: this.control_item.event,
           eventId: this.control_item.eventId,
-          sample_type: this.control_item.sample_type
+          sample_type: this.control_item.sample_type,
+          operation: this.control_item.operation
         }).then((res) => {
           if (res.data.success) {
             this.modal = false
@@ -197,6 +214,42 @@ export default {
           console.log(err)
         })
     },
+    addControlToServer () {
+      this.modal = false
+      this.$axios.post('/control/add', this.control_item)
+        .then((res) => {
+          this.$Notice.success({
+            title: '成功',
+            desc: res.data.msg,
+            duration: 2
+          })
+          this.fetchTableDataFromServer()
+        }).catch((err) => {
+          this.$Notice.error({
+            title: '删除失败',
+            desc: `失败原因: ${err}`,
+            duration: 2
+          })
+        })
+    },
+    updateControlToServer () {
+      this.$axios.post('/control/auto_update', this.control_item)
+      .then((res) => {
+        this.$Notice.success({
+          title: '成功',
+          desc: res.data.msg,
+          duration: 2
+        })
+        this.modal = false
+        this.fetchTableDataFromServer()
+      }).catch((err) => {
+        this.$Notice.error({
+          title: '删除失败',
+          desc: `失败原因: ${err}`,
+          duration: 2
+        })
+      })
+    },
     handleControlDetail (item) {
       this.modal = true
       this.control_item = {
@@ -207,7 +260,8 @@ export default {
         time: new Date(item.control_time),
         event: item.event,
         eventId: item.event_id,
-        sample_type: item.sample_type
+        sample_type: item.sample_type,
+        operation: item.operation
       }
     },
     handleTableSort (sort) {
@@ -222,10 +276,6 @@ export default {
     },
     handlePagesizeChange (perItem) {
       this.perItem = perItem
-      this.fetchTableDataFromServer()
-    },
-    handleCheck (val) {
-      this.check = val
       this.fetchTableDataFromServer()
     },
     handleDel (item) {
@@ -253,6 +303,33 @@ export default {
           })
         }
       })
+    },
+    handleAdd () {
+      this.control_item = {
+        id: '',
+        descript: '',
+        number: '',
+        range: '',
+        time: '',
+        event: '',
+        sample_type: '',
+        operation: ''
+      }
+      this.modal = true
+    },
+    handleSubmit (item) {
+      this.control_item = {
+        id: item.control_id,
+        descript: item.control_descript,
+        number: item.control_number,
+        range: item.control_range,
+        time: new Date(item.control_time),
+        event: item.event,
+        eventId: item.event_id,
+        sample_type: item.sample_type,
+        operation: item.operation
+      }
+      this.confirmCheck()
     }
   },
   mounted () {

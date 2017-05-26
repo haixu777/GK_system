@@ -7,15 +7,15 @@
       </Menu-item>
       <!-- <Menu-item name="data_entry">
         <Icon type="ios-paper"></Icon>
-        数据录入
+        管控方案编辑
       </Menu-item> -->
       <Menu-item name="auto_extract">
         <Icon type="ios-people"></Icon>
-        人工校验 (抽取结果)
+        管控方案编辑
       </Menu-item>
       <Menu-item name="manual_review">
         <Icon type="settings"></Icon>
-        人工审核 (校验结果)
+        管控方案审核
       </Menu-item>
     </Menu>
     <router-view></router-view>

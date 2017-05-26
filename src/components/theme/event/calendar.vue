@@ -6,7 +6,7 @@
       @eventClick="handleEventClick"
       lang="zh">
       <div slot="fc-header-left">
-        <Button type="ghost" shape="circle" @click="fetchNoticeFromServer" size="small">获取提醒</Button>
+        <Button type="ghost" shape="circle" @click="handleNoticeClick" size="small">获取提醒</Button>
       </div>
       <div slot="fc-header-right">
         <Select
@@ -148,6 +148,7 @@ export default {
   data () {
     return {
       modal: false,
+      noticeShow: true,
       activeMonth: (new Date()).getMonth() + 1,
       date: '',
       eventId: '',
@@ -327,6 +328,17 @@ export default {
         console.log(err)
       })
     },
+    handleNoticeClick () {
+      /*
+      this.noticeShow = !this.noticeShow
+      if (this.noticeShow) {
+        this.$Notice.destroy()
+      } else {
+        this.fetchNoticeFromServer()
+      }
+      */
+      this.fetchNoticeFromServer()
+    },
     fetchNoticeFromServer () {
       this.$axios.get('/events/notice')
         .then((res) => {
@@ -335,7 +347,8 @@ export default {
             setTimeout(() => {
               this.$Notice.warning({
                 title: item.name,
-                duration: 0,
+                // duration: 0,
+                key: 'events',
                 desc: item.descript
               })
             }, 100 * i)

@@ -1,6 +1,13 @@
 <template lang="html">
   <div class="category clearfix">
     <div class="category_tree">
+      <i-button
+        type="primary"
+        icon="ios-plus"
+        size="small"
+        @click="handleEventAdd">
+          添加
+      </i-button>
       <Input
         placeholder="输入关键字进行过滤"
         v-model="filterText">
@@ -15,7 +22,7 @@
         :highlight-current="true">
       </el-tree>
     </div>
-    <div class="category_content">
+    <div class="category_content" v-show="eventForm_show">
       <Form ref="eventForm" :model="eventForm" :label-width="80">
         <Form-item label="名称" prop="name">
           <Input v-model="eventForm.name" placeholder="请输入名称"></Input>
@@ -53,6 +60,27 @@
             </Radio>
           </Radio-group>
         </Form-item>
+        <Form-item label="周期性" prop="recurrence">
+          <Radio-group v-model="eventForm.recurrence">
+            <Radio label="0">
+              <span>否</span>
+            </Radio>
+            <Radio label="1">
+              <span>是</span>
+            </Radio>
+          </Radio-group>
+        </Form-item>
+        <Form-item label="发生时间" prop="occurrence_time">
+          <Date-picker type="date" placeholder="选择日期" style="width: 200px" v-model="eventForm.occurrence_time"></Date-picker>
+        </Form-item>
+        <Form-item label="预警时间">
+          <Date-picker
+            type="daterange"
+            placement="bottom-end"
+            placeholder="选择日期"
+            style="width: 200px"
+            v-model="eventForm.alertRange"></Date-picker>
+        </Form-item>
         <Form-item label="层级" prop="level">
           <el-cascader
             :options="treeData"
@@ -63,12 +91,100 @@
           </el-cascader>
         </Form-item>
         <Form-item>
-          <Button type="success" @click="resetEventForm">添加新事件</Button>
-          <Button type="warning" @click="handleEventConfirm">确认</Button>
-          <!-- <Button type="error" icon="trash-a">删除</Button> -->
+          <Button
+            type="warning"
+            @click="handleEventConfirm"
+            icon="edit"
+            :disabled="!Boolean(this.eventForm.id)">
+              更新
+          </Button>
+          <Button
+            type="error"
+            icon="trash-a"
+            :disabled="!Boolean(this.eventForm.id)">
+              删除
+          </Button>
         </Form-item>
       </Form>
     </div>
+
+    <Modal v-model="eventAdd_modal" width="400">
+      <p slot="header" style="color:#39f;text-align:center">
+        <Icon type="information-circled"></Icon>
+        <span>事件添加</span>
+      </p>
+      <div style="">
+        <Form ref="eventForm" :model="eventForm" :label-width="80">
+          <Form-item label="名称" prop="name">
+            <Input v-model="eventForm.name" placeholder="请输入名称"></Input>
+          </Form-item>
+          <Form-item label="简介" prop="descript">
+            <Input
+              v-model="eventForm.descript"
+              placeholder="请描述简介"
+              type="textarea"></Input>
+          </Form-item>
+          <!--
+          <Form-item label="编辑时间" prop="edit_time">
+            <Date-picker type="date" placeholder="选择日期" style="width: 200px" v-model="eventForm.edit_time"></Date-picker>
+          </Form-item>
+          -->
+          <!--
+          <Form-item label="发生时间" prop="harm_level">
+            <span>{{ (eventForm.occurrence_time) }}</span>
+          </Form-item>
+          -->
+          <Form-item label="危害等级" prop="harm_level">
+            <Slider v-model="eventForm.harm_level" :max="5" :show-input="true" :show-stops="true"></Slider>
+            <!-- <el-slider v-model="eventForm.harm_level" :max="2" show-input></el-slider> -->
+          </Form-item>
+          <Form-item label="类型" prop="type">
+            <Radio-group v-model="eventForm.type">
+              <Radio label="0">
+                <span>根结点</span>
+              </Radio>
+              <Radio label="1">
+                <span>叶子节点</span>
+              </Radio>
+            </Radio-group>
+          </Form-item>
+          <Form-item label="发生时间" prop="occurrence_time">
+            <Date-picker type="date" placeholder="选择日期" style="" v-model="eventForm.occurrence_time"></Date-picker>
+          </Form-item>
+          <Form-item label="预警时间">
+            <Date-picker
+              type="daterange"
+              placement="bottom-end"
+              placeholder="选择日期"
+              v-model="eventForm.alertRange"></Date-picker>
+          </Form-item>
+          <Form-item label="周期性" prop="recurrence">
+            <Radio-group v-model="eventForm.recurrence">
+              <Radio label="0">
+                <span>否</span>
+              </Radio>
+              <Radio label="1">
+                <span>是</span>
+              </Radio>
+            </Radio-group>
+          </Form-item>
+          <Form-item label="层级" prop="level">
+            <el-cascader
+              style="width:100%;"
+              :options="treeData"
+              :props="defaultProps"
+              :clearable="true"
+              change-on-select
+              v-model="eventForm.level">
+            </el-cascader>
+          </Form-item>
+        </Form>
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" long @click="handleEventConfirm">添加</Button>
+      </div>
+    </Modal>
+
   </div>
 </template>
 
@@ -87,14 +203,18 @@ export default {
         level: [],
         type: 0,
         edit_time: '',
-        harm_level: 0
+        harm_level: 0,
+        recurrence: 0,
+        alertRange: []
       },
       treeData: [],
       defaultProps: {
         children: 'children',
         label: 'name',
         value: 'id'
-      }
+      },
+      eventForm_show: false,
+      eventAdd_modal: false
     }
   },
   components: {
@@ -110,6 +230,7 @@ export default {
       return data.label.indexOf(value) !== -1
     },
     handleEventClick (node) {
+      this.eventForm_show = true
       this.eventForm = {
         id: node.id,
         name: node.name,
@@ -119,39 +240,64 @@ export default {
         type: node.type,
         level: $utils.formatEventLevel(node.level),
         edit_time: node.edit_time,
-        harm_level: node.harm_level
+        harm_level: node.harm_level,
+        recurrence: node.recurrence,
+        alertRange: node.alertRange
       }
-      console.log(this.eventForm)
     },
     fetchEventsTreeFromServer () {
       this.$axios.get('/events/tree')
         .then((res) => {
-          console.log(res)
           this.treeData = res.data.tree
         }).catch((err) => {
           console.log(err)
         })
     },
-    resetEventForm () {
-      this.eventForm = {}
-    },
     handleEventConfirm () {
       this.$axios.post('/events/update', {
         id: this.eventForm.id,
         name: this.eventForm.name,
-        parent_id: this.eventForm.parent_id,
+        parent_id: this.eventForm.level[-1],
         descript: this.eventForm.descript,
         occurrence_time: this.eventForm.occurrence_time,
         type: this.eventForm.type,
-        level: $utils.formatEventLevel(this.eventForm.level),
+        level: this.eventForm.level,
         edit_time: this.eventForm.edit_time,
-        harm_level: this.eventForm.harm_level
+        harm_level: this.eventForm.harm_level,
+        recurrence: this.eventForm.recurrence,
+        alertRange: this.eventForm.alertRange
       }).then((res) => {
-        console.log(res)
         this.fetchEventsTreeFromServer()
+        this.eventForm_show = false
+        this.eventAdd_modal = false
+        let str = res.data.msg.split(',')
+        this.$Notice.success({
+          title: str[1],
+          desc: str[0]
+        })
       }).catch((err) => {
         console.log(err)
       })
+    },
+    handleEventAdd () {
+      this.eventAdd_modal = true
+      this.eventForm_show = false
+      this.eventForm = {
+        id: '',
+        name: '',
+        parent_id: '',
+        descript: '',
+        occurrence_time: '',
+        level: [],
+        type: 0,
+        edit_time: new Date(),
+        harm_level: 0,
+        recurrence: 0,
+        alertRange: []
+      }
+    },
+    console1 () {
+      console.log(this.eventForm)
     }
   },
   mounted () {
@@ -169,6 +315,7 @@ export default {
       float: left;
     }
     .category_tree {
+      width: 25%;
     }
     .category_content {
       width: 70%;

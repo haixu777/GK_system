@@ -1,5 +1,33 @@
 <template lang="html">
   <div class="control_manual_review">
+    <Row>
+      <Col span="8">
+        <span style="display: inline-block;">日期范围</span>
+        <Date-picker
+          class="condition_datePicker"
+          style="display: inline-block;"
+          type="daterange"
+          placeholder="选择日期"
+          v-model="time_range"
+          confirm
+          @on-ok="fetchTableDataFromServer">
+        </Date-picker>
+      </Col>
+      <Col span="8">
+        <span style="display: inline-block;">事件筛选</span>
+        <Select v-model="event_id" filterable clearable style="display: inline-block;" @on-change="fetchTableDataFromServer">
+          <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
+        </Select>
+      </Col>
+      <Col span="8">
+        <span style="display: inline-block;">状态选择</span>
+        <Select v-model="verify" clearable style="display: inline-block;" @on-change="fetchTableDataFromServer">
+          <Option :value="0">待审核</option>
+          <Option :value="1">已审核</option>
+          <Option :value="-1">所有</option>
+        </Select>
+      </Col>
+    </Row>
     <Table
       :columns="columns"
       :data="tableData"
@@ -18,7 +46,7 @@
       show-sizer>
     </Page>
 
-    <Modal v-model="modal">
+    <Modal v-model="modal" style="modal_container">
       <p slot="header" style="color:#f60;text-align:center">
         <Icon type="information-circled"></Icon>
         <span>管控详情</span>
@@ -31,8 +59,11 @@
           <Form-item label="范围">
             <Input v-model="control_item.range"></Input>
           </Form-item>
+          <Form-item label="操作">
+            <Input v-model="control_item.operation"></Input>
+          </Form-item>
           <Form-item label="事件">
-            <Select v-model="control_item.eventId" style="width:200px" filterable>
+            <Select v-model="control_item.eventId" filterable>
               <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
             </Select>
           </Form-item>
@@ -70,6 +101,9 @@ export default {
       modal: false,
       sort_key: 'control_time',
       sort_order: 'desc',
+      time_range: new Date(),
+      event_id: null,
+      verify: 0,
       control_item: {
         id: '',
         descript: '',
@@ -77,7 +111,8 @@ export default {
         range: '',
         time: '',
         event: '',
-        sample_type: ''
+        sample_type: '',
+        operation: ''
       },
       columns: [
         {
@@ -135,18 +170,22 @@ export default {
         { value: 111, label: 'asdad' },
         { value: 222, label: 'qqq' },
         { value: 468, label: '两会' }
-      ],
-      test: null
+      ]
     }
   },
   methods: {
     fetchTableDataFromServer () {
+      console.log(this.time_range)
       this.$axios.get('/control/fetchList', {
         params: {
           perItem: this.perItem,
           currentPage: this.currentPage,
           sort_key: this.sort_key,
-          sort_order: this.sort_order
+          sort_order: this.sort_order,
+          time_start: this.time_range[0],
+          time_end: this.time_range[1],
+          event_id: this.event_id,
+          verify: this.verify
         }
       }).then((res) => {
         this.tableData = res.data.controlList
@@ -213,7 +252,8 @@ export default {
         time: new Date(item.control_time),
         event: item.event,
         eventId: item.event_id,
-        sample_type: item.sample_type
+        sample_type: item.sample_type,
+        operation: item.control_operation
       }
     },
     handleDel (item) {
@@ -283,14 +323,20 @@ export default {
 .control_manual_review {
   margin-bottom: 200px;
 }
-.ivu-select-single {
-  width: 100% !important;
+.modal_container {
+  .ivu-select-single {
+    width: 100% !important;
+  }
+  .ivu-select-dropdown {
+    position: absolute !important;
+  }
 }
-.ivu-select-dropdown {
-  position: absolute !important;
-}
-.ivu-col {
-  height: 30px;
-  line-height: 30px;
+.ivu-row {
+  .ivu-col {
+    line-height: 32px;
+    .ivu-select {
+      width: 200px !important;
+    }
+  }
 }
 </style>

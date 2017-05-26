@@ -59,7 +59,7 @@
       <el-table-column label="事件" prop="event_name"></el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
-          <i-button type="primary" size="small" @click="handleSampleDetail(scope.row)">查看</i-button>
+          <i-button type="primary" size="small" @click="handleSampleDetail(scope.row)">编辑</i-button>
           <i-button type="error" size="small" @click="handleDel(scope.row)">删除</i-button>
         </template>
       </el-table-column>

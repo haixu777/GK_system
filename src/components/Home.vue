@@ -20,7 +20,7 @@ export default {
     return {
       activeName: '',
       themeList: [
-        { name: '取证样本', path: 'sample/data-entry' },
+        { name: '取证样本', path: 'sample/auto-extract' },
         { name: '管控方案', path: 'control/auto_extract' },
         { name: '事件管理', path: 'event/category' }
       ]

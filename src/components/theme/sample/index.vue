@@ -5,17 +5,17 @@
         <Icon type="ios-home"></Icon>
         首页
       </Menu-item>
-      <Menu-item name="data-entry">
+      <!-- <Menu-item name="data-entry">
         <Icon type="ios-paper"></Icon>
-        数据录入
-      </Menu-item>
+        待处理文件列表
+      </Menu-item> -->
       <Menu-item name="auto-extract">
         <Icon type="ios-people"></Icon>
-        自动抽取
+        待处理文件列表
       </Menu-item>
       <Menu-item name="manual-review">
         <Icon type="settings"></Icon>
-        人工校验
+        抽取结果列表
       </Menu-item>
     </Menu>
     <router-view></router-view>

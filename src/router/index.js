@@ -9,6 +9,8 @@ import Sample from './routesMap/sample'
 import Events from './routesMap/event'
 import Control from './routesMap/control'
 
+import Test from '@/components/test'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -26,6 +28,11 @@ const router = new Router({
       path: '/home',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: Test
     },
     Sample,
     Control,
