@@ -121,6 +121,41 @@ export default {
         })
       })
     },
+    delSampleFromServer (reqObj, cb) {
+      this.$axios.post('/sample/autoDel', reqObj)
+        .then((res) => {
+          cb(null, res.data.msg)
+        }).catch((err) => {
+          cb(err, false)
+        })
+    },
+    handleDel (sample) {
+      this.$Modal.confirm({
+        title: '确认删除?',
+        content: `${sample.name}`,
+        loading: true,
+        onOk: () => {
+          this.delSampleFromServer({ id: sample.id, path: sample.path }, (err, msg) => {
+            if (err) {
+              this.$Notice.error({
+                title: '删除失败',
+                desc: `${sample.name}`
+              })
+            } else {
+              this.$Notice.success({
+                title: '删除成功',
+                desc: `${sample.name}`
+              })
+              this.fetchTableDataFromServer()
+            }
+            this.$Modal.remove()
+          })
+        },
+        onCancel: () => {
+          this.$Message.info('删除取消')
+        }
+      })
+    },
     handleSortChange (item) {
       this.fetchCondition.sort_key = item.prop
       this.fetchCondition.sort_order = (item.order.indexOf('desc') !== -1) ? 'desc' : 'asc'
