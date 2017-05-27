@@ -12,13 +12,18 @@
     <el-table
       :data="tableData"
       style="width: 100%;text-align: left;margin: 0;"
+      @selection-change="handleSelectionChange"
       @sort-change="handleSortChange">
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="上传时间" prop="upload_date" sortable></el-table-column>
         <el-table-column label="文件名" prop="name"></el-table-column>
         <el-table-column label="文件路径" prop="path"></el-table-column>
         <el-table-column label="操作">
           <template scope="scope">
-            <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">抽取</i-button>
+            <i-button type="primary" size="small" icon="hammer" @click="handleSampleExtra(scope.row)">抽取</i-button>
+            <i-button type="success" size="small" icon="ios-eye">
+              <a :href="'/sample/autoDownload?id='+scope.row.id" style="color:#fff;">下载</a>
+            </i-button>
             <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
           </template>
         </el-table-column>
@@ -57,7 +62,6 @@
           multiple
           type="drag"
           :before-upload="beforeUpload"
-          :on-error="handleUploadError"
           :on-success="handleUploadSuccess"
           action="//localhost:3000/sample/upload">
           <div style="padding: 20px 0">
@@ -179,9 +183,11 @@ export default {
       })
       this.fetchTableDataFromServer()
     },
-    handleUploadError (error, file, fileList) {
-      console.log(error)
-      console.log(file)
+    handleSelectionChange (selection) {
+      console.log(selection)
+    },
+    handleSampleExtra (sample) {
+      console.log(sample)
     },
     multipleExtra (data) {
       console.log(data)

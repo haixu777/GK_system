@@ -53,7 +53,11 @@ export default {
         username: this.formInline.username,
         password: this.formInline.password
       }).then((res) => {
-        this.$Message.success(res.data.msg)
+        if (res.data.success) {
+          this.$router.push('home')
+        } else {
+          this.$Message.error(res.data.msg)
+        }
       }).catch((err) => {
         console.log(err)
       })
