@@ -8,6 +8,7 @@
         @click="handleEventAdd">
           添加
       </i-button>
+      <router-link :to="'test'">to</router-link>
       <Input
         placeholder="输入关键字进行过滤"
         v-model="filterText">
@@ -22,90 +23,50 @@
         :highlight-current="true">
       </el-tree>
     </div>
-    <div class="category_content" v-show="eventForm_show">
-      <Form ref="eventForm" :model="eventForm" :label-width="80">
-        <Form-item label="名称" prop="name">
-          <Input v-model="eventForm.name" placeholder="请输入名称"></Input>
-        </Form-item>
-        <Form-item label="简介" prop="descript">
-          <Input
-            v-model="eventForm.descript"
-            placeholder="请描述简介"
-            type="textarea"></Input>
-        </Form-item>
-        <!--
-        <Form-item label="发生时间" prop="occurrence_time">
-          <Date-picker type="date" placeholder="选择日期" style="width: 200px" v-model="eventForm.occurrence_time"></Date-picker>
-        </Form-item>
-        <Form-item label="编辑时间" prop="edit_time">
-          <Date-picker type="date" placeholder="选择日期" style="width: 200px" v-model="eventForm.edit_time"></Date-picker>
-        </Form-item>
-        -->
-        <!--
-        <Form-item label="发生时间" prop="harm_level">
-          <span>{{ (eventForm.occurrence_time) }}</span>
-        </Form-item>
-        -->
-        <Form-item label="危害等级" prop="harm_level">
-          <Slider v-model="eventForm.harm_level" :max="5" :show-input="true" :show-stops="true"></Slider>
-          <!-- <el-slider v-model="eventForm.harm_level" :max="2" show-input></el-slider> -->
-        </Form-item>
-        <Form-item label="类型" prop="type">
-          <Radio-group v-model="eventForm.type">
-            <Radio label="0">
-              <span>根结点</span>
-            </Radio>
-            <Radio label="1">
-              <span>叶子节点</span>
-            </Radio>
-          </Radio-group>
-        </Form-item>
-        <Form-item label="周期性" prop="recurrence">
-          <Radio-group v-model="eventForm.recurrence">
-            <Radio label="0">
-              <span>否</span>
-            </Radio>
-            <Radio label="1">
-              <span>是</span>
-            </Radio>
-          </Radio-group>
-        </Form-item>
-        <Form-item label="发生时间" prop="occurrence_time">
-          <Date-picker type="date" placeholder="选择日期" style="width: 200px" v-model="eventForm.occurrence_time"></Date-picker>
-        </Form-item>
-        <Form-item label="预警时间">
-          <Date-picker
-            type="daterange"
-            placement="bottom-end"
-            placeholder="选择日期"
-            style="width: 200px"
-            v-model="eventForm.alertRange"></Date-picker>
-        </Form-item>
-        <Form-item label="层级" prop="level">
-          <el-cascader
-            :options="treeData"
-            :props="defaultProps"
-            :clearable="true"
-            change-on-select
-            v-model="eventForm.level">
-          </el-cascader>
-        </Form-item>
-        <Form-item>
-          <Button
-            type="warning"
-            @click="handleEventConfirm"
-            icon="edit"
-            :disabled="!Boolean(this.eventForm.id)">
-              更新
-          </Button>
-          <Button
-            type="error"
-            icon="trash-a"
-            :disabled="!Boolean(this.eventForm.id)">
-              删除
-          </Button>
-        </Form-item>
-      </Form>
+    <div class="category_content">
+      <div class="submenu">
+        <Menu :active-name="activeMenu" @on-select="handleMenuSelect">
+          <Menu-group :title="activeEvent">
+            <Menu-item name="details">
+              <Icon type=""></Icon>
+              事件详情
+            </Menu-item>
+            <Menu-item name="keywords">
+              <Icon type=""></Icon>
+              事件关键词
+            </Menu-item>
+            <Menu-item name="account">
+              <Icon type=""></Icon>
+              相关账号
+            </Menu-item>
+            <Menu-item name="person">
+              <Icon type=""></Icon>
+              相关人物
+            </Menu-item>
+            <Menu-item name="group">
+              <Icon type=""></Icon>
+              相关组织
+            </Menu-item>
+            <Menu-item name="platform">
+              <Icon type=""></Icon>
+              相关平台
+            </Menu-item>
+          </Menu-group>
+        </Menu>
+      </div>
+      <div class="content">
+        <category-details
+          v-if="activeMenu === 'details'"
+          :eventForm="eventForm"
+          :defaultProps="defaultProps"
+          :treeData="treeData"
+          @fetchTree="fetchEventsTreeFromServer">
+          </category-details>
+          <category-keywords
+            v-if="activeMenu === 'keywords'"
+            :eventId="eventForm.id">
+          </category-keywords>
+      </div>
     </div>
 
     <Modal v-model="eventAdd_modal" width="400">
@@ -190,6 +151,8 @@
 
 <script>
 const $utils = require('utils')
+const categoryDetails = require('./submenu/details')
+const categoryKeywords = require('./submenu/keywords')
 export default {
   data () {
     return {
@@ -207,6 +170,8 @@ export default {
         recurrence: 0,
         alertRange: []
       },
+      activeEvent: '',
+      activeMenu: 'details',
       treeData: [],
       defaultProps: {
         children: 'children',
@@ -218,6 +183,8 @@ export default {
     }
   },
   components: {
+    categoryDetails,
+    categoryKeywords
   },
   watch: {
     filterText (val) {
@@ -230,6 +197,7 @@ export default {
       return data.label.indexOf(value) !== -1
     },
     handleEventClick (node) {
+      this.activeEvent = node.name
       this.eventForm_show = true
       this.eventForm = {
         id: node.id,
@@ -296,8 +264,11 @@ export default {
         alertRange: []
       }
     },
-    console1 () {
-      console.log(this.eventForm)
+    console1 (str) {
+      console.log(str)
+    },
+    handleMenuSelect (name) {
+      this.activeMenu = name
     }
   },
   mounted () {
@@ -318,9 +289,24 @@ export default {
       width: 25%;
     }
     .category_content {
-      width: 70%;
-      margin-left: 4%;
+      width: 74%;
+      margin-left: 1%;
+      margin-top: 25px;
       border: 1px solid #d1dbe5;
+
+      .submenu {
+        float: left;
+        .ivu-menu-item-group-title {
+          color: #f40;
+        }
+      }
+      .content {
+        float: left;
+        padding: 25px;
+        border-left: 1px solid #d7dde4;
+        min-height: 500px;
+      }
+
       .ivu-input-group {
         width: 35% !important;
       }
