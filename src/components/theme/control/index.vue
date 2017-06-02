@@ -9,13 +9,13 @@
         <Icon type="ios-paper"></Icon>
         管控方案编辑
       </Menu-item> -->
-      <Menu-item name="auto_extract">
+      <!-- <Menu-item name="auto_extract">
         <Icon type="ios-people"></Icon>
         管控方案编辑
-      </Menu-item>
+      </Menu-item> -->
       <Menu-item name="manual_review">
         <Icon type="settings"></Icon>
-        管控方案审核
+        管控方案编辑
       </Menu-item>
     </Menu>
     <router-view></router-view>

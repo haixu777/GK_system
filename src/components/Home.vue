@@ -21,7 +21,7 @@ export default {
       activeName: '',
       themeList: [
         { name: '取证样本', path: 'sample/auto-extract' },
-        { name: '管控方案', path: 'control/auto_extract' },
+        { name: '管控方案', path: 'control/manual_review' },
         { name: '事件管理', path: 'event/category' }
       ]
     }

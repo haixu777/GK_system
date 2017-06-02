@@ -55,7 +55,7 @@
       </el-table-column>
       <el-table-column label="发布网站" prop="publish_platform"></el-table-column>
       <el-table-column label="发布频道" prop="publish_chanel"></el-table-column>
-      <el-table-column label="样本格式" prop="sample_format"></el-table-column>
+      <!-- <el-table-column label="样本格式" prop="sample_format"></el-table-column> -->
       <el-table-column label="事件" prop="event_name"></el-table-column>
       <el-table-column label="操作">
         <template scope="scope">

@@ -8,7 +8,6 @@
         @click="handleEventAdd">
           添加
       </i-button>
-      <router-link :to="'test'">to</router-link>
       <Input
         placeholder="输入关键字进行过滤"
         v-model="filterText">
@@ -23,33 +22,33 @@
         :highlight-current="true">
       </el-tree>
     </div>
-    <div class="category_content">
+    <div class="category_content" v-if="eventForm.id">
       <div class="submenu">
         <Menu :active-name="activeMenu" @on-select="handleMenuSelect">
           <Menu-group :title="activeEvent">
             <Menu-item name="details">
-              <Icon type=""></Icon>
+              <Icon type="ios-cog"></Icon>
               事件详情
             </Menu-item>
             <Menu-item name="keywords">
-              <Icon type=""></Icon>
+              <Icon type="bug"></Icon>
               事件关键词
             </Menu-item>
-            <Menu-item name="account">
-              <Icon type=""></Icon>
-              相关账号
-            </Menu-item>
             <Menu-item name="person">
-              <Icon type=""></Icon>
+              <Icon type="android-person"></Icon>
               相关人物
             </Menu-item>
-            <Menu-item name="group">
-              <Icon type=""></Icon>
-              相关组织
-            </Menu-item>
             <Menu-item name="platform">
-              <Icon type=""></Icon>
+              <Icon type="earth"></Icon>
               相关平台
+            </Menu-item>
+            <Menu-item name="account">
+              <Icon type="social-twitter"></Icon>
+              相关账号
+            </Menu-item>
+            <Menu-item name="group">
+              <Icon type="ios-people"></Icon>
+              相关组织
             </Menu-item>
           </Menu-group>
         </Menu>
@@ -66,6 +65,14 @@
             v-if="activeMenu === 'keywords'"
             :eventId="eventForm.id">
           </category-keywords>
+          <category-persons
+            v-if="activeMenu === 'person'"
+            :eventId="eventForm.id">
+          </category-persons>
+          <category-platform
+            v-if="activeMenu === 'platform'"
+            :eventId="eventForm.id">
+          </category-platform>
       </div>
     </div>
 
@@ -153,6 +160,8 @@
 const $utils = require('utils')
 const categoryDetails = require('./submenu/details')
 const categoryKeywords = require('./submenu/keywords')
+const categoryPersons = require('./submenu/person')
+const categoryPlatform = require('./submenu/platform')
 export default {
   data () {
     return {
@@ -184,7 +193,9 @@ export default {
   },
   components: {
     categoryDetails,
-    categoryKeywords
+    categoryKeywords,
+    categoryPersons,
+    categoryPlatform
   },
   watch: {
     filterText (val) {
@@ -293,15 +304,19 @@ export default {
       margin-left: 1%;
       margin-top: 25px;
       border: 1px solid #d1dbe5;
+      display: box;
+      display: -webkit-box;
+      display: -moz-box;
 
       .submenu {
-        float: left;
         .ivu-menu-item-group-title {
           color: #f40;
         }
       }
       .content {
-        float: left;
+        box-flex: 1;
+        -webkit-box-flex: 1;
+        -moz-box-flex: 1;
         padding: 25px;
         border-left: 1px solid #d7dde4;
         min-height: 500px;

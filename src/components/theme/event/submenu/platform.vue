@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="">
-    <Tag color="red" v-for="keyword in keywordsList" :key="keyword.id">
-      {{ keyword.name }}
+    <Tag color="red" v-for="platform in platformList" :key="platform">
+      {{ platform.name }}
     </Tag>
   </div>
 </template>
@@ -10,30 +10,30 @@
 export default {
   data () {
     return {
-      keywordsList: []
+      platformList: []
     }
   },
   props: ['eventId'],
   watch: {
     eventId (id) {
-      this.fetchKeywordByEventIdFromServer(id)
+      this.fetchPlateformByEventIdFromServer(id)
     }
   },
   methods: {
-    fetchKeywordByEventIdFromServer (eventId) {
-      this.$axios.get('/events/fetchKeywords', {
+    fetchPlateformByEventIdFromServer (eventId) {
+      this.$axios.get('/events/fetchPlatform', {
         params: {
           eventId: eventId
         }
       }).then((res) => {
-        this.keywordsList = res.data.keywordsList
+        this.platformList = res.data.platformList
       }).catch((err) => {
         console.log(err)
       })
     }
   },
   mounted () {
-    this.fetchKeywordByEventIdFromServer(this.eventId)
+    this.fetchPlateformByEventIdFromServer(this.eventId)
   }
 }
 </script>

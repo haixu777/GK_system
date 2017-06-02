@@ -1,6 +1,17 @@
 <template lang="html">
   <div class="control_manual_review">
     <Row>
+      <Col span="24">
+        <i-button
+          type="primary"
+          icon="plus"
+          size="small"
+          @click="handleAdd">
+          管控记录添加
+        </i-button>
+      </Col>
+    </Row>
+    <Row>
       <Col span="8">
         <span style="display: inline-block;">日期范围</span>
         <Date-picker
@@ -22,8 +33,8 @@
       <Col span="8">
         <span style="display: inline-block;">状态选择</span>
         <Select v-model="verify" clearable style="display: inline-block;" @on-change="fetchTableDataFromServer">
-          <Option :value="0">待审核</option>
-          <Option :value="1">已审核</option>
+          <Option :value="0">待校验</option>
+          <Option :value="1">已校验</option>
           <Option :value="-1">所有</option>
         </Select>
       </Col>
@@ -83,8 +94,25 @@
           </Form-item>
         </Form>
       </div>
-      <div slot="footer">
+      <!-- <div slot="footer">
         <Button type="success" size="large" long @click="updateControlToServer">更新</Button>
+      </div> -->
+      <div slot="footer">
+        <Button :type="control_item.check ? 'warning' : 'success'"
+          size="large"
+          long
+          v-if="control_item.id"
+          @click="updateControlToServer">
+            <!-- {{control_item.check ? '取消校验' : '确认校验'}} -->
+            校验
+        </Button>
+        <Button type="success"
+          size="large"
+          long
+          v-else
+          @click="addControlToServer">
+            确认添加
+        </Button>
       </div>
     </Modal>
 
@@ -103,7 +131,7 @@ export default {
       sort_order: 'desc',
       time_range: new Date(),
       event_id: null,
-      verify: 0,
+      verify: -1,
       control_item: {
         id: '',
         descript: '',
@@ -112,7 +140,8 @@ export default {
         time: '',
         event: '',
         sample_type: '',
-        operation: ''
+        operation: '',
+        verify: ''
       },
       columns: [
         {
@@ -153,14 +182,23 @@ export default {
           key: 'event'
         },
         {
+          title: '状态',
+          key: 'verify',
+          render (row, column, index) {
+            return `
+              <Tag color="green" v-if="${row.verify}">已校验</Tag>
+              <Tag color="yellow" v-else>未校验</Tag>
+            `
+          }
+        },
+        {
           title: '操作',
           key: 'action',
           render (row, column, index) {
             return `
               <i-button type="primary" size="small" @click="handleControlDetail(row)">详情</i-button>
-              <i-button type="success" size="small" @click="handleVerify(row.control_id, 1)" :disabled="${Boolean(row.verify)}">通过</i-button>
-              <i-button type="error" size="small" @click="handleVerify(row.control_id, 0)">拒绝</i-button>
-              <i-button type="error" size="small" @click="handleDel(row)" v-if="${false}">删除</i-button>
+              <i-button type="success" size="small" @click="handleVerify(row.control_id, 1)" v-if="${false}">通过</i-button>
+              <i-button type="error" size="small" @click="handleDel(row)">删除</i-button>
             `
           }
         }
@@ -200,13 +238,32 @@ export default {
           this.eventList = res.data.eventsList
         })
     },
+    addControlToServer () {
+      this.$axios.post('/control/add', this.control_item)
+        .then((res) => {
+          this.$Notice.success({
+            title: '成功',
+            desc: res.data.msg,
+            duration: 2
+          })
+          this.fetchTableDataFromServer()
+          this.modal = false
+        }).catch((err) => {
+          this.$Notice.error({
+            title: '删除失败',
+            desc: `失败原因: ${err}`,
+            duration: 2
+          })
+        })
+    },
     updateControlToServer () {
+      this.control_item.verify = 1
       this.$axios.post('/control/updateControl', this.control_item)
         .then((res) => {
           if (res.data.success) {
             this.modal = false
             this.$Notice.success({
-              title: '管控条目更新成功!'
+              title: '管控条目更新校验成功!'
             })
             this.fetchTableDataFromServer()
           }
@@ -263,7 +320,6 @@ export default {
         okText: 'OK',
         cancelText: 'Cancel',
         onOk: () => {
-          /*
           this.delControlToServer(item.control_id, (err, msg) => {
             if (err) {
               this.$Notice.error({
@@ -280,8 +336,6 @@ export default {
               this.fetchTableDataFromServer()
             }
           })
-          */
-          console.log(`call this.delControlToServer()`)
         }
       })
     },
@@ -310,6 +364,20 @@ export default {
       this.sort_key = sort.key
       this.sort_order = sort.order
       this.fetchTableDataFromServer()
+    },
+    handleAdd () {
+      this.control_item = {
+        id: '',
+        descript: '',
+        number: '',
+        range: '',
+        time: '',
+        event: '',
+        sample_type: '',
+        operation: '',
+        verify: 0
+      }
+      this.modal = true
     }
   },
   mounted () {
@@ -333,6 +401,7 @@ export default {
 }
 .ivu-row {
   .ivu-col {
+    border: 0;
     line-height: 32px;
     .ivu-select {
       width: 200px !important;

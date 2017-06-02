@@ -7,3 +7,4 @@ yarn-error.log*
 config/
 src/assets/data
 src/assets/zhongmu.png
+src/assets/person
