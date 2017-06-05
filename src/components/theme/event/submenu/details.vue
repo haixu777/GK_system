@@ -11,9 +11,9 @@
           type="textarea"></Input>
       </Form-item>
       <Form-item label="危害等级" prop="harm_level">
-        <Slider v-model="eventForm.harm_level" :max="5" :show-input="true" :show-stops="true"></Slider>
+        <Slider v-model="eventForm.harm_level" :max="3" :show-input="true" :show-stops="true"></Slider>
       </Form-item>
-      <Form-item label="类型" prop="type">
+      <!-- <Form-item label="类型" prop="type">
         <Radio-group v-model="eventForm.type">
           <Radio label="0">
             <span>根结点</span>
@@ -22,7 +22,7 @@
             <span>叶子节点</span>
           </Radio>
         </Radio-group>
-      </Form-item>
+      </Form-item> -->
       <Form-item label="周期性" prop="recurrence">
         <Radio-group v-model="eventForm.recurrence">
           <Radio label="0">

@@ -28,7 +28,11 @@
           <Menu-group :title="activeEvent">
             <Menu-item name="details">
               <Icon type="ios-cog"></Icon>
-              事件详情
+              事件概述
+            </Menu-item>
+            <Menu-item name="procedure">
+              <Icon type="bug"></Icon>
+              事件流程图
             </Menu-item>
             <Menu-item name="keywords">
               <Icon type="bug"></Icon>
@@ -61,6 +65,10 @@
           :treeData="treeData"
           @fetchTree="fetchEventsTreeFromServer">
           </category-details>
+          <category-procedure
+            v-if="activeMenu === 'procedure'"
+            :eventId="eventForm.id">
+          </category-procedure>
           <category-keywords
             v-if="activeMenu === 'keywords'"
             :eventId="eventForm.id">
@@ -73,6 +81,10 @@
             v-if="activeMenu === 'platform'"
             :eventId="eventForm.id">
           </category-platform>
+          <category-account
+            v-if="activeMenu === 'account'"
+            :eventId="eventForm.id">
+          </category-account>
       </div>
     </div>
 
@@ -103,16 +115,16 @@
           </Form-item>
           -->
           <Form-item label="危害等级" prop="harm_level">
-            <Slider v-model="eventForm.harm_level" :max="5" :show-input="true" :show-stops="true"></Slider>
+            <Slider v-model="eventForm.harm_level" :max="3" :show-input="true" :show-stops="true"></Slider>
             <!-- <el-slider v-model="eventForm.harm_level" :max="2" show-input></el-slider> -->
           </Form-item>
           <Form-item label="类型" prop="type">
             <Radio-group v-model="eventForm.type">
               <Radio label="0">
-                <span>根结点</span>
+                <span>事件类</span>
               </Radio>
               <Radio label="1">
-                <span>叶子节点</span>
+                <span>事件</span>
               </Radio>
             </Radio-group>
           </Form-item>
@@ -162,6 +174,8 @@ const categoryDetails = require('./submenu/details')
 const categoryKeywords = require('./submenu/keywords')
 const categoryPersons = require('./submenu/person')
 const categoryPlatform = require('./submenu/platform')
+const categoryProcedure = require('./submenu/procedure')
+const categoryAccount = require('./submenu/account')
 export default {
   data () {
     return {
@@ -195,7 +209,9 @@ export default {
     categoryDetails,
     categoryKeywords,
     categoryPersons,
-    categoryPlatform
+    categoryPlatform,
+    categoryProcedure,
+    categoryAccount
   },
   watch: {
     filterText (val) {

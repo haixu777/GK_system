@@ -22,7 +22,7 @@
           <template scope="scope">
             <i-button type="primary" size="small" icon="hammer" @click="handleSampleExtra(scope.row)">抽取</i-button>
             <i-button type="success" size="small" icon="ios-eye">
-              <a :href="'/sample/autoDownload?id='+scope.row.id" style="color:#fff;">下载</a>
+              <a :href="'http://localhost:3000/sample/autoDownload?id='+scope.row.id" style="color:#fff;">下载</a>
             </i-button>
             <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
           </template>
