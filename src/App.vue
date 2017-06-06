@@ -29,6 +29,9 @@ export default {
   color: #2c3e50;
   /*background: url('./assets/bg.jpg');*/
 }
+.ivu-menu-dark {
+  background: #464c5b !important;
+}
 .clearfix {
   overflow:auto;
   _height:1%

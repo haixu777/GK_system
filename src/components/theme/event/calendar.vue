@@ -6,7 +6,9 @@
       @eventClick="handleEventClick"
       lang="zh">
       <div slot="fc-header-left">
-        <Button type="ghost" shape="circle" @click="handleNoticeClick" size="small">获取提醒</Button>
+        <Button :type="noticeShow ? `error` : `success`" shape="circle" @click="handleNoticeClick" size="small">
+          {{ noticeShow ? `关闭提醒` : `获取提醒` }}
+        </Button>
       </div>
       <div slot="fc-header-right">
         <Select
@@ -329,15 +331,12 @@ export default {
       })
     },
     handleNoticeClick () {
-      /*
       this.noticeShow = !this.noticeShow
-      if (this.noticeShow) {
+      if (!this.noticeShow) {
         this.$Notice.destroy()
       } else {
         this.fetchNoticeFromServer()
       }
-      */
-      this.fetchNoticeFromServer()
     },
     fetchNoticeFromServer () {
       this.$axios.get('/events/notice')
@@ -347,7 +346,7 @@ export default {
             setTimeout(() => {
               this.$Notice.warning({
                 title: item.name,
-                // duration: 0,
+                duration: 0,
                 key: 'events',
                 desc: item.descript
               })

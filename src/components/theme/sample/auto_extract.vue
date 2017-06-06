@@ -105,25 +105,35 @@ export default {
       })
     },
     checkIsExistFromServer (filename) {
-      return new Promise((resolve, reject) => {
-        this.$axios.get('/sample/autoIsExist', {
-          params: {
-            name: filename
-          }
-        }).then((res) => {
-          if (res.data.isExist) {
-            reject()
-            this.$Notice.error({
-              title: `上传失败`,
-              desc: `样本: ${filename}，已存在，请勿重复上传`
-            })
-          } else {
-            resolve()
-          }
-        }).catch((err) => {
-          console.log(err)
+      if (filename.indexOf(' ') !== -1) {
+        return new Promise((resolve, reject) => {
+          reject()
+          this.$Notice.error({
+            title: `上传失败`,
+            desc: `样本: ${filename}，文件名内不能有空格存在`
+          })
         })
-      })
+      } else {
+        return new Promise((resolve, reject) => {
+          this.$axios.get('/sample/autoIsExist', {
+            params: {
+              name: filename
+            }
+          }).then((res) => {
+            if (res.data.isExist) {
+              reject()
+              this.$Notice.error({
+                title: `上传失败`,
+                desc: `样本: ${filename}，已存在，请勿重复上传`
+              })
+            } else {
+              resolve()
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        })
+      }
     },
     delSampleFromServer (reqObj, cb) {
       this.$axios.post('/sample/autoDel', reqObj)

@@ -39,11 +39,44 @@
         </Select>
       </Col>
     </Row>
-    <Table
+    <!-- <Table
       :columns="columns"
       :data="tableData"
+      :context="this"
       @on-sort-change="handleTableSort">
-    </Table>
+    </Table> -->
+    <el-table
+      :data="tableData"
+      @sort-change="handleTableSort"
+      style="width:100%;text-align:left;">
+      <el-table-column label="管控日期" prop="control_time" sortable></el-table-column>
+      <el-table-column label="管控范围" prop="control_range"></el-table-column>
+      <el-table-column label="管控内容">
+        <template scope="scope">
+          <Tooltip :delay="300">
+            <Tag>{{ scope.row.control_descript.substring(0, 6) + '...' }}</Tag>
+            <div slot="content" style="white-space: normal;">
+              {{ scope.row.control_descript }}
+            </div>
+          </Tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="类型" prop="sample_type"></el-table-column>
+      <el-table-column label="数量" prop="control_number" sortable></el-table-column>
+      <el-table-column label="事件" prop="event"></el-table-column>
+      <el-table-column label="状态">
+        <template scope="scope">
+          <Tag color="green" v-if="scope.row.verify">已校验</Tag>
+          <Tag color="yellow" v-else>未校验</Tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template scope="scope">
+          <i-button type="primary" size="small" @click="handleControlDetail(scope.row)">详情</i-button>
+          <i-button type="error" size="small" @click="handleDel(scope.row)">删除</i-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <Page
       style="float: right;"
       :total="totalItem"
@@ -361,8 +394,14 @@ export default {
     },
     handleTableSort (sort) {
       console.log(sort)
-      this.sort_key = sort.key
-      this.sort_order = sort.order
+      // this.sort_order = sort.order
+      if (!sort.order) return
+      this.sort_key = sort.prop
+      if (sort.order.indexOf('desc') !== -1) {
+        this.sort_order = 'desc'
+      } else {
+        this.sort_order = 'asc'
+      }
       this.fetchTableDataFromServer()
     },
     handleAdd () {
