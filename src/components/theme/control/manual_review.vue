@@ -369,6 +369,9 @@ export default {
               this.fetchTableDataFromServer()
             }
           })
+        },
+        onCancel: () => {
+          this.$Message.info('删除取消')
         }
       })
     },

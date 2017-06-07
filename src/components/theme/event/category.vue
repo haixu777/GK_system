@@ -85,6 +85,10 @@
             v-if="activeMenu === 'account'"
             :eventId="eventForm.id">
           </category-account>
+          <category-group
+            v-if="activeMenu === 'group'"
+            :eventId="eventForm.id">
+          </category-group>
       </div>
     </div>
 
@@ -176,6 +180,7 @@ const categoryPersons = require('./submenu/person')
 const categoryPlatform = require('./submenu/platform')
 const categoryProcedure = require('./submenu/procedure')
 const categoryAccount = require('./submenu/account')
+const categoryGroup = require('./submenu/group')
 export default {
   data () {
     return {
@@ -211,7 +216,8 @@ export default {
     categoryPersons,
     categoryPlatform,
     categoryProcedure,
-    categoryAccount
+    categoryAccount,
+    categoryGroup
   },
   watch: {
     filterText (val) {
@@ -244,6 +250,7 @@ export default {
       this.$axios.get('/events/tree')
         .then((res) => {
           this.treeData = res.data.tree
+          this.eventForm.id = null
         }).catch((err) => {
           console.log(err)
         })

@@ -63,6 +63,7 @@
         </Button>
         <Button
           type="error"
+          @click="handleDel"
           icon="trash-a"
           :disabled="!Boolean(this.eventForm.id)">
             删除
@@ -86,7 +87,7 @@ export default {
         name: this.eventForm.name,
         parent_id: this.eventForm.level[-1],
         descript: this.eventForm.descript,
-        occurrence_time: this.eventForm.occurrence_time,
+        occurrence_time: this.eventForm.occurrence_time === '' ? null : this.eventForm.occurrence_time,
         type: this.eventForm.type,
         level: this.eventForm.level,
         edit_time: this.eventForm.edit_time,
@@ -106,14 +107,33 @@ export default {
         console.log(err)
       })
     },
-    fetchEventsTreeFromServer () {
-      this.$axios.get('/events/tree')
+    handleDel () {
+      this.$Modal.confirm({
+        title: '确认删除？',
+        content: '事件：' + this.eventForm.name + ', 删除后将无法恢复',
+        onOk: () => {
+          this.delEventsFromServer()
+        },
+        onCancel: () => {
+          this.$Message.info('删除取消')
+        }
+      })
+    },
+    delEventsFromServer () {
+      this.$axios.post('events/del', {id: this.eventForm.id})
         .then((res) => {
-          this.treeData = res.data.tree
+          this.$emit('fetchTree')
+          let str = res.data.msg.split(',')
+          this.$Notice.success({
+            title: str[1],
+            desc: str[0]
+          })
         }).catch((err) => {
           console.log(err)
         })
     }
+  },
+  mounted () {
   }
 }
 </script>
