@@ -10,7 +10,7 @@ import jsPlumb from 'jsplumb'
 Vue.prototype.$axios = Axios
 
 if (process.env.NODE_ENV === 'development') {
-  Axios.defaults.baseURL = 'http://localhost:3000'
+  Axios.defaults.baseURL = 'http://10.10.28.23:3000'
 }
 
 import {
