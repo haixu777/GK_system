@@ -59,8 +59,11 @@
       <el-table-column label="事件" prop="event_name"></el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
-          <i-button type="primary" size="small" @click="handleSampleDetail(scope.row)">编辑</i-button>
-          <i-button type="error" size="small" @click="handleDel(scope.row)">删除</i-button>
+          <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
+          <i-button type="success" icon="ios-eye" size="small">
+            <a :href="'http://localhost:3000/sample/download?id='+scope.row.id" style="color:#fff;">下载</a>
+          </i-button>
+          <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
         </template>
       </el-table-column>
     </el-table>
@@ -217,8 +220,8 @@ export default {
         })
       console.log(this.sampleItem)
     },
-    delSampleToServer (id, cb) {
-      this.$axios.post('/sample/del', {id: id})
+    delSampleToServer (item, cb) {
+      this.$axios.post('/sample/del', {id: item.id, path: item.sample_path})
         .then((msg) => {
           cb(null, msg)
         }).catch((err) => {
@@ -257,8 +260,7 @@ export default {
         okText: 'OK',
         cancelText: 'Cancel',
         onOk: () => {
-          /*
-          this.delSampleToServer(item.id, (err, msg) => {
+          this.delSampleToServer(item, (err, msg) => {
             if (err) {
               this.$Notice.error({
                 title: '删除失败',
@@ -274,8 +276,6 @@ export default {
               this.fetchTableDataFromServer()
             }
           })
-          */
-          console.log(`call this.delSampleToServer()`)
         }
       })
     },

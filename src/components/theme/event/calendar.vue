@@ -116,9 +116,9 @@
                 </el-table-column>
                 <el-table-column label="操作" prop="sample_path">
                   <template scope="scope">
-                    <Button>
-                      <a :href="handleSamplePath(scope.row.sample_path)" target="_blank">查看</a>
-                    </Button>
+                    <i-button type="success" size="small">
+                      <a :href="'http://localhost:3000/sample/download?id='+scope.row.id" style="color:#fff;">下载</a>
+                    </i-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -269,7 +269,7 @@ export default {
       } else if (value === 'timeline') {
         this.fetchTimelineFromServer()
       } else if (value === 'process') {
-        console.log(111)
+        // console.log(111)
         this.$emit('initChart')
       }
     }

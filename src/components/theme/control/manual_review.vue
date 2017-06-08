@@ -112,11 +112,12 @@
             </Select>
           </Form-item>
           <Form-item label="样本类型">
-            <Select v-model="control_item.sample_type" placeholder="请选择样本类型">
-              <Option value="文本">文本</Option>
+            <Select v-model="control_item.sample_type" placeholder="请选择样本类型" filterable>
+              <!-- <Option value="文本">文本</Option>
               <Option value="图片">图片</Option>
               <Option value="音频">音频</Option>
-              <Option value="视频">视频</Option>
+              <Option value="视频">视频</Option> -->
+              <Option v-for="type in sampleTypeList" :value="type.text" :key="type.text">{{ type.text }}</Option>
             </Select>
           </Form-item>
           <Form-item label="时间">
@@ -176,6 +177,28 @@ export default {
         operation: '',
         verify: ''
       },
+      sampleTypeList: [
+        { text: '信息' },
+        { text: '视频' },
+        { text: '图片' },
+        { text: '文字样本' },
+        { text: '音频' },
+        { text: '跟帖' },
+        { text: '文本' },
+        { text: '账号' },
+        { text: '网址' },
+        { text: '贴文' },
+        { text: '公号' },
+        { text: 'qq群' },
+        { text: '图文' },
+        { text: '直播' },
+        { text: '快照死链' },
+        { text: '联想词' },
+        { text: '关键词' },
+        { text: '评论' },
+        { text: '网站' },
+        { text: '站点' }
+      ],
       columns: [
         {
           title: '管控日期',

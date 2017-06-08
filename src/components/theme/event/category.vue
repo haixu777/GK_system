@@ -307,6 +307,7 @@ export default {
   },
   mounted () {
     this.fetchEventsTreeFromServer()
+    this.$Notice.destroy()
   }
 }
 </script>

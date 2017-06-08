@@ -50,7 +50,7 @@ export default {
     }
   },
   mounted () {
-    setTimeout(this.initChart, 2000)
+    // setTimeout(this.initChart, 2000)
   }
 }
 </script>
