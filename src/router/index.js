@@ -11,6 +11,8 @@ import Control from './routesMap/control'
 
 import Test from '@/components/test'
 
+const $utils = require('utils')
+
 Vue.use(Router)
 
 const router = new Router({
@@ -42,7 +44,20 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
-  next()
+  let isLogin = $utils.Cookie.get('login')
+  if (!isLogin) {
+    if (to.path !== '/login') {
+      return next({path: '/login'})
+    } else {
+      next()
+    }
+  } else {
+    // if (to.path === '/login') {
+    //   // return next({path: '/login'})
+    //
+    // }
+    next()
+  }
 })
 
 router.afterEach((to, from, next) => {

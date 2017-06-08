@@ -8,7 +8,7 @@
           </Input>
         </Form-item>
         <Form-item prop="password">
-          <Input type="password" v-model="formInline.password" placeholder="Password">
+          <Input type="password" v-model="formInline.password" placeholder="Password" @keyup.enter.native="handleSubmit('formInline')">
             <Icon type="ios-locked-outline" slot="prepend"></Icon>
           </Input>
         </Form-item>
@@ -21,6 +21,7 @@
 </template>
 
 <script>
+const $utils = require('utils')
 export default {
   data () {
     return {
@@ -54,6 +55,7 @@ export default {
         password: this.formInline.password
       }).then((res) => {
         if (res.data.success) {
+          $utils.Cookie.set('login', true)
           this.$router.push('home')
         } else {
           this.$Message.error(res.data.msg)
