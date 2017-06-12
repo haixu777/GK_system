@@ -13,7 +13,7 @@
       <div style="">
         <!-- <i-button type="primary" size="small" @click="handleKeywordAdd" :disabled="!(filterWord.length)">添加</i-button> -->
         <!-- <Input v-model="filterWord" icon="ios-search" placeholder="关键词搜索" style="width: 180px"></Input> -->
-        <Select v-model="keywordId" remote filterable :remote-method="handleSearch" :loading="loading" placeholder="请输入搜索内容">
+        <Select v-model="keywordId" remote filterable :remote-method="handleSearch" :loading="loading" placeholder="请输入搜索内容" @keyup.enter.native="handleEvent2Keyword">
           <Option v-for="keyword in searchKeywordList" :value="keyword.value" :key="keyword.value" :disabled="keyword.disabled">{{ keyword.label }}</Option>
         </Select>
       </div>
@@ -86,6 +86,10 @@ export default {
       }).then((res) => {
         if (res.data.success) {
           this.$Notice.success({
+            title: res.data.msg
+          })
+        } else {
+          this.$Notice.error({
             title: res.data.msg
           })
         }
