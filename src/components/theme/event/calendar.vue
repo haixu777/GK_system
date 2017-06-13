@@ -242,21 +242,7 @@ export default {
           }
         ]
       },
-      fcEvents: [
-        {
-          title: 'event1',
-          start: '2017-05-01',
-          cssClass: 'family',
-          YOUR_DATA: {}
-        },
-        {
-          title: 'event2',
-          start: '2017-05-13',
-          end: '2017-05-20',
-          cssClass: ['family', 'career'],
-          YOUR_DATA: {}
-        }
-      ]
+      fcEvents: []
     }
   },
   watch: {
@@ -272,6 +258,9 @@ export default {
         // console.log(111)
         this.$emit('initChart')
       }
+    },
+    modal_detail (val) {
+      if (!val) this.collapse = ''
     }
   },
   methods: {
@@ -344,11 +333,23 @@ export default {
           let noticeList = res.data.noticeList
           noticeList.forEach((item, i) => {
             setTimeout(() => {
+              let warnStarDom = ''
+              if (!Number(item.harm_level)) {
+                // warnStarDom = '<span style="color:green">无</span>'
+                warnStarDom = '&nbsp;<i class="ivu-icon ivu-icon-android-happy" style="color:#19be6b;font-size:20px;"></i>'
+              } else {
+                for (let i = 0; i < Number(item.harm_level); i++) {
+                  warnStarDom += `<span class="el-rate__item" style="cursor: auto;"><i class="el-rate__icon el-icon-star-on" style="color: rgb(247, 186, 42);"></i></span>`
+                }
+              }
               this.$Notice.warning({
                 title: item.name,
                 duration: 0,
                 key: 'events',
-                desc: item.descript
+                desc: `
+                  危害等级: ${warnStarDom}
+                  <br>
+                `
               })
             }, 100 * i)
           })
@@ -439,5 +440,8 @@ export default {
   }
   .full-calendar-header .header-right {
     flex: none !important;
+  }
+  .ivu-rate-star-content:before, .ivu-rate-star:before {
+    cursor: initial !important;
   }
 </style>

@@ -122,6 +122,7 @@ export default {
       this.keywordId = ''
     },
     handleEvent2Keyword () {
+      if (!this.query) return
       this.postEvent2KeywordFromServer('add', this.keywordId, null, this.query)
     },
     handleDel (item) {
