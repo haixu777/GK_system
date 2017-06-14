@@ -9,13 +9,14 @@ import Sample from './routesMap/sample'
 import Events from './routesMap/event'
 import Control from './routesMap/control'
 
-import Test from '@/components/test'
+import NotFoundComponent from '@/components/notFoundComponent'
 
 const $utils = require('utils')
 
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -31,14 +32,13 @@ const router = new Router({
       name: 'home',
       component: Home
     },
-    {
-      path: '/test',
-      name: 'test',
-      component: Test
-    },
     Sample,
     Control,
-    Events
+    Events,
+    {
+      path: '*',
+      component: NotFoundComponent
+    }
   ]
 })
 

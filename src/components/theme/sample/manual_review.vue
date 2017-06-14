@@ -60,7 +60,7 @@
       <el-table-column label="操作">
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
-          <i-button type="success" icon="ios-eye" size="small">
+          <i-button type="success" icon="android-download" size="small">
             <a :href="'http://localhost:3000/sample/download?id='+scope.row.id" style="color:#fff;">下载</a>
           </i-button>
           <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>

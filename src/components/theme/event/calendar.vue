@@ -116,7 +116,7 @@
                 </el-table-column>
                 <el-table-column label="操作" prop="sample_path">
                   <template scope="scope">
-                    <i-button type="success" size="small">
+                    <i-button type="success" size="small" icon="android-download">
                       <a :href="'http://localhost:3000/sample/download?id='+scope.row.id" style="color:#fff;">下载</a>
                     </i-button>
                   </template>
@@ -255,7 +255,6 @@ export default {
       } else if (value === 'timeline') {
         this.fetchTimelineFromServer()
       } else if (value === 'process') {
-        // console.log(111)
         this.$emit('initChart')
       }
     },
@@ -349,6 +348,7 @@ export default {
                 desc: `
                   危害等级: ${warnStarDom}
                   <br>
+                  距离管控: <span style="color:#f40;">${3}</span> 天
                 `
               })
             }, 100 * i)
