@@ -6,6 +6,8 @@ import router from './router'
 import Axios from 'axios'
 import fullCalendar from 'vue-fullcalendar'
 import jsPlumb from 'jsplumb'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 Vue.prototype.$axios = Axios
 
@@ -24,7 +26,8 @@ import {
   Form,
   FormItem,
   Loading,
-  Upload
+  Upload,
+  Tooltip
 } from 'element-ui'
 
 Vue.use(Tree)
@@ -38,6 +41,7 @@ Vue.use(Loading)
 Vue.use(jsPlumb)
 Vue.use(Pagination)
 Vue.use(Upload)
+Vue.use(Tooltip)
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
@@ -51,8 +55,15 @@ iView.LoadingBar.config({
   color: '#00cc66',
   height: 4
 })
-Axios.interceptors.request.use((response) => {
-  iView.LoadingBar.finish()
+
+Axios.interceptors.request.use((request) => {
+  NProgress.start()
+  // iView.LoadingBar.start()
+  return request
+})
+Axios.interceptors.response.use((response) => {
+  NProgress.done()
+  // iView.LoadingBar.finish()
   return response
 })
 

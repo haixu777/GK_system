@@ -65,7 +65,7 @@
           type="error"
           @click="handleDel"
           icon="trash-a"
-          :disabled="!Boolean(this.eventForm.id)">
+          :disabled="!Boolean(this.eventForm.type)">
             删除
         </Button>
       </Form-item>

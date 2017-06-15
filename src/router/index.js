@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import iView from 'iview'
+// import iView from 'iview'
+import NProgress from 'nprogress'
 
 import Login from '@/components/Login'
 import Home from '@/components/Home'
@@ -43,7 +44,8 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  iView.LoadingBar.start()
+  // iView.LoadingBar.start()
+  NProgress.start()
   let isLogin = $utils.Cookie.get('login')
   if (!isLogin) {
     if (to.path !== '/login') {
@@ -61,7 +63,8 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from, next) => {
-  iView.LoadingBar.finish()
+  NProgress.done()
+  // iView.LoadingBar.finish()
 })
 
 module.exports = router

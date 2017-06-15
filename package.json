@@ -17,6 +17,7 @@
     "iview": "^2.0.0-rc.16",
     "jquery": "^3.2.1",
     "jsplumb": "^2.3.5",
+    "nprogress": "^0.2.0",
     "vue": "^2.2.2",
     "vue-fullcalendar": "^1.0.9",
     "vue-router": "^2.3.0"

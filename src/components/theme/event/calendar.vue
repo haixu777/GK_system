@@ -332,6 +332,7 @@ export default {
           let noticeList = res.data.noticeList
           noticeList.forEach((item, i) => {
             setTimeout(() => {
+              // 有害评级DOM控制
               let warnStarDom = ''
               if (!Number(item.harm_level)) {
                 // warnStarDom = '<span style="color:green">无</span>'
@@ -341,6 +342,25 @@ export default {
                   warnStarDom += `<span class="el-rate__item" style="cursor: auto;"><i class="el-rate__icon el-icon-star-on" style="color: rgb(247, 186, 42);"></i></span>`
                 }
               }
+
+              // 管控事件DOM控制
+              let controlDom = ''
+              let now = new Date()
+              let itemStart = new Date(item.control_start_time)
+              let timeStart = now.getTime() - itemStart.getTime()
+              let itemEnd = new Date(item.control_end_time)
+              let timeEnd = now.getTime() - itemEnd.getTime()
+              if (timeStart < 0) {
+                controlDom = `距离管控: <span style="color:#f40;">${Math.abs(Math.floor(timeStart / (1000 * 60 * 60 * 24)))}</span> 天`
+              }
+              if (timeEnd > 0) {
+                controlDom = `管控结束: <span style="color:#f40;">${Math.abs(parseInt(timeEnd / (1000 * 60 * 60 * 24)))}</span> 天`
+              }
+              if (timeStart > 0 && timeEnd < 0) {
+                controlDom = `已经管控: <span style="color:#f40;">${Math.abs(parseInt(timeStart / (1000 * 60 * 60 * 24)))}</span> 天`
+              }
+
+              // Notice
               this.$Notice.warning({
                 title: item.name,
                 duration: 0,
@@ -348,7 +368,8 @@ export default {
                 desc: `
                   危害等级: ${warnStarDom}
                   <br>
-                  距离管控: <span style="color:#f40;">${3}</span> 天
+                  ${controlDom}
+                  <br>
                 `
               })
             }, 100 * i)
@@ -375,7 +396,7 @@ export default {
     },
     openCalendar () {
       this.modal_calendar = true
-      this.fetchEventByMonthFromServer(5)
+      this.fetchEventByMonthFromServer()
     },
     handleMonthChange (start, end, current) {
       let date = new Date(current)

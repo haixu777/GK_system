@@ -1,20 +1,16 @@
 <template lang="html">
   <div class="sample_manual_review">
-    <div class="condition_area" style="text-align: left;" v-if="false">
+    <div class="condition_area" style="text-align: left;">
       <Row>
         <Col span="8">
+        </Col>
+        <Col span="8"></Col>
+        <Col span="8">
           事件选择
-          <Select v-model="event_id" size="small" style="width: 200px;">
+          <Select v-model="event_id" size="small" clearable filterable style="width: 200px;" @on-change="fetchTableDataFromServer">
             <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
           </Select>
         </Col>
-        <Col span="8">col-12</Col>
-        <Col span="8">col-12</Col>
-      </Row>
-      <Row>
-        <Col span="8">col-12</Col>
-        <Col span="8">col-12</Col>
-        <Col span="8">col-12</Col>
       </Row>
     </div>
     <el-table
@@ -45,12 +41,19 @@
       <el-table-column label="取证时间" prop="forensic_date" sortable></el-table-column>
       <el-table-column label="样本标题">
         <template scope="scope">
-          <Tooltip>
+          <!-- <Tooltip>
             <Tag>{{ scope.row.sample_title.substring(0, 6) + '...' }}</Tag>
             <div slot="content" style="white-space: normal;">
               {{ scope.row.sample_title }}
             </div>
-          </Tooltip>
+          </Tooltip> -->
+          <el-tooltip
+            effect="dark"
+            :content="scope.row.sample_title"
+            placement="bottom"
+            :openDelay="300">
+            <Tag>{{ scope.row.sample_title.substring(0, 6) + '...' }}</Tag>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="发布网站" prop="publish_platform"></el-table-column>
@@ -162,7 +165,7 @@ export default {
       totalItem: null,
       modal: false,
       eventList: [],
-      event_id: null,
+      event_id: 272,
       sampleItem: {
         id: null,
         event_name: '',
@@ -188,7 +191,8 @@ export default {
           currentPage: this.currentPage,
           perItem: this.perItem,
           sort_key: this.sort_key,
-          sort_order: this.sort_order
+          sort_order: this.sort_order,
+          eventId: this.event_id
         }
       }).then((res) => {
         if (res.data.success) {
@@ -334,6 +338,10 @@ export default {
   text-align: center;
   line-height: 30px;
   height: 30px;
-  border: 1px solid #eee;
+  // border: 1px solid #eee;
+}
+.el-tooltip__popper {
+  width: 200px;
+  background-color: rgba(70,76,91,.9) !important;
 }
 </style>

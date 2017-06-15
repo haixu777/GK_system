@@ -74,6 +74,35 @@
         <!-- <Button type="success" size="large" long @click="submitUpload">上传到服务器</Button> -->
       </div>
     </Modal>
+
+    <Modal v-model="extra_modal">
+      <p slot="header" style="color:#f60;text-align:center">
+        <Icon type="information-circled"></Icon>
+        <span>抽取确认</span>
+      </p>
+      <div style="text-align:center">
+        <Form :model="extra_item" :label-width="60">
+          <Form-item label="文件名">
+            <Input v-model="extra_item.post"></Input>
+          </Form-item>
+          <Form-item label="文件路径">
+            <Input v-model="extra_item.url"></Input>
+          </Form-item>
+          <Form-item label="发布平台">
+            <Input v-model="extra_item.platform"></Input>
+          </Form-item>
+          <Form-item label="发布频道">
+            <Input v-model="extra_item.chanel"></Input>
+          </Form-item>
+          <Form-item label="发布事件">
+            <Input v-model="extra_item.time"></Input>
+          </Form-item>
+        </Form>
+      </div>
+      <div slot="footer">
+        <!-- <Button type="success" size="large" long @click="submitUpload">上传到服务器</Button> -->
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -90,7 +119,12 @@ export default {
         sort_order: 'desc'
       },
       upload_modal: false,
-      fileList: []
+      extra_modal: false,
+      fileList: [],
+      extra_item: {
+        filename: '',
+        path: ''
+      }
     }
   },
   methods: {
@@ -198,6 +232,7 @@ export default {
     },
     handleSampleExtra (sample) {
       console.log(sample)
+      this.extra_modal = true
     },
     multipleExtra (data) {
       console.log(data)

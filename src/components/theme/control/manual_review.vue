@@ -53,12 +53,20 @@
       <el-table-column label="管控范围" prop="control_range"></el-table-column>
       <el-table-column label="管控内容">
         <template scope="scope">
-          <Tooltip :delay="300">
+          <!-- <Tooltip :delay="300">
             <Tag>{{ scope.row.control_descript.substring(0, 6) + '...' }}</Tag>
             <div slot="content" style="white-space: normal;">
               {{ scope.row.control_descript }}
             </div>
-          </Tooltip>
+          </Tooltip> -->
+          <el-tooltip
+            class="my_tooltip"
+            effect="dark"
+            :content="scope.row.control_descript"
+            placement="bottom"
+            :openDelay="300">
+            <Tag>{{ scope.row.control_descript.substring(0, 6) + '...' }}</Tag>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="类型" prop="sample_type"></el-table-column>
@@ -173,6 +181,7 @@ export default {
         range: '',
         time: '',
         event: '',
+        eventId: null,
         sample_type: '',
         operation: '',
         verify: ''
@@ -269,7 +278,7 @@ export default {
   },
   methods: {
     fetchTableDataFromServer () {
-      console.log(this.time_range)
+      // console.log(this.time_range)
       this.$axios.get('/control/fetchList', {
         params: {
           perItem: this.perItem,
@@ -472,5 +481,9 @@ export default {
       width: 200px !important;
     }
   }
+}
+.el-tooltip__popper {
+  width: 200px;
+  background-color: rgba(70,76,91,.9) !important;
 }
 </style>
