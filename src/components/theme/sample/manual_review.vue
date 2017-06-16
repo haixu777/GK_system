@@ -1,17 +1,15 @@
 <template lang="html">
   <div class="sample_manual_review">
-    <div class="condition_area" style="text-align: left;">
-      <Row>
-        <Col span="8">
-        </Col>
-        <Col span="8"></Col>
-        <Col span="8">
-          事件选择
-          <Select v-model="event_id" size="small" clearable filterable style="width: 200px;" @on-change="fetchTableDataFromServer">
-            <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
-          </Select>
-        </Col>
-      </Row>
+    <div class="condition_container">
+      <Select
+        v-model="event_id"
+        clearable
+        filterable
+        placeholder="事件筛选"
+        style="width:176px;"
+        @on-change="fetchTableDataFromServer">
+        <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
+      </Select>
     </div>
     <el-table
       :data="tableData"
@@ -38,8 +36,8 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="取证时间" prop="forensic_date" sortable></el-table-column>
-      <el-table-column label="样本标题">
+      <el-table-column label="取证时间" prop="forensic_date" width="180" sortable></el-table-column>
+      <el-table-column label="样本标题" width="180">
         <template scope="scope">
           <!-- <Tooltip>
             <Tag>{{ scope.row.sample_title.substring(0, 6) + '...' }}</Tag>
@@ -64,7 +62,7 @@
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
           <i-button type="success" icon="android-download" size="small">
-            <a :href="'http://localhost:3000/sample/download?id='+scope.row.id" style="color:#fff;">下载</a>
+            <a :href="'http://'+ localUrl +':3000/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
           </i-button>
           <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
         </template>
@@ -137,9 +135,9 @@
           <Form-item label="样本内容">
             <Input v-model="sampleItem.sample_content" type="textarea"></Input>
           </Form-item>
-          <Form-item label="样本路径">
+          <!-- <Form-item label="样本路径">
             <Input v-model="sampleItem.sample_path"></Input>
-          </Form-item>
+          </Form-item> -->
           <Form-item label="url">
             <Input v-model="sampleItem.url"></Input>
           </Form-item>
@@ -165,7 +163,7 @@ export default {
       totalItem: null,
       modal: false,
       eventList: [],
-      event_id: 272,
+      event_id: null,
       sampleItem: {
         id: null,
         event_name: '',
@@ -181,7 +179,8 @@ export default {
         sample_path: '',
         sample_title: '',
         url: ''
-      }
+      },
+      localUrl: ''
     }
   },
   methods: {
@@ -257,7 +256,6 @@ export default {
       this.modal = true
     },
     handleDel (item) {
-      console.log(item)
       this.$Modal.confirm({
         title: '确认删除?',
         content: '<h3 style="color: #f60;">删除此条样本记录将无法恢复</h3><p>' + item.sample_title + '</p>',
@@ -290,11 +288,28 @@ export default {
     handlePagesizeChange (pageSize) {
       this.perItem = pageSize
       this.fetchTableDataFromServer()
+    },
+    handleDownload (id) {
+      this.$axios.get('/sample/download', {
+        params: {
+          id: id
+        }
+      }).then((res) => {
+        console.log(res)
+      })
+    },
+    handleLocalUrl () {
+      if (process.env.NODE_ENV === 'development') {
+        this.localUrl = '10.10.28.23'
+      } else {
+        this.localUrl = 'localhost'
+      }
     }
   },
   mounted () {
     this.fetchTableDataFromServer()
     this.fetchEventListFromServer()
+    this.handleLocalUrl()
   }
 }
 </script>

@@ -50,7 +50,7 @@ export default {
       })
     },
     loginToServer () {
-      this.$axios.post('user/login', {
+      this.$axios.post('/user/login', {
         username: this.formInline.username,
         password: this.formInline.password
       }).then((res) => {

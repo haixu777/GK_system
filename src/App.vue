@@ -39,4 +39,8 @@ export default {
 * {
   -box-sizing: inherit !important;
 }
+.condition_container {
+  padding: 5px;
+  text-align: left;
+}
 </style>

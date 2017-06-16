@@ -1,50 +1,43 @@
 <template lang="html">
   <div class="control_manual_review">
-    <Row>
-      <Col span="24">
-        <i-button
-          type="primary"
-          icon="plus"
-          size="small"
-          @click="handleAdd">
-          管控记录添加
-        </i-button>
-      </Col>
-    </Row>
-    <Row>
-      <Col span="8">
-        <span style="display: inline-block;">日期范围</span>
-        <Date-picker
-          class="condition_datePicker"
-          style="display: inline-block;"
-          type="daterange"
-          placeholder="选择日期"
-          v-model="time_range"
-          confirm
-          @on-ok="fetchTableDataFromServer">
-        </Date-picker>
-      </Col>
-      <Col span="8">
-        <span style="display: inline-block;">事件筛选</span>
-        <Select v-model="event_id" filterable clearable style="display: inline-block;" @on-change="fetchTableDataFromServer">
-          <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
-        </Select>
-      </Col>
-      <Col span="8">
-        <span style="display: inline-block;">状态选择</span>
-        <Select v-model="verify" clearable style="display: inline-block;" @on-change="fetchTableDataFromServer">
-          <Option :value="0">待校验</option>
-          <Option :value="1">已校验</option>
-          <Option :value="-1">所有</option>
-        </Select>
-      </Col>
-    </Row>
-    <!-- <Table
-      :columns="columns"
-      :data="tableData"
-      :context="this"
-      @on-sort-change="handleTableSort">
-    </Table> -->
+    <div class="condition_container">
+      <Date-picker
+        class="condition_datePicker"
+        style="display: inline-block;"
+        type="daterange"
+        placeholder="选择日期"
+        v-model="time_range"
+        confirm
+        @on-ok="fetchTableDataFromServer">
+      </Date-picker>
+      <Select v-model="event_id"
+        filterable
+        placeholder="事件筛选"
+        clearable
+        style="width:176px;"
+        @on-change="fetchTableDataFromServer">
+        <Option v-for="item in eventList" :value="item.value" :key="item">
+          {{ item.text }}
+        </Option>
+      </Select>
+      <Select
+        v-model="verify"
+        clearable
+        placeholder="状态选择"
+        style="width:167px;"
+        @on-change="fetchTableDataFromServer">
+        <Option :value="0">待校验</option>
+        <Option :value="1">已校验</option>
+        <Option :value="-1">所有</option>
+      </Select>
+      <i-button
+        type="primary"
+        icon="plus"
+        size="small"
+        @click="handleAdd">
+        管控记录添加
+      </i-button>
+    </div>
     <el-table
       :data="tableData"
       @sort-change="handleTableSort"
@@ -53,12 +46,6 @@
       <el-table-column label="管控范围" prop="control_range"></el-table-column>
       <el-table-column label="管控内容">
         <template scope="scope">
-          <!-- <Tooltip :delay="300">
-            <Tag>{{ scope.row.control_descript.substring(0, 6) + '...' }}</Tag>
-            <div slot="content" style="white-space: normal;">
-              {{ scope.row.control_descript }}
-            </div>
-          </Tooltip> -->
           <el-tooltip
             class="my_tooltip"
             effect="dark"
@@ -173,7 +160,7 @@ export default {
       sort_order: 'desc',
       time_range: new Date(),
       event_id: null,
-      verify: -1,
+      verify: '',
       control_item: {
         id: '',
         descript: '',

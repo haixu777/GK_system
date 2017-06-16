@@ -14,37 +14,6 @@
         事件日历
       </Menu-item>
     </Menu>
-    <!--
-    <div class="event_content clearfix">
-      <div class="event_tree">
-        <el-tree
-          :data="treeData"
-          :props="defaultProps"
-          :render-content="renderContent"
-          :highlight-current="true"
-          :default-expand-all="true"
-          :expand-on-click-node="false"
-          @node-click="handleNodeClick">
-        </el-tree>
-      </div>
-      <div class="event_details">
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-            <Form-item :label="(event_id?'事件':'主题') + '名称'" prop="name">
-              <Input v-model="formValidate.name" :placeholder="'请输入'+ (event_id?'事件':'主题') +'名称'"></Input>
-            </Form-item>
-            <Form-item :label="(event_id?'事件':'主题') + '描述'" prop="descript">
-              <Input v-model="formValidate.descript" :placeholder="'请输入'+ (event_id?'事件':'主题') +'描述'" type="textarea"></Input>
-            </Form-item>
-            <Form-item label="危害等级" prop="harm_level">
-              <Input v-model="formValidate.harm_level" placeholder="请输入危害等级（数字）"></Input>
-            </Form-item>
-            <Form-item>
-              <Button type="primary" @click="handleSubmit('formValidate')">修改</Button>
-              <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
-            </Form-item>
-        </Form>
-      </div>
-    </div> -->
     <div class="event_content">
       <router-view></router-view>
     </div>

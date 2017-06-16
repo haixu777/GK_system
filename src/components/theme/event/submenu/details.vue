@@ -13,16 +13,29 @@
       <Form-item label="危害等级" prop="harm_level">
         <Slider v-model="eventForm.harm_level" :max="3" :show-input="true" :show-stops="true"></Slider>
       </Form-item>
-      <!-- <Form-item label="类型" prop="type">
+      <Form-item label="类型" prop="type">
         <Radio-group v-model="eventForm.type">
           <Radio label="0">
-            <span>根结点</span>
+            <span>事件集合</span>
           </Radio>
           <Radio label="1">
-            <span>叶子节点</span>
+            <span>事件个体</span>
           </Radio>
         </Radio-group>
-      </Form-item> -->
+      </Form-item>
+      <Form-item label="事件分类" prop="category">
+        <Radio-group v-model="eventForm.category">
+          <Radio label="1">
+            <span>重大专项</span>
+          </Radio>
+          <Radio label="2">
+            <span>值班关注</span>
+          </Radio>
+          <Radio label="3">
+            <span>其他</span>
+          </Radio>
+        </Radio-group>
+      </Form-item>
       <Form-item label="周期性" prop="recurrence">
         <Radio-group v-model="eventForm.recurrence">
           <Radio label="0">
@@ -61,13 +74,26 @@
           :disabled="!Boolean(this.eventForm.id)">
             更新
         </Button>
-        <Button
-          type="error"
-          @click="handleDel"
-          icon="trash-a"
-          :disabled="!Boolean(this.eventForm.type)">
+        <template v-if="!Boolean(this.eventForm.type)">
+          <Tooltip content="事件集合无法删除" placement="top">
+            <Button
+              type="error"
+              @click="handleDel"
+              icon="trash-a"
+              :disabled="!Boolean(this.eventForm.type)">
+              删除
+            </Button>
+          </Tooltip>
+        </template>
+        <template v-else>
+          <Button
+            type="error"
+            @click="handleDel"
+            icon="trash-a"
+            :disabled="!Boolean(this.eventForm.type)">
             删除
-        </Button>
+          </Button>
+        </template>
       </Form-item>
     </Form>
   </div>
@@ -93,7 +119,8 @@ export default {
         edit_time: this.eventForm.edit_time,
         harm_level: this.eventForm.harm_level,
         recurrence: this.eventForm.recurrence,
-        alertRange: this.eventForm.alertRange
+        alertRange: this.eventForm.alertRange,
+        category: this.eventForm.category
       }).then((res) => {
         this.$emit('fetchTree')
         this.eventForm_show = false
@@ -120,7 +147,7 @@ export default {
       })
     },
     delEventsFromServer () {
-      this.$axios.post('events/del', {id: this.eventForm.id})
+      this.$axios.post('/events/del', {id: this.eventForm.id})
         .then((res) => {
           this.$emit('fetchTree')
           let str = res.data.msg.split(',')

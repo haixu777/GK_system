@@ -117,7 +117,7 @@
                 <el-table-column label="操作" prop="sample_path">
                   <template scope="scope">
                     <i-button type="success" size="small" icon="android-download">
-                      <a :href="'http://localhost:3000/sample/download?id='+scope.row.id" style="color:#fff;">下载</a>
+                      <a :href="'http://'+ localUrl +':3000/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
                     </i-button>
                   </template>
                 </el-table-column>
@@ -169,32 +169,9 @@ export default {
         { title: '管控时间', key: 'control_time' },
         { title: '描述', key: 'control_descript' }
       ],
-      control_tableData: [
-      ],
-      /*
-      sample_columns: [
-        { title: '名称', key: 'sample_title' },
-        { title: '取证时间', key: 'forensic_date' },
-        {
-          title: '操作',
-          key: 'action',
-          render (node) {
-            let path = node.sample_path + '.png'
-            console.log(path)
-            let str = '<i-button type="ghost" size="small"><a target="_blank" href="' + require('assets/data/samples/聂树斌死亡时间与章含之换肾时间考2.png') + '">查看</a></i-button>'
-            // return `
-            //   <i-button type="ghost" size="small">
-            //     <a target="_blank" href="${require(path)}">查看</a>
-            //   </i-button>
-            // `
-            return str
-          }
-        }
-
-      ],
-      */
-      sample_tableData: [
-      ],
+      control_tableData: [],
+      sample_tableData: [],
+      localUrl: '',
       columns: [
         { title: '日期', key: 'date' },
         { title: '事件名', key: 'name' },
@@ -208,8 +185,7 @@ export default {
           }
         }
       ],
-      tableData: [
-      ],
+      tableData: [],
       totalItem: 100,
       date_options: {
         shortcuts: [
@@ -270,7 +246,7 @@ export default {
       this.modal_detail = true
     },
     fetchEventListFromServer () {
-      this.$axios.get('events/list', {
+      this.$axios.get('/events/list', {
         params: {
           month: this.activeMonth
         }
@@ -279,7 +255,7 @@ export default {
       })
     },
     fetchControl () {
-      this.$axios.get('events/fetchEventControl', {
+      this.$axios.get('/events/fetchEventControl', {
         params: {
           id: this.eventId
         }
@@ -293,7 +269,7 @@ export default {
       })
     },
     fetchSample () {
-      this.$axios.get('events/fetchEventSample', {
+      this.$axios.get('/events/fetchEventSample', {
         params: {
           id: this.eventId
         }
@@ -307,7 +283,7 @@ export default {
       })
     },
     fetchEventByMonthFromServer () {
-      this.$axios.get('events/fetchEventByMonth', {
+      this.$axios.get('/events/fetchEventByMonth', {
         params: {
           recurrence: this.calendar_conditions.recurrence,
           view: this.calendar_conditions.view
@@ -379,7 +355,7 @@ export default {
         })
     },
     fetchTimelineFromServer () {
-      this.$axios.get('events/timeline', {
+      this.$axios.get('/events/timeline', {
         params: {
           eventId: this.eventId
         }
@@ -409,12 +385,20 @@ export default {
     handleSamplePath (path) {
       if (!path) return '#'
       return require('../../../assets/' + path + '.png')
+    },
+    handleLocalUrl () {
+      if (process.env.NODE_ENV === 'development') {
+        this.localUrl = '10.10.28.23'
+      } else {
+        this.localUrl = 'localhost'
+      }
     }
   },
   mounted () {
     // this.fetchEventListFromServer()
     this.fetchEventByMonthFromServer()
     this.fetchNoticeFromServer()
+    this.handleLocalUrl()
   }
 }
 </script>

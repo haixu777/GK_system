@@ -125,10 +125,23 @@
           <Form-item label="类型" prop="type">
             <Radio-group v-model="eventForm.type">
               <Radio label="0">
-                <span>事件类</span>
+                <span>事件集合</span>
               </Radio>
               <Radio label="1">
-                <span>事件</span>
+                <span>事件个体</span>
+              </Radio>
+            </Radio-group>
+          </Form-item>
+          <Form-item label="事件分类" prop="category">
+            <Radio-group v-model="eventForm.category">
+              <Radio label="1">
+                <span>重大专项</span>
+              </Radio>
+              <Radio label="2">
+                <span>值班关注</span>
+              </Radio>
+              <Radio label="3">
+                <span>其他</span>
               </Radio>
             </Radio-group>
           </Form-item>
@@ -196,7 +209,8 @@ export default {
         edit_time: '',
         harm_level: 0,
         recurrence: 0,
-        alertRange: []
+        alertRange: [],
+        category: ''
       },
       activeEvent: '',
       activeMenu: 'details',
@@ -243,7 +257,8 @@ export default {
         edit_time: node.edit_time,
         harm_level: node.harm_level,
         recurrence: node.recurrence,
-        alertRange: node.alertRange
+        alertRange: node.alertRange,
+        category: node.category
       }
     },
     fetchEventsTreeFromServer () {
@@ -267,7 +282,8 @@ export default {
         edit_time: this.eventForm.edit_time,
         harm_level: this.eventForm.harm_level,
         recurrence: this.eventForm.recurrence,
-        alertRange: this.eventForm.alertRange
+        alertRange: this.eventForm.alertRange,
+        category: this.eventForm.category
       }).then((res) => {
         this.fetchEventsTreeFromServer()
         this.eventForm_show = false
@@ -295,7 +311,8 @@ export default {
         edit_time: new Date(),
         harm_level: 0,
         recurrence: 0,
-        alertRange: []
+        alertRange: [],
+        category: ''
       }
     },
     console1 (str) {
@@ -350,7 +367,7 @@ export default {
         width: 35% !important;
       }
       .ivu-form-item-content {
-        width: 200px;
+        width: 230px;
       }
       .ivu-slider-button {
         border: 2px solid #f40;
