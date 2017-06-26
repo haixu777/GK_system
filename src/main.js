@@ -27,7 +27,8 @@ import {
   FormItem,
   Loading,
   Upload,
-  Tooltip
+  Tooltip,
+  Rate
 } from 'element-ui'
 
 Vue.use(Tree)
@@ -42,6 +43,7 @@ Vue.use(jsPlumb)
 Vue.use(Pagination)
 Vue.use(Upload)
 Vue.use(Tooltip)
+Vue.use(Rate)
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'

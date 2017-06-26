@@ -63,6 +63,7 @@
           :eventForm="eventForm"
           :defaultProps="defaultProps"
           :treeData="treeData"
+          :isGroup="true"
           @fetchTree="fetchEventsTreeFromServer">
           </category-details>
           <category-procedure
@@ -199,7 +200,7 @@ export default {
     return {
       filterText: '',
       eventForm: {
-        id: '',
+        id: null,
         name: '',
         parent_id: '',
         descript: '',
@@ -210,7 +211,7 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: ''
+        category: 1
       },
       activeEvent: '',
       activeMenu: 'details',
@@ -276,7 +277,7 @@ export default {
         name: this.eventForm.name,
         parent_id: this.eventForm.level[-1],
         descript: this.eventForm.descript,
-        occurrence_time: this.eventForm.occurrence_time,
+        occurrence_time: this.eventForm.occurrence_time.toLocaleString(),
         type: this.eventForm.type,
         level: this.eventForm.level,
         edit_time: this.eventForm.edit_time,
@@ -296,6 +297,7 @@ export default {
       }).catch((err) => {
         console.log(err)
       })
+      console.log(this.eventForm.occurrence_time)
     },
     handleEventAdd () {
       this.eventAdd_modal = true
@@ -312,7 +314,7 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: ''
+        category: 1
       }
     },
     console1 (str) {

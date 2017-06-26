@@ -15,7 +15,7 @@
       </Form-item>
       <Form-item label="类型" prop="type">
         <Radio-group v-model="eventForm.type">
-          <Radio label="0">
+          <Radio label="0" :disabled="!isGroup">
             <span>事件集合</span>
           </Radio>
           <Radio label="1">
@@ -47,14 +47,13 @@
         </Radio-group>
       </Form-item>
       <Form-item label="发生时间" prop="occurrence_time">
-        <Date-picker type="date" placeholder="选择日期" style="width: 200px" v-model="eventForm.occurrence_time"></Date-picker>
+        <Date-picker type="date" placeholder="选择日期" style="" v-model="eventForm.occurrence_time"></Date-picker>
       </Form-item>
       <Form-item label="预警时间">
         <Date-picker
           type="daterange"
           placement="bottom-end"
           placeholder="选择日期"
-          style="width: 200px"
           v-model="eventForm.alertRange"></Date-picker>
       </Form-item>
       <Form-item label="层级" prop="level">
@@ -66,7 +65,7 @@
           v-model="eventForm.level">
         </el-cascader>
       </Form-item>
-      <Form-item>
+      <Form-item class="details_btn">
         <Button
           type="warning"
           @click="handleEventConfirm"
@@ -103,9 +102,14 @@
 export default {
   data () {
     return {
+      defaultProps: {
+        children: 'children',
+        label: 'name',
+        value: 'id'
+      }
     }
   },
-  props: ['eventForm', 'defaultProps', 'treeData'],
+  props: ['eventForm', 'treeData', 'isGroup'],
   methods: {
     handleEventConfirm () {
       this.$axios.post('/events/update', {

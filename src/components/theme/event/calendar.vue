@@ -4,6 +4,7 @@
       :events="fcEvents"
       @changeMonth="handleMonthChange"
       @eventClick="handleEventClick"
+      @dayClick="handleDayClick"
       lang="zh">
       <div slot="fc-header-left">
         <Button :type="noticeShow ? `error` : `success`" shape="circle" @click="handleNoticeClick" size="small">
@@ -137,15 +138,39 @@
       <div slot="footer">
       </div>
     </Modal>
+
+    <Modal
+    v-model="modal_eventForm"
+    width="800"
+    class="modal_detail"
+    :scrollable="true"
+    :closable="false">
+      <p slot="header" style="color:#f60;">
+        <Icon type="ios-information"></Icon>
+        <!-- <span>{{ activeTime.getFullYear() + '-' + activeTime.getMonth() + 1 + '-' + activeTime.getDate() }}</span> -->
+        {{ activeTime ? activeTime.getFullYear() + '-' + (activeTime.getMonth() + 1) + '-' + activeTime.getDate() : 'nothing' }}
+      </p>
+      <div class="event_form">
+        <!-- <event-form :eventForm="eventForm" :treeData="treeData" :isGroup="false"></event-form> -->
+        <day-list :time="activeTime" :treeData="treeData" @closeDayListModal="closeDayListModal"></day-list>
+      </div>
+      <div slot="footer">
+        <!-- <i-button type="primary" long :disabled="!(eventForm.name)" @click="handleEventConfirm">确认添加</i-button> -->
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
 const $utils = require('utils')
 const Plumb = require('./jsplumb')
+const dayList = require('./dayList')
+const eventForm = require('./submenu/details')
 export default {
   components: {
-    Plumb
+    Plumb,
+    eventForm,
+    dayList
   },
   data () {
     return {
@@ -172,6 +197,9 @@ export default {
       control_tableData: [],
       sample_tableData: [],
       localUrl: '',
+      timer: null,
+      count: 0,
+      modal_eventForm: false,
       columns: [
         { title: '日期', key: 'date' },
         { title: '事件名', key: 'name' },
@@ -218,7 +246,23 @@ export default {
           }
         ]
       },
-      fcEvents: []
+      fcEvents: [],
+      eventForm: {
+        id: '',
+        name: '',
+        parent_id: '',
+        descript: '',
+        occurrence_time: '',
+        level: [],
+        type: 1,
+        edit_time: '',
+        harm_level: 0,
+        recurrence: 0,
+        alertRange: [],
+        category: 1
+      },
+      treeData: [],
+      activeTime: null
     }
   },
   watch: {
@@ -290,6 +334,34 @@ export default {
         }
       }).then((res) => {
         this.fcEvents = res.data.eventsList
+        this.modal_eventForm = false
+        this.$Notice.destroy()
+        this.fetchNoticeFromServer()
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    handleEventConfirm () {
+      this.$axios.post('/events/update', {
+        id: '',
+        name: this.eventForm.name,
+        parent_id: this.eventForm.level[-1],
+        descript: this.eventForm.descript,
+        occurrence_time: this.eventForm.occurrence_time,
+        type: this.eventForm.type,
+        level: this.eventForm.level,
+        edit_time: new Date(),
+        harm_level: this.eventForm.harm_level,
+        recurrence: this.eventForm.recurrence,
+        alertRange: this.eventForm.alertRange,
+        category: this.eventForm.category
+      }).then((res) => {
+        let str = res.data.msg.split(',')
+        this.$Notice.success({
+          title: str[1],
+          desc: str[0]
+        })
+        this.fetchEventByMonthFromServer()
       }).catch((err) => {
         console.log(err)
       })
@@ -350,6 +422,7 @@ export default {
               })
             }, 100 * i)
           })
+          this.noticeShow = true
         }).catch((err) => {
           console.log(err)
         })
@@ -364,6 +437,15 @@ export default {
       }).catch((err) => {
         console.log(err)
       })
+    },
+    fetchEventsTreeFromServer () {
+      this.$axios.get('/events/tree')
+        .then((res) => {
+          this.treeData = res.data.tree
+          this.eventForm.id = ''
+        }).catch((err) => {
+          console.log(err)
+        })
     },
     openEventDetail (node) {
       this.eventName = node.name
@@ -382,6 +464,23 @@ export default {
       this.handleToDetails()
       this.openEventDetail({name: event.title, id: event.id, descript: event.descript})
     },
+    handleDayClick (day, jsEvent) {
+      // will use to handle doubleClick soon...
+      // this.timer = null
+      this.count++
+      this.timer = setTimeout(() => {
+        if (this.count === 2) { // double click: 双击显示以天为单位的事件列表
+          this.activeTime = new Date(day)
+          this.eventForm.occurrence_time = new Date(day)
+          this.eventForm.name = ''
+          this.modal_eventForm = true
+        } else { // click: 显示事件
+          console.log('single')
+        }
+        this.count = 0
+        clearTimeout(this.timer)
+      }, 300)
+    },
     handleSamplePath (path) {
       if (!path) return '#'
       return require('../../../assets/' + path + '.png')
@@ -392,12 +491,19 @@ export default {
       } else {
         this.localUrl = 'localhost'
       }
+    },
+    closeDayListModal (val) {
+      if (val === 'close') {
+        this.modal_eventForm = false
+      } else {
+        this.modal_eventForm = true
+      }
     }
   },
   mounted () {
     // this.fetchEventListFromServer()
+    this.fetchEventsTreeFromServer()
     this.fetchEventByMonthFromServer()
-    this.fetchNoticeFromServer()
     this.handleLocalUrl()
   }
 }
@@ -448,5 +554,8 @@ export default {
   }
   .ivu-rate-star-content:before, .ivu-rate-star:before {
     cursor: initial !important;
+  }
+  .event_form .details_btn {
+    display: none;
   }
 </style>
