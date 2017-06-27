@@ -176,6 +176,9 @@
               v-model="eventForm.level">
             </el-cascader>
           </Form-item>
+          <Form-item label="备注" prop="name">
+            <Input v-model="eventForm.remark" placeholder="请输入备注"></Input>
+          </Form-item>
         </Form>
       </div>
       <div slot="footer">
@@ -211,7 +214,8 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: 1
+        category: 1,
+        remark: ''
       },
       activeEvent: '',
       activeMenu: 'details',
@@ -259,7 +263,8 @@ export default {
         harm_level: node.harm_level,
         recurrence: node.recurrence,
         alertRange: node.alertRange,
-        category: node.category
+        category: node.category,
+        remark: node.remark
       }
     },
     fetchEventsTreeFromServer () {
@@ -284,7 +289,8 @@ export default {
         harm_level: this.eventForm.harm_level,
         recurrence: this.eventForm.recurrence,
         alertRange: this.eventForm.alertRange,
-        category: this.eventForm.category
+        category: this.eventForm.category,
+        remark: this.eventForm.remark
       }).then((res) => {
         this.fetchEventsTreeFromServer()
         this.eventForm_show = false
@@ -314,7 +320,8 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: 1
+        category: 1,
+        remark: ''
       }
     },
     console1 (str) {

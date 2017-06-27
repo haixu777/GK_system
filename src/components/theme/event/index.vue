@@ -14,7 +14,7 @@
         事件日历
       </Menu-item>
     </Menu>
-    <div class="event_content">
+    <div class="event_content clearfix">
       <router-view></router-view>
     </div>
   </div>

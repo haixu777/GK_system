@@ -1,35 +1,66 @@
 <template lang="html">
-  <div class="calendar">
-    <full-calendar
-      :events="fcEvents"
-      @changeMonth="handleMonthChange"
-      @eventClick="handleEventClick"
-      @dayClick="handleDayClick"
-      lang="zh">
-      <div slot="fc-header-left">
-        <Button :type="noticeShow ? `error` : `success`" shape="circle" @click="handleNoticeClick" size="small">
-          {{ noticeShow ? `关闭提醒` : `获取提醒` }}
-        </Button>
+  <div class="calendar clearfix">
+    <div class="calendar_left">
+      <full-calendar
+        :events="fcEvents"
+        @changeMonth="handleMonthChange"
+        @eventClick="handleEventClick"
+        @dayClick="handleDayClick"
+        lang="zh">
+        <div slot="fc-header-left">
+          <Button :type="noticeShow ? `error` : `success`" shape="circle" @click="handleNoticeClick" size="small">
+            {{ noticeShow ? `关闭提醒` : `获取提醒` }}
+          </Button>
+        </div>
+        <div slot="fc-header-right">
+          <Select
+            v-model="calendar_conditions.view"
+            style="width: 100px;display: inline-block"
+            placeholder="视角选择"
+            @on-change="fetchEventByMonthFromServer">
+            <Option :value="1">管控时段</Option>
+            <Option :value="0">发生时间</Option>
+          </Select>
+          <Select
+            v-model="calendar_conditions.recurrence"
+            style="width: 100px;display: inline-block"
+            placeholder="事件过滤"
+            @on-change="fetchEventByMonthFromServer">
+            <Option :value="0">所有</Option>
+            <Option :value="1">周期性</Option>
+          </Select>
+        </div>
+      </full-calendar>
+    </div>
+    <div class="calendar_right clearfix">
+      <div class="item_container" v-for="item in dayList">
+        <el-form>
+          <el-form-item label="事件名称">
+            <span>{{ item.name }}</span>
+          </el-form-item>
+          <el-form-item label="描述">
+            <span>{{ item.descript }}</span>
+          </el-form-item>
+          <el-form-item label="危害等级">
+            <el-rate
+              v-if="item.harm_level"
+              style="line-height: 46px;"
+              v-model="(item.harm_level)"
+              disabled
+              :max="3"
+              text-color="#ff9900">
+            </el-rate>
+            <i v-else class="ivu-icon ivu-icon-android-happy" style="color:#19be6b;font-size:20px;"></i>
+          </el-form-item>
+          <el-form-item label="管控时间">
+            <span>{{  item.control_start_time ? (item.control_start_time + ' - ' + item.control_end_time) : '暂无' }}</span>
+          </el-form-item>
+          <el-form-item label="备注">
+            <span>{{ item.remark ? item.remark : '暂无' }}</span>
+          </el-form-item>
+        </el-form>
       </div>
-      <div slot="fc-header-right">
-        <Select
-          v-model="calendar_conditions.view"
-          style="width: 100px;display: inline-block"
-          placeholder="视角选择"
-          @on-change="fetchEventByMonthFromServer">
-          <Option :value="1">管控时段</Option>
-          <Option :value="0">发生时间</Option>
-        </Select>
-        <Select
-          v-model="calendar_conditions.recurrence"
-          style="width: 100px;display: inline-block"
-          placeholder="事件过滤"
-          @on-change="fetchEventByMonthFromServer">
-          <Option :value="0">所有</Option>
-          <Option :value="1">周期性</Option>
-        </Select>
-      </div>
-    </full-calendar>
+    </div>
       <!--
       <Date-picker
         type="daterange"
@@ -144,7 +175,8 @@
     width="800"
     class="modal_detail"
     :scrollable="true"
-    :closable="false">
+    :closable="false"
+    @on-cancel="fetchEventByMonthFromServer">
       <p slot="header" style="color:#f60;">
         <Icon type="ios-information"></Icon>
         <!-- <span>{{ activeTime.getFullYear() + '-' + activeTime.getMonth() + 1 + '-' + activeTime.getDate() }}</span> -->
@@ -152,7 +184,7 @@
       </p>
       <div class="event_form">
         <!-- <event-form :eventForm="eventForm" :treeData="treeData" :isGroup="false"></event-form> -->
-        <day-list :time="activeTime" :treeData="treeData" @closeDayListModal="closeDayListModal"></day-list>
+        <day-list :time="activeTime" :treeData="treeData" @closeDayListModal="closeDayListModal" @updateCalendar="fetchEventByMonthFromServer"></day-list>
       </div>
       <div slot="footer">
         <!-- <i-button type="primary" long :disabled="!(eventForm.name)" @click="handleEventConfirm">确认添加</i-button> -->
@@ -259,10 +291,13 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: 1
+        category: 1,
+        remark: ''
       },
       treeData: [],
-      activeTime: null
+      activeTime: null,
+      dayList: [],
+      activeDay: null
     }
   },
   watch: {
@@ -296,6 +331,25 @@ export default {
         }
       }).then((res) => {
         this.tableData = res.data.eventList
+      })
+    },
+    fetchEventListByDayFromServer (time) {
+      if (!time) return
+      this.$axios.get('/events/fetchByDay', {
+        params: {
+          month: ((time).getMonth() + 1),
+          day: (time).getDate()
+        }
+      }).then((res) => {
+        this.dayList = res.data.eventsList.map((item) => {
+          for (var prop in item) {
+            if (prop === 'control_start_time' || prop === 'control_end_time') {
+              if (!(item[prop])) return item
+              item[prop] = $utils.formatTime(item[prop])
+            }
+          }
+          return item
+        })
       })
     },
     fetchControl () {
@@ -336,6 +390,7 @@ export default {
         this.fcEvents = res.data.eventsList
         this.modal_eventForm = false
         this.$Notice.destroy()
+        this.fetchEventListByDayFromServer(this.activeDay)
         this.fetchNoticeFromServer()
       }).catch((err) => {
         console.log(err)
@@ -354,7 +409,8 @@ export default {
         harm_level: this.eventForm.harm_level,
         recurrence: this.eventForm.recurrence,
         alertRange: this.eventForm.alertRange,
-        category: this.eventForm.category
+        category: this.eventForm.category,
+        remark: this.eventForm.remark
       }).then((res) => {
         let str = res.data.msg.split(',')
         this.$Notice.success({
@@ -475,7 +531,8 @@ export default {
           this.eventForm.name = ''
           this.modal_eventForm = true
         } else { // click: 显示事件
-          console.log('single')
+          this.activeDay = day
+          this.fetchEventListByDayFromServer(this.activeDay)
         }
         this.count = 0
         clearTimeout(this.timer)
@@ -510,6 +567,45 @@ export default {
 </script>
 
 <style lang="scss">
+  .calendar {
+    display: flex;
+    display: -webkit-flex;
+    .calendar_left {
+      width: 50%;
+      min-width: 800px;
+      float: left;
+    }
+    .calendar_right {
+      width: 50%;
+      max-height: 678px;
+      margin-top: 67px;
+      display: flex;
+      display: -webkit-flex;
+      flex-wrap: wrap;
+      align-self: flex-start;
+    }
+  }
+  .item_container {
+    display: inline-block;
+    background: #fbfdff;
+    border-radius: 5px;
+    border: 1px solid #dfe6ec;
+    width: 450px;
+    padding: 10px 20px;
+    margin: 5px;
+    text-align: left;
+    label {
+      width: 70px;
+      color: #99a9bf;
+    }
+    .el-form-item {
+      margin-bottom: 0 !important;
+    }
+    .el-form-item__content {
+      display: inline-block;
+      width: 330px;
+    }
+  }
   table {
     width: 100%;
   }

@@ -65,6 +65,9 @@
           v-model="eventForm.level">
         </el-cascader>
       </Form-item>
+      <Form-item label="备注" prop="remark">
+        <Input v-model="eventForm.remark" placeholder="请输入备注"></Input>
+      </Form-item>
       <Form-item class="details_btn">
         <Button
           type="warning"
@@ -124,7 +127,8 @@ export default {
         harm_level: this.eventForm.harm_level,
         recurrence: this.eventForm.recurrence,
         alertRange: this.eventForm.alertRange,
-        category: this.eventForm.category
+        category: this.eventForm.category,
+        remark: this.eventForm.remark
       }).then((res) => {
         this.$emit('fetchTree')
         this.eventForm_show = false

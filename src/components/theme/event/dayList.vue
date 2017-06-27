@@ -9,19 +9,28 @@
           <el-rate
             v-model="(scope.row.harm_level)"
             disabled
-            show-text
+            :max="3"
             text-color="#ff9900"
-            text-template="{value}"
             @change="handleRate">
           </el-rate>
         </template>
       </el-table-column>
-      <el-table-column prop="occurrence_time" label="发生时间"></el-table-column>
-      <el-table-column prop="control_start_time" label="管控开始时间"></el-table-column>
-      <el-table-column prop="control_end_time" label="管控结束时间"></el-table-column>
+      <!-- <el-table-column prop="occurrence_time" label="发生时间"></el-table-column> -->
+      <!-- <el-table-column prop="control_start_time" label="管控开始时间"></el-table-column> -->
+      <!-- <el-table-column prop="control_end_time" label="管控结束时间"></el-table-column> -->
+      <el-table-column label="管控时间" width="180">
+        <template scope="scope">
+          <span>{{ scope.row.control_start_time ? (scope.row.control_start_time + ' - ' + scope.row.control_end_time) : '暂无' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注">
+        <template scope="scope">
+          <span>{{ scope.row.remark ? scope.row.remark : '暂无' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="" label="操作">
         <template scope="scope">
-          <Button type="error" size="small">删除</Button>
+          <Button type="error" size="small" @click="handleDel(scope.row.name, scope.row.id)">删除</Button>
           <Button type="primary" size="small" @click="handleEdit(scope.row)">编辑</Button>
         </template>
       </el-table-column>
@@ -112,6 +121,9 @@
               v-model="eventForm.level">
             </el-cascader>
           </Form-item>
+          <Form-item label="备注" prop="remark">
+            <Input v-model="eventForm.remark" placeholder="请输入备注"></Input>
+          </Form-item>
         </Form>
       </div>
       <div slot="footer">
@@ -147,7 +159,8 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: 1
+        category: 1,
+        remark: ''
       },
       isEdit: false
     }
@@ -167,7 +180,16 @@ export default {
           day: (this.time).getDate()
         }
       }).then((res) => {
-        this.eventList = res.data.eventsList
+        // this.eventList = res.data.eventsList
+        this.eventList = res.data.eventsList.map((item) => {
+          for (var prop in item) {
+            if (prop === 'control_start_time' || prop === 'control_end_time') {
+              if (!(item[prop])) return item
+              item[prop] = $utils.formatTime(item[prop])
+            }
+          }
+          return item
+        })
       })
     },
     handleEventConfirm () {
@@ -183,7 +205,8 @@ export default {
         harm_level: this.eventForm.harm_level,
         recurrence: this.eventForm.recurrence,
         alertRange: this.eventForm.alertRange,
-        category: this.eventForm.category
+        category: this.eventForm.category,
+        remark: this.eventForm.remark
       }).then((res) => {
         this.eventAdd_modal = false
         this.cancelEventAdd()
@@ -212,9 +235,36 @@ export default {
         harm_level: _event.harm_level,
         recurrence: _event.recurrence,
         alertRange: [_event.control_start_time, _event.control_end_time],
-        category: _event.category
+        category: _event.category,
+        remark: _event.remark
       }
       this.isEdit = true
+    },
+    handleDel (name, id) {
+      this.$Modal.confirm({
+        title: '确认删除？',
+        content: '事件：' + name + ', 删除后将无法恢复',
+        onOk: () => {
+          this.delEventsFromServer(id)
+        },
+        onCancel: () => {
+          this.$Message.info('删除取消')
+        }
+      })
+    },
+    delEventsFromServer (id) {
+      this.$axios.post('/events/del', {id: id})
+        .then((res) => {
+          this.$emit('fetchTree')
+          let str = res.data.msg.split(',')
+          this.$Notice.success({
+            title: str[1],
+            desc: str[0]
+          })
+          this.fetchEventListFromServer()
+        }).catch((err) => {
+          console.log(err)
+        })
     },
     cancelParentModal () {
       this.$emit('closeDayListModal', 'close')
@@ -232,7 +282,8 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: 1
+        category: 1,
+        remark: ''
       }
       this.$emit('closeDayListModal', 'show')
     },
@@ -249,14 +300,15 @@ export default {
         harm_level: 0,
         recurrence: 0,
         alertRange: [],
-        category: 1
+        category: 1,
+        remark: ''
       }
       this.cancelParentModal()
       this.eventAdd_modal = true
       this.isEdit = false
     },
     handleRate (val) {
-      console.log(val)
+      console.log(`handle rate: ${val}`)
     }
   },
   mounted () {
