@@ -35,8 +35,9 @@
         </template>
       </el-table-column>
     </el-table>
-    <Button type="success" icon="ios-plus" size="small" @click="handleAdd">添加</Button>
-
+    <div class="" style="text-align:center;margin-top:5px;">
+      <Button type="success" icon="ios-plus" size="small" @click="handleAdd">添加</Button>
+    </div>
     <Modal v-model="eventAdd_modal" width="400" @on-cancel="cancelEventAdd">
       <p slot="header" style="color:#39f;text-align:center">
         <Icon type="information-circled"></Icon>
