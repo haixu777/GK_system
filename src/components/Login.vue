@@ -56,6 +56,7 @@ export default {
       }).then((res) => {
         if (res.data.success) {
           $utils.Cookie.set('login', true)
+          $utils.Cookie.set('isAdmin', Boolean(res.data.user.admin))
           this.$router.push('home')
         } else {
           this.$Message.error(res.data.msg)

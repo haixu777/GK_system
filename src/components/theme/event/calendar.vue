@@ -535,11 +535,15 @@ export default {
       // this.timer = null
       this.count++
       this.timer = setTimeout(() => {
-        if (this.count === 2) { // double click: 双击显示以天为单位的事件列表
-          this.activeTime = new Date(day)
-          this.eventForm.occurrence_time = new Date(day)
-          this.eventForm.name = ''
-          this.modal_eventForm = true
+        if (this.count === 2) { // double click: 双击显示以天为单位的事件列表x
+          if (($utils.Cookie.get('isAdmin')).toString() === 'true') { // 管理员用户
+            this.activeTime = new Date(day)
+            this.eventForm.occurrence_time = new Date(day)
+            this.eventForm.name = ''
+            this.modal_eventForm = true
+          } else { // 普通用户
+            console.log(111)
+          }
         } else { // click: 显示事件
           this.activeDay = day
           this.fetchEventListByDayFromServer(this.activeDay)

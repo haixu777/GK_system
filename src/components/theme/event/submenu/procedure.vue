@@ -1,6 +1,5 @@
 <template lang="html">
   <div class="procedure_container">
-    <img v-if="showImg" :src="require('assets/zhongmu.png')" alt="procedure">
   </div>
 </template>
 
