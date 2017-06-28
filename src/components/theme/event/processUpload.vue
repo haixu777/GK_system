@@ -41,7 +41,7 @@ export default {
           var datajpg = 'data:image/jpg;base64,' + b64encoded
           this.imageUrl = datajpg
         } else {
-          console.log(res.data.msg)
+          this.imageUrl = ''
         }
       }).catch((err) => {
         console.log(err)
