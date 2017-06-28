@@ -21,6 +21,7 @@
         </Option>
       </Select>
       <Select
+        v-if="false"
         v-model="verify"
         clearable
         placeholder="状态选择"
@@ -59,7 +60,7 @@
       <el-table-column label="类型" prop="sample_type"></el-table-column>
       <el-table-column label="数量" prop="control_number" sortable></el-table-column>
       <el-table-column label="事件" prop="event"></el-table-column>
-      <el-table-column label="状态">
+      <el-table-column label="状态" v-if="false">
         <template scope="scope">
           <Tag color="green" v-if="scope.row.verify">已校验</Tag>
           <Tag color="yellow" v-else>未校验</Tag>
@@ -67,7 +68,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
-          <i-button type="primary" size="small" @click="handleControlDetail(scope.row)">详情</i-button>
+          <i-button type="primary" size="small" @click="handleControlDetail(scope.row)">编辑</i-button>
           <i-button type="error" size="small" @click="handleDel(scope.row)">删除</i-button>
         </template>
       </el-table-column>
@@ -133,7 +134,7 @@
           v-if="control_item.id"
           @click="updateControlToServer">
             <!-- {{control_item.check ? '取消校验' : '确认校验'}} -->
-            校验
+            更新
         </Button>
         <Button type="success"
           size="large"
@@ -315,7 +316,7 @@ export default {
           if (res.data.success) {
             this.modal = false
             this.$Notice.success({
-              title: '管控条目更新校验成功!'
+              title: '管控条目更新成功!'
             })
             this.fetchTableDataFromServer()
           }
