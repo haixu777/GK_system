@@ -56,7 +56,9 @@ export default {
       }).then((res) => {
         if (res.data.success) {
           $utils.Cookie.set('login', true)
-          this.$router.push('home')
+          // this.$router.push('home')
+          $utils.Cookie.set('isAdmin', Boolean(res.data.user.admin)) // wxb用户
+          this.$router.push('calendar') // wxb用户
         } else {
           this.$Message.error(res.data.msg)
         }

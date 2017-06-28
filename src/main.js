@@ -2,7 +2,8 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
+// import router from './router'
+import router from './router/wxb_index' // wxb用户路由
 import Axios from 'axios'
 import fullCalendar from 'vue-fullcalendar'
 import jsPlumb from 'jsplumb'
