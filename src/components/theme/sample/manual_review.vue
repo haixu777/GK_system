@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="sample_manual_review">
-    <div class="condition_container">
+    <div class="condition_container" v-if="showEvent">
       <Select
         v-model="event_id"
         clearable
@@ -57,7 +57,7 @@
       <el-table-column label="发布网站" prop="publish_platform"></el-table-column>
       <el-table-column label="发布频道" prop="publish_chanel"></el-table-column>
       <!-- <el-table-column label="样本格式" prop="sample_format"></el-table-column> -->
-      <el-table-column label="事件" prop="event_name"></el-table-column>
+      <el-table-column label="事件" prop="event_name" v-if="showEvent"></el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
@@ -183,6 +183,19 @@ export default {
       localUrl: ''
     }
   },
+  props: {
+    eventId: {
+      type: Number
+    },
+    showEvent: {
+      default: true
+    }
+  },
+  watch: {
+    eventId () {
+      this.fetchTableDataFromServer()
+    }
+  },
   methods: {
     fetchTableDataFromServer () {
       this.$axios.get('/sample/fetchList', {
@@ -191,7 +204,7 @@ export default {
           perItem: this.perItem,
           sort_key: this.sort_key,
           sort_order: this.sort_order,
-          eventId: this.event_id
+          eventId: this.eventId || this.event_id
         }
       }).then((res) => {
         if (res.data.success) {

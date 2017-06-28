@@ -54,6 +54,14 @@
               <Icon type="ios-people"></Icon>
               相关组织
             </Menu-item>
+            <Menu-item name="control">
+              <Icon type="ios-people"></Icon>
+              管控记录
+            </Menu-item>
+            <Menu-item name="sample">
+              <Icon type="ios-people"></Icon>
+              相关样本
+            </Menu-item>
           </Menu-group>
         </Menu>
       </div>
@@ -90,6 +98,16 @@
             v-if="activeMenu === 'group'"
             :eventId="eventForm.id">
           </category-group>
+          <category-control
+           v-if="activeMenu === 'control'"
+           :showEvent="false"
+           :eventId="eventForm.id">
+          </category-control>
+          <category-sample
+           v-if="activeMenu === 'sample'"
+           :showEvent="false"
+           :eventId="eventForm.id">
+          </category-sample>
       </div>
     </div>
 
@@ -198,6 +216,8 @@ const categoryPlatform = require('./submenu/platform')
 const categoryProcedure = require('./submenu/procedure')
 const categoryAccount = require('./submenu/account')
 const categoryGroup = require('./submenu/group')
+const categoryControl = require('../control/manual_review')
+const categorySample = require('../sample/manual_review')
 export default {
   data () {
     return {
@@ -236,7 +256,9 @@ export default {
     categoryPlatform,
     categoryProcedure,
     categoryAccount,
-    categoryGroup
+    categoryGroup,
+    categoryControl,
+    categorySample
   },
   watch: {
     filterText (val) {

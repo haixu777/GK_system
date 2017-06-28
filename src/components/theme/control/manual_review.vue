@@ -11,6 +11,7 @@
         @on-ok="fetchTableDataFromServer">
       </Date-picker>
       <Select v-model="event_id"
+        v-show="showEvent"
         filterable
         placeholder="事件筛选"
         clearable
@@ -58,7 +59,7 @@
       </el-table-column>
       <el-table-column label="类型" prop="sample_type"></el-table-column>
       <el-table-column label="数量" prop="control_number" sortable></el-table-column>
-      <el-table-column label="事件" prop="event"></el-table-column>
+      <el-table-column label="事件" prop="event" v-if="showEvent"></el-table-column>
       <el-table-column label="状态">
         <template scope="scope">
           <Tag color="green" v-if="scope.row.verify">已校验</Tag>
@@ -263,6 +264,19 @@ export default {
       ]
     }
   },
+  props: {
+    showEvent: {
+      default: true
+    },
+    eventId: {
+      type: Number
+    }
+  },
+  watch: {
+    eventId () {
+      this.fetchTableDataFromServer()
+    }
+  },
   methods: {
     fetchTableDataFromServer () {
       // console.log(this.time_range)
@@ -274,7 +288,7 @@ export default {
           sort_order: this.sort_order,
           time_start: this.time_range[0],
           time_end: this.time_range[1],
-          event_id: this.event_id,
+          event_id: this.eventId || this.event_id,
           verify: this.verify
         }
       }).then((res) => {
@@ -433,7 +447,7 @@ export default {
         number: '',
         range: '',
         time: '',
-        event: '',
+        eventId: this.eventId || '',
         sample_type: '',
         operation: '',
         verify: 0
