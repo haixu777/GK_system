@@ -34,11 +34,16 @@
     </div>
     <div class="calendar_right clearfix">
       <div class="item_container" v-for="item in dayList">
+        <i-button
+        size="small"
+        type="success"
+        style="position:absolute;right:9px;"
+        @click="handleEventCardClick({title: item.name, id: item.id, descript: item.descript})">查看详情</i-button>
         <el-form>
-          <el-form-item label="事件名称">
+          <el-form-item label="事件名称" class="title">
             <span>{{ item.name }}</span>
           </el-form-item>
-          <el-form-item label="描述">
+          <el-form-item label="描述" class="content">
             <span>{{ item.descript }}</span>
           </el-form-item>
           <el-form-item label="危害等级">
@@ -112,8 +117,7 @@
           <Panel name="process">
             事件流程
             <div slot="content">
-              <!-- <img :src="require('assets/data/samples/zhongmu.png')" alt=""> -->
-              <plumb></plumb>
+              <process-upload :eventId="eventId" v-if="activeProcess"></process-upload>
             </div>
           </Panel>
           <Panel name="timeline">
@@ -195,14 +199,14 @@
 
 <script>
 const $utils = require('utils')
-const Plumb = require('./jsplumb')
 const dayList = require('./dayList')
 const eventForm = require('./submenu/details')
+const processUpload = require('./processUpload')
 export default {
   components: {
-    Plumb,
     eventForm,
-    dayList
+    dayList,
+    processUpload
   },
   data () {
     return {
@@ -297,7 +301,8 @@ export default {
       treeData: [],
       activeTime: null,
       dayList: [],
-      activeDay: null
+      activeDay: null,
+      activeProcess: false
     }
   },
   watch: {
@@ -310,7 +315,9 @@ export default {
       } else if (value === 'timeline') {
         this.fetchTimelineFromServer()
       } else if (value === 'process') {
-        this.$emit('initChart')
+        this.activeProcess = true
+      } else {
+        this.activeProcess = false
       }
     },
     modal_detail (val) {
@@ -517,6 +524,9 @@ export default {
       this.activeMonth = date.getMonth() + 1
     },
     handleEventClick (event, jsEvent, pos) {
+      this.handleDayClick(new Date(event.start))
+    },
+    handleEventCardClick (event) {
       this.handleToDetails()
       this.openEventDetail({name: event.title, id: event.id, descript: event.descript})
     },
@@ -586,6 +596,7 @@ export default {
     }
   }
   .item_container {
+    position: relative;
     display: inline-block;
     background: #fbfdff;
     border-radius: 5px;
@@ -604,6 +615,13 @@ export default {
     .el-form-item__content {
       display: inline-block;
       width: 330px;
+    }
+    .title .el-form-item__content {
+      width: 280px;
+    }
+    .content .el-form-item__content {
+      margin-top: 7px;
+      line-height: 22px;
     }
   }
   table {
