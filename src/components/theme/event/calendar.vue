@@ -38,7 +38,7 @@
         size="small"
         type="success"
         style="position:absolute;right:9px;"
-        @click="handleEventClick({title: item.name, id: item.id, descript: item.descript})">查看详情</i-button>
+        @click="handleEventCardClick({title: item.name, id: item.id, descript: item.descript})">查看详情</i-button>
         <el-form>
           <el-form-item label="事件名称" class="title">
             <span>{{ item.name }}</span>
@@ -522,6 +522,9 @@ export default {
       this.activeMonth = date.getMonth() + 1
     },
     handleEventClick (event, jsEvent, pos) {
+      this.handleDayClick(new Date(event.start))
+    },
+    handleEventCardClick (event) {
       this.handleToDetails()
       this.openEventDetail({name: event.title, id: event.id, descript: event.descript})
     },
