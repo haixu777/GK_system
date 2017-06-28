@@ -34,11 +34,16 @@
     </div>
     <div class="calendar_right clearfix">
       <div class="item_container" v-for="item in dayList">
+        <i-button
+        size="small"
+        type="success"
+        style="position:absolute;right:9px;"
+        @click="handleEventClick({title: item.name, id: item.id, descript: item.descript})">查看详情</i-button>
         <el-form>
-          <el-form-item label="事件名称">
+          <el-form-item label="事件名称" class="title">
             <span>{{ item.name }}</span>
           </el-form-item>
-          <el-form-item label="描述">
+          <el-form-item label="描述" class="content">
             <span>{{ item.descript }}</span>
           </el-form-item>
           <el-form-item label="危害等级">
@@ -590,6 +595,7 @@ export default {
     }
   }
   .item_container {
+    position: relative;
     display: inline-block;
     background: #fbfdff;
     border-radius: 5px;
@@ -608,6 +614,13 @@ export default {
     .el-form-item__content {
       display: inline-block;
       width: 330px;
+    }
+    .title .el-form-item__content {
+      width: 280px;
+    }
+    .content .el-form-item__content {
+      margin-top: 7px;
+      line-height: 22px;
     }
   }
   table {
