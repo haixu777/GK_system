@@ -51,7 +51,7 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file) {
-      const isAdmin = $utils.Cookie.get('isAdmin')
+      const isAdmin = $utils.Cookie.get('isAdmin').toString() === 'true'
       if (!isAdmin) {
         this.$Message.error('无法上传：非管理员用户')
         return false
