@@ -117,8 +117,7 @@
           <Panel name="process">
             事件流程
             <div slot="content">
-              <!-- <img :src="require('assets/data/samples/zhongmu.png')" alt=""> -->
-              <plumb></plumb>
+              <process-upload :eventId="eventId" v-if="activeProcess"></process-upload>
             </div>
           </Panel>
           <Panel name="timeline">
@@ -200,14 +199,14 @@
 
 <script>
 const $utils = require('utils')
-const Plumb = require('./jsplumb')
 const dayList = require('./dayList')
 const eventForm = require('./submenu/details')
+const processUpload = require('./processUpload')
 export default {
   components: {
-    Plumb,
     eventForm,
-    dayList
+    dayList,
+    processUpload
   },
   data () {
     return {
@@ -302,7 +301,8 @@ export default {
       treeData: [],
       activeTime: null,
       dayList: [],
-      activeDay: null
+      activeDay: null,
+      activeProcess: false
     }
   },
   watch: {
@@ -315,7 +315,9 @@ export default {
       } else if (value === 'timeline') {
         this.fetchTimelineFromServer()
       } else if (value === 'process') {
-        this.$emit('initChart')
+        this.activeProcess = true
+      } else {
+        this.activeProcess = false
       }
     },
     modal_detail (val) {
