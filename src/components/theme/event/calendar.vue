@@ -101,7 +101,7 @@
       class="modal_detail"
       :width="720"
       :scrollable="true"
-      :closable="false">
+      :closable="true">
       <p slot="header" style="color:#f60;">
         <Icon type="ios-information"></Icon>
         <span>{{ eventName }}</span>
@@ -179,7 +179,7 @@
     width="800"
     class="modal_detail"
     :scrollable="true"
-    :closable="false"
+    :closable="true"
     @on-cancel="fetchEventByMonthFromServer">
       <p slot="header" style="color:#f60;">
         <Icon type="ios-information"></Icon>
