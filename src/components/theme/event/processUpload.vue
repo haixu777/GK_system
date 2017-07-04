@@ -37,8 +37,11 @@ export default {
         }
       }).then((res) => {
         if (res.data.success) {
-          var b64encoded = btoa(String.fromCharCode.apply(null, res.data.buffer.data))
-          var datajpg = 'data:image/jpg;base64,' + b64encoded
+          var base64 = btoa(
+            new Uint8Array(res.data.buffer.data)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+          )
+          var datajpg = 'data:image/jpg;base64,' + base64
           this.imageUrl = datajpg
         } else {
           this.imageUrl = ''
