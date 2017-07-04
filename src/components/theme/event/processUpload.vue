@@ -13,7 +13,7 @@
     </el-upload>
     <div v-else style="position:relative;">
       <Button v-if="isAdmin" size="small" type="warning" style="position:absolute;right:0;top:2px;" icon="ios-trash" @click="delImage"></Button>
-      <vue-images :imgs="[{imageUrl: imageUrl}]" showclosebutton>
+      <vue-images :imgs="[{imageUrl: imageUrl}]" showclosebutton modalclose>
       </vue-images>
     </div>
   </div>
@@ -159,6 +159,12 @@ export default {
   }
 }
 .vue-images {
+  .lightbox {
+    overflow: auto !important;
+    img {
+      max-height: inherit !important;
+    }
+  }
   .wrapper {
     img {
       width: 100% !important;
