@@ -1,6 +1,7 @@
 <template lang="html">
   <div class="process_upload_container">
     <el-upload
+      v-if="!imageUrl"
       class="uploader"
       :action="'//'+ localUrl +':3000/events/process_upload'"
       :data="{ eventId: eventId }"
@@ -10,11 +11,17 @@
       <img v-if="imageUrl" :src="imageUrl" class="process_image">
       <i v-else class="el-icon-plus uploader-icon"></i>
     </el-upload>
+    <div v-else style="position:relative;">
+      <Button size="small" type="warning" style="position:absolute;right:0;top:2px;" icon="ios-trash" @click="delImage"></Button>
+      <vue-images :imgs="[{imageUrl: imageUrl}]" showclosebutton>
+      </vue-images>
+    </div>
   </div>
 </template>
 
 <script>
 const $utils = require('utils')
+const vueImages = require('vue-images')
 export default {
   data () {
     return {
@@ -23,6 +30,9 @@ export default {
     }
   },
   props: ['eventId'],
+  components: {
+    vueImages: vueImages.default
+  },
   watch: {
     eventId () {
       this.fetchProcessImageFromServer()
@@ -37,15 +47,32 @@ export default {
         }
       }).then((res) => {
         if (res.data.success) {
-          var b64encoded = btoa(String.fromCharCode.apply(null, res.data.buffer.data))
-          var datajpg = 'data:image/jpg;base64,' + b64encoded
+          var base64 = btoa(
+            new Uint8Array(res.data.buffer.data)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+          )
+          var datajpg = 'data:image/jpg;base64,' + base64
           this.imageUrl = datajpg
         } else {
           this.imageUrl = ''
+          console.log(res.data.msg)
         }
       }).catch((err) => {
         console.log(err)
       })
+    },
+    delImageFromServer () {
+      this.$axios.post('/events/process_image/del', {eventId: this.eventId})
+        .then((res) => {
+          if (res.data.success) {
+            this.$Notice.success({
+              title: '图片删除成功'
+            })
+            this.imageUrl = ''
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
     },
     handleAvatarScucess (res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
@@ -66,6 +93,18 @@ export default {
       }
       return isJPG && isLt2M
     },
+    delImage () {
+      this.$Modal.confirm({
+        title: '确认删除图片',
+        content: '图片删除将无法恢复',
+        onOk: () => {
+          this.delImageFromServer()
+        },
+        onCancel: () => {
+          this.$Message.warning('操作取消')
+        }
+      })
+    },
     handleLocalUrl () {
       if (process.env.NODE_ENV === 'development') {
         this.localUrl = '10.10.28.23'
@@ -81,7 +120,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
 .uploader {
   text-align: center;
 }
@@ -106,6 +145,23 @@ export default {
 }
 .process_image {
   width: 100%;
-  /*display: block;*/
+}
+.image-wrapper {
+  .header {
+    .play {
+      display: none !important;
+    }
+    .full {
+      display: none !important;
+    }
+  }
+}
+.vue-images {
+  .wrapper {
+    img {
+      width: 100% !important;
+      height: inherit !important;
+    }
+  }
 }
 </style>
