@@ -12,7 +12,7 @@
       <i v-else class="el-icon-plus uploader-icon"></i>
     </el-upload>
     <div v-else style="position:relative;">
-      <Button size="small" type="warning" style="position:absolute;right:0;top:2px;" icon="ios-trash" @click="delImage"></Button>
+      <Button v-if="isAdmin" size="small" type="warning" style="position:absolute;right:0;top:2px;" icon="ios-trash" @click="delImage"></Button>
       <vue-images :imgs="[{imageUrl: imageUrl}]" showclosebutton>
       </vue-images>
     </div>
@@ -31,7 +31,8 @@ export default {
   },
   props: ['eventId'],
   components: {
-    vueImages: vueImages.default
+    vueImages: vueImages.default,
+    isAdmin: ''
   },
   watch: {
     eventId () {
@@ -41,6 +42,7 @@ export default {
   methods: {
     fetchProcessImageFromServer () {
       if (!this.eventId) return
+      this.isAdmin = $utils.Cookie.get('isAdmin').toString() === 'true'
       this.$axios.get('events/process_image', {
         params: {
           eventId: this.eventId
