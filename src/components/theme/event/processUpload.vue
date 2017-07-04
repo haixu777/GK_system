@@ -160,6 +160,9 @@ export default {
 }
 .vue-images {
   .lightbox {
+    .fancybox {
+      height: initial !important;
+    }
     overflow: auto !important;
     img {
       max-height: inherit !important;
