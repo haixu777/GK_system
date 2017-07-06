@@ -289,6 +289,7 @@ export default {
       this.extra_item.name = sample.name
       this.extra_item.path = sample.path
       this.extra_item.upload_date = sample.upload_date
+      this.extra_item.publish_time = new Date()
       this.fetchEventListFromServer()
     },
     multipleExtra (data) {
