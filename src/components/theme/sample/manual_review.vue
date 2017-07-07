@@ -50,11 +50,11 @@
             <el-form-item label="岗位">
               <span>{{ props.row.post }}</span>
             </el-form-item>
-            <el-form-item label="样本内容">
-              <span>{{ props.row.sample_content }}</span>
-            </el-form-item>
             <el-form-item label="文件路径" style="">
               <span>{{ props.row.sample_path }}</span>
+            </el-form-item>
+            <el-form-item label="样本内容" class="full">
+              <span>{{ props.row.sample_content }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -371,10 +371,15 @@ export default {
   width: 90px;
   color: #99a9bf;
 }
-.sample-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 50%;
+.sample-table-expand {
+  .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+  .full {
+    width: 100%;
+  }
 }
 .sample_manual_review {
   .el-form-item__content {
