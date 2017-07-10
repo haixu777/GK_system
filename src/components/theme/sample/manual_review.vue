@@ -79,13 +79,13 @@
       <el-table-column label="发布网站" prop="publish_platform"></el-table-column>
       <el-table-column label="发布频道" prop="publish_chanel"></el-table-column>
       <el-table-column label="样本格式" prop="sample_format"></el-table-column>
-      <el-table-column label="事件" prop="event_name" v-if="showEvent"></el-table-column>
-      <el-table-column label="关键词" prop="keyword">
+      <el-table-column label="事件" prop="event_name" v-if="showEvent" width="200"></el-table-column>
+      <el-table-column label="关键词" prop="keyword" width="400">
         <template scope="scope">
           <Tag v-for="item in handleKeyword(scope.row.keyword)" :key="item">{{ item }}</Tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="215">
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
           <i-button type="success" icon="android-download" size="small">
