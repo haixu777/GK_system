@@ -10,6 +10,28 @@
         @on-change="fetchTableDataFromServer">
         <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
       </Select>
+      <Select
+        v-model="sample_format"
+        clearable
+        filterable
+        placeholder="格式筛选"
+        style="width:176px;"
+        @on-change="fetchTableDataFromServer">
+        <Option value="图片">图片</Option>
+        <Option value="音频">音频</Option>
+        <Option value="视频">视频</Option>
+        <Option value="html">html</Option>
+        <Option value="pdf">pdf</Option>
+      </Select>
+      <Select
+       v-model="hasKeyword"
+       clearable
+       placeholder="关键词配置"
+       style="width:176px;"
+       @on-change="fetchTableDataFromServer">
+       <Option value="0">未配置</Option>
+       <Option value="1">已配置</Option>
+      </Select>
     </div>
     <el-table
       :data="tableData"
@@ -56,8 +78,13 @@
       </el-table-column>
       <el-table-column label="发布网站" prop="publish_platform"></el-table-column>
       <el-table-column label="发布频道" prop="publish_chanel"></el-table-column>
-      <!-- <el-table-column label="样本格式" prop="sample_format"></el-table-column> -->
+      <el-table-column label="样本格式" prop="sample_format"></el-table-column>
       <el-table-column label="事件" prop="event_name" v-if="showEvent"></el-table-column>
+      <el-table-column label="关键词" prop="keyword">
+        <template scope="scope">
+          <Tag v-for="item in handleKeyword(scope.row.keyword)" :key="item">{{ item }}</Tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
@@ -122,11 +149,11 @@
           <Form-item label="样本格式">
             <!-- <Input v-model="sampleItem.sample_format"></Input> -->
             <Radio-group v-model="sampleItem.sample_format">
-              <Radio label="文本"></Radio>
+              <Radio label="图片"></Radio>
+              <Radio label="音频"></Radio>
               <Radio label="视频"></Radio>
-              <Radio label="网页"></Radio>
-              <Radio label="word"></Radio>
-              <Radio label="excel"></Radio>
+              <Radio label="html"></Radio>
+              <Radio label="pdf"></Radio>
             </Radio-group>
           </Form-item>
           <Form-item label="样本标题">
@@ -138,6 +165,9 @@
           <!-- <Form-item label="样本路径">
             <Input v-model="sampleItem.sample_path"></Input>
           </Form-item> -->
+          <Form-item label="关键词">
+            <Input v-model="sampleItem.keyword" placeholder="关键词以空格分割"></Input>
+          </Form-item>
           <Form-item label="url">
             <Input v-model="sampleItem.url"></Input>
           </Form-item>
@@ -164,6 +194,8 @@ export default {
       modal: false,
       eventList: [],
       event_id: null,
+      sample_format: '',
+      hasKeyword: '1',
       sampleItem: {
         id: null,
         event_name: '',
@@ -178,6 +210,7 @@ export default {
         sample_format: '',
         sample_path: '',
         sample_title: '',
+        keyword: '',
         url: ''
       },
       localUrl: ''
@@ -204,7 +237,9 @@ export default {
           perItem: this.perItem,
           sort_key: this.sort_key,
           sort_order: this.sort_order,
-          eventId: this.eventId || this.event_id
+          eventId: this.eventId || this.event_id,
+          sample_format: this.sample_format,
+          hasKeyword: this.hasKeyword
         }
       }).then((res) => {
         if (res.data.success) {
@@ -264,6 +299,7 @@ export default {
         sample_format: item.sample_format,
         sample_path: item.sample_path,
         sample_title: item.sample_title,
+        keyword: item.keyword,
         url: item.url
       }
       this.modal = true
@@ -311,6 +347,9 @@ export default {
         console.log(res)
       })
     },
+    handleKeyword (str) {
+      return str ? str.split(' ') : null
+    },
     handleLocalUrl () {
       if (process.env.NODE_ENV === 'development') {
         this.localUrl = '10.10.28.23'
@@ -339,7 +378,7 @@ export default {
 .sample-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
-  width: 100%;
+  width: 50%;
 }
 .sample_manual_review {
   .el-form-item__content {

@@ -80,7 +80,7 @@
         <Icon type="information-circled"></Icon>
         <span>抽取确认</span>
       </p>
-      <div style="text-align:center">
+      <div style="text-align:center" v-if="false">
         <Form :model="extra_item" :label-width="60">
           <Form-item label="岗位">
             <Input v-model="extra_item.post"></Input>
@@ -118,6 +118,65 @@
           </Form-item>
         </Form>
       </div>
+      <div style="text-align:center">
+        <Form :model="extra_item" :label-width="60">
+          <Form-item label="发布账号">
+            <Input v-model="extra_item.publish_account"></Input>
+          </Form-item>
+          <Form-item label="发布平台">
+            <Input v-model="extra_item.publish_platform"></Input>
+          </Form-item>
+          <Form-item label="发布频道">
+            <Input v-model="extra_item.publish_chanel"></Input>
+          </Form-item>
+          <Form-item label="发布时间">
+            <Date-picker type="date" placeholder="选择日期" v-model="extra_item.publish_time"></Date-picker>
+          </Form-item>
+          <Form-item label="所属事件">
+            <Select v-model="extra_item.event_id" class="modal_select" style="width:200px" filterable>
+              <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
+            </Select>
+          </Form-item>
+          <!--
+          <Form-item label="样本类型">
+            <Select v-model="control_item.sample_type" placeholder="请选择样本类型">
+              <Option value="文本">文本</Option>
+              <Option value="视频">视频</Option>
+            </Select>
+          </Form-item> -->
+          <Form-item label="岗位">
+            <Input v-model="extra_item.post"></Input>
+          </Form-item>
+          <Form-item label="取证时间">
+            <Date-picker type="date" placeholder="选择日期" v-model="extra_item.forensic_date"></Date-picker>
+          </Form-item>
+          <Form-item label="样本格式">
+            <!-- <Input v-model="sampleItem.sample_format"></Input> -->
+            <Radio-group v-model="extra_item.sample_format">
+              <Radio label="图片"></Radio>
+              <Radio label="音频"></Radio>
+              <Radio label="视频"></Radio>
+              <Radio label="html"></Radio>
+              <Radio label="pdf"></Radio>
+            </Radio-group>
+          </Form-item>
+          <Form-item label="样本标题">
+            <Input v-model="extra_item.sample_title"></Input>
+          </Form-item>
+          <Form-item label="样本内容">
+            <Input v-model="extra_item.sample_content" type="textarea"></Input>
+          </Form-item>
+          <!-- <Form-item label="样本路径">
+            <Input v-model="sampleItem.sample_path"></Input>
+          </Form-item> -->
+          <Form-item label="关键词">
+            <Input v-model="extra_item.keyword" placeholder="关键词以空格分割"></Input>
+          </Form-item>
+          <Form-item label="url">
+            <Input v-model="extra_item.url"></Input>
+          </Form-item>
+        </Form>
+      </div>
       <div slot="footer">
         <Button type="success" size="large" long @click="submitExtra">确认</Button>
       </div>
@@ -142,19 +201,21 @@ export default {
       fileList: [],
       eventList: [],
       extra_item: {
-        sampleId: '',
-        name: '',
-        path: '',
-        upload_date: '',
+        id: null,
+        event_name: '',
+        event_id: null,
+        forensic_date: '',
         post: '',
-        url: '',
-        platform: '',
-        chanel: '',
-        publish_time: '',
         publish_account: '',
-        title: '',
-        content: '',
-        eventId: null
+        publish_chanel: '',
+        publish_platform: '',
+        publish_time: '',
+        sample_content: '',
+        sample_format: '',
+        sample_path: '',
+        sample_title: '',
+        keyword: '',
+        url: ''
       },
       localUrl: ''
     }
@@ -285,10 +346,9 @@ export default {
     handleSampleExtra (sample) {
       this.extra_modal = true
       this.extra_item.sampleId = sample.id
-      this.extra_item.title = sample.name
-      this.extra_item.name = sample.name
-      this.extra_item.path = sample.path
-      this.extra_item.upload_date = sample.upload_date
+      this.extra_item.sample_title = sample.name
+      this.extra_item.sample_path = sample.path
+      this.extra_item.forensic_date = sample.upload_date
       this.extra_item.publish_time = new Date()
       this.fetchEventListFromServer()
     },
@@ -300,7 +360,8 @@ export default {
     },
     handleLocalUrl () {
       if (process.env.NODE_ENV === 'development') {
-        this.localUrl = '10.10.28.23'
+        // this.localUrl = '10.10.28.23'
+        this.localUrl = 'localhost'
       } else {
         this.localUrl = 'localhost'
       }
