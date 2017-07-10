@@ -35,6 +35,7 @@
     </div>
     <el-table
       :data="tableData"
+      border
       @sort-change="handleSortChange"
       style="width: 100%;text-align: left;margin: 0;">
       <el-table-column type="expand">
@@ -58,8 +59,8 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="取证时间" prop="forensic_date" width="180" sortable></el-table-column>
-      <el-table-column label="样本标题" width="180">
+      <el-table-column label="取证时间" prop="forensic_date" width="130" sortable></el-table-column>
+      <el-table-column label="样本标题" width="130">
         <template scope="scope">
           <!-- <Tooltip>
             <Tag>{{ scope.row.sample_title.substring(0, 6) + '...' }}</Tag>
@@ -76,16 +77,16 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="发布网站" prop="publish_platform"></el-table-column>
-      <el-table-column label="发布频道" prop="publish_chanel"></el-table-column>
-      <el-table-column label="样本格式" prop="sample_format"></el-table-column>
+      <el-table-column label="发布网站" prop="publish_platform" width="130"></el-table-column>
+      <el-table-column label="发布频道" prop="publish_chanel" width="130"></el-table-column>
+      <el-table-column label="样本格式" prop="sample_format" width="130"></el-table-column>
       <el-table-column label="事件" prop="event_name" v-if="showEvent" width="200"></el-table-column>
-      <el-table-column label="关键词" prop="keyword" width="400">
+      <el-table-column label="关键词" prop="keyword">
         <template scope="scope">
           <Tag v-for="item in handleKeyword(scope.row.keyword)" :key="item">{{ item }}</Tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="215">
+      <el-table-column label="操作">
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
           <i-button type="success" icon="android-download" size="small">
