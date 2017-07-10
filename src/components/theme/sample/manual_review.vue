@@ -60,14 +60,11 @@
         </template>
       </el-table-column>
       <el-table-column label="取证时间" prop="forensic_date" width="130" sortable></el-table-column>
-      <el-table-column label="样本标题" width="130">
+      <el-table-column label="发布网站" prop="publish_platform" width="130"></el-table-column>
+      <el-table-column label="发布频道" prop="publish_chanel" width="130"></el-table-column>
+      <el-table-column label="样本格式" prop="sample_format" width="100"></el-table-column>
+      <!-- <el-table-column label="样本标题" width="130">
         <template scope="scope">
-          <!-- <Tooltip>
-            <Tag>{{ scope.row.sample_title.substring(0, 6) + '...' }}</Tag>
-            <div slot="content" style="white-space: normal;">
-              {{ scope.row.sample_title }}
-            </div>
-          </Tooltip> -->
           <el-tooltip
             effect="dark"
             :content="scope.row.sample_title"
@@ -76,10 +73,8 @@
             <Tag>{{ scope.row.sample_title.substring(0, 6) + '...' }}</Tag>
           </el-tooltip>
         </template>
-      </el-table-column>
-      <el-table-column label="发布网站" prop="publish_platform" width="130"></el-table-column>
-      <el-table-column label="发布频道" prop="publish_chanel" width="130"></el-table-column>
-      <el-table-column label="样本格式" prop="sample_format" width="130"></el-table-column>
+      </el-table-column> -->
+      <el-table-column label="样本标题" prop="sample_title"></el-table-column>
       <el-table-column label="事件" prop="event_name" v-if="showEvent" width="200"></el-table-column>
       <el-table-column label="关键词" prop="keyword">
         <template scope="scope">
