@@ -22,7 +22,7 @@
           <template scope="scope">
             <i-button type="primary" size="small" icon="hammer" @click="handleSampleExtra(scope.row)">抽取</i-button>
             <i-button type="success" size="small" icon="android-download">
-              <a :href="'http://'+ localUrl +':3000/sample/autoDownload?id='+scope.row.id" style="color:#fff;" download>下载</a>
+              <a :href="localUrl + '/sample/autoDownload?id='+scope.row.id" style="color:#fff;" download>下载</a>
             </i-button>
             <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
           </template>
@@ -63,7 +63,7 @@
           type="drag"
           :before-upload="beforeUpload"
           :on-success="handleUploadSuccess"
-          :action="'//'+ localUrl +':3000/sample/upload'">
+          :action="localUrl +'/sample/upload'">
           <div style="padding: 20px 0">
             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
             <p>点击或将文件拖拽到这里上传</p>
@@ -219,7 +219,7 @@ export default {
         url: '',
         user_id: $utils.Cookie.get('userId')
       },
-      localUrl: ''
+      localUrl: process.env.URL
     }
   },
   methods: {
@@ -359,19 +359,10 @@ export default {
     },
     beforeUpload (file) {
       return this.checkIsExistFromServer(file.name)
-    },
-    handleLocalUrl () {
-      if (process.env.NODE_ENV === 'development') {
-        // this.localUrl = '10.10.28.23'
-        this.localUrl = 'localhost'
-      } else {
-        this.localUrl = 'localhost'
-      }
     }
   },
   mounted () {
     this.fetchTableDataFromServer()
-    this.handleLocalUrl()
   }
 }
 </script>

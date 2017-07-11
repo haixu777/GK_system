@@ -3,7 +3,7 @@
     <el-upload
       v-if="!imageUrl"
       class="uploader"
-      :action="'//'+ localUrl +':3000/events/process_upload'"
+      :action="localUrl + '/events/process_upload'"
       :data="{ eventId: eventId }"
       :show-file-list="false"
       :on-success="handleAvatarScucess"
@@ -26,7 +26,7 @@ export default {
   data () {
     return {
       imageUrl: '',
-      localUrl: ''
+      localUrl: process.env.URL
     }
   },
   props: ['eventId'],
@@ -106,17 +106,9 @@ export default {
           this.$Message.warning('操作取消')
         }
       })
-    },
-    handleLocalUrl () {
-      if (process.env.NODE_ENV === 'development') {
-        this.localUrl = '10.10.28.23'
-      } else {
-        this.localUrl = 'localhost'
-      }
     }
   },
   mounted () {
-    this.handleLocalUrl()
     this.fetchProcessImageFromServer()
   }
 }

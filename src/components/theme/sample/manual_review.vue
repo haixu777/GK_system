@@ -113,7 +113,7 @@
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
           <i-button type="success" icon="android-download" size="small">
-            <a :href="'http://'+ localUrl +':3000/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
+            <a :href="localUrl +'/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
           </i-button>
           <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
         </template>
@@ -273,7 +273,7 @@ export default {
         url: '',
         user_id: $utils.Cookie.get('userId')
       },
-      localUrl: ''
+      localUrl: process.env.URL
     }
   },
   props: {
@@ -425,20 +425,12 @@ export default {
     },
     handleKeyword (str) {
       return str ? str.split(' ') : null
-    },
-    handleLocalUrl () {
-      if (process.env.NODE_ENV === 'development') {
-        this.localUrl = '10.10.28.23'
-      } else {
-        this.localUrl = 'localhost'
-      }
     }
   },
   mounted () {
     this.fetchTableDataFromServer()
     this.fetchEventListFromServer()
     this.fetchUserListFromServer()
-    this.handleLocalUrl()
   }
 }
 </script>
