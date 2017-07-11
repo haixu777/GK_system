@@ -185,6 +185,7 @@
 </template>
 
 <script>
+const $utils = require('utils')
 export default {
   data () {
     return {
@@ -215,7 +216,8 @@ export default {
         sample_path: '',
         sample_title: '',
         keyword: '',
-        url: ''
+        url: '',
+        user_id: $utils.Cookie.get('userId')
       },
       localUrl: ''
     }

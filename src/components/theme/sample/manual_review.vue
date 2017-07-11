@@ -10,6 +10,17 @@
         @on-change="fetchTableDataFromServer">
         <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
       </Select>
+      <Date-picker
+        v-model="time_range"
+        type="daterange"
+        :options="time_options"
+        confirm
+        placement="bottom-start"
+        placeholder="选择取证日期"
+        style="width:176px;display:inline-block;"
+        @on-clear="handleClearTimeRange"
+        @on-ok="fetchTableDataFromServer">
+      </Date-picker>
       <Select
         v-model="sample_format"
         clearable
@@ -32,6 +43,15 @@
        <Option value="0">未配置</Option>
        <Option value="1">已配置</Option>
       </Select>
+      <Select
+        v-model="user_id"
+        clearable
+        filterable
+        placeholder="操作人筛选"
+        style="width:176px;"
+        @on-change="fetchTableDataFromServer">
+        <Option v-for="item in userList" :value="item.value" :key="item">{{ item.text }}</Option>
+      </Select>
     </div>
     <el-table
       :data="tableData"
@@ -41,6 +61,12 @@
       <el-table-column type="expand">
         <template scope="props">
           <el-form label-position="left" inline class="sample-table-expand">
+            <el-form-item label="发布网站">
+              <span>{{ props.row.publish_platform }}</span>
+            </el-form-item>
+            <el-form-item label="发布频道">
+              <span>{{ props.row.publish_chanel }}</span>
+            </el-form-item>
             <el-form-item label="url">
               <span>{{ props.row.url }}</span>
             </el-form-item>
@@ -60,9 +86,9 @@
         </template>
       </el-table-column>
       <el-table-column label="取证时间" prop="forensic_date" width="130" sortable></el-table-column>
-      <el-table-column label="发布网站" prop="publish_platform" width="130"></el-table-column>
-      <el-table-column label="发布频道" prop="publish_chanel" width="130"></el-table-column>
-      <el-table-column label="样本格式" prop="sample_format" width="100"></el-table-column>
+      <!-- <el-table-column label="发布网站" prop="publish_platform" width="130"></el-table-column> -->
+      <!-- <el-table-column label="发布频道" prop="publish_chanel" width="130"></el-table-column> -->
+      <el-table-column label="样本标题" prop="sample_title"></el-table-column>
       <!-- <el-table-column label="样本标题" width="130">
         <template scope="scope">
           <el-tooltip
@@ -74,13 +100,15 @@
           </el-tooltip>
         </template>
       </el-table-column> -->
-      <el-table-column label="样本标题" prop="sample_title"></el-table-column>
       <el-table-column label="事件" prop="event_name" v-if="showEvent" width="200"></el-table-column>
+      <el-table-column label="样本格式" prop="sample_format" width="100"></el-table-column>
       <el-table-column label="关键词" prop="keyword">
         <template scope="scope">
           <Tag v-for="item in handleKeyword(scope.row.keyword)" :key="item">{{ item }}</Tag>
         </template>
       </el-table-column>
+      <el-table-column label="操作时间" prop="update_time" width="130" sortable></el-table-column>
+      <el-table-column label="操作人" prop="operator" width="130"></el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
@@ -178,6 +206,7 @@
 </template>
 
 <script>
+const $utils = require('utils')
 export default {
   data () {
     return {
@@ -191,7 +220,41 @@ export default {
       eventList: [],
       event_id: null,
       sample_format: '',
-      hasKeyword: '1',
+      hasKeyword: '0',
+      userList: [],
+      user_id: null,
+      time_range: [],
+      time_options: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            value () {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              return [start, end]
+            }
+          },
+          {
+            text: '最近一个月',
+            value () {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              return [start, end]
+            }
+          },
+          {
+            text: '最近三个月',
+            value () {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              return [start, end]
+            }
+          }
+        ]
+      },
       sampleItem: {
         id: null,
         event_name: '',
@@ -207,7 +270,8 @@ export default {
         sample_path: '',
         sample_title: '',
         keyword: '',
-        url: ''
+        url: '',
+        user_id: $utils.Cookie.get('userId')
       },
       localUrl: ''
     }
@@ -235,7 +299,10 @@ export default {
           sort_order: this.sort_order,
           eventId: this.eventId || this.event_id,
           sample_format: this.sample_format,
-          hasKeyword: this.hasKeyword
+          hasKeyword: this.hasKeyword,
+          user_id: this.user_id,
+          time_start: this.time_range[0],
+          time_end: this.time_range[1]
         }
       }).then((res) => {
         if (res.data.success) {
@@ -250,6 +317,14 @@ export default {
       this.$axios.get('/control/fetchEventListForControl')
         .then((res) => {
           this.eventList = res.data.eventsList
+        })
+    },
+    fetchUserListFromServer () {
+      this.$axios.get('/user/list')
+        .then((res) => {
+          this.userList = res.data.userList
+        }).catch((err) => {
+          console.log(err)
         })
     },
     updateSampleToServer () {
@@ -275,6 +350,10 @@ export default {
           cb(err, false)
         })
     },
+    handleClearTimeRange () {
+      this.time_range = []
+      this.fetchTableDataFromServer()
+    },
     handleSortChange (item) {
       this.sort_key = item.prop
       this.sort_order = (item.order.indexOf('desc') !== -1) ? 'desc' : 'asc'
@@ -296,7 +375,8 @@ export default {
         sample_path: item.sample_path,
         sample_title: item.sample_title,
         keyword: item.keyword,
-        url: item.url
+        url: item.url,
+        user_id: $utils.Cookie.get('userId')
       }
       this.modal = true
     },
@@ -357,6 +437,7 @@ export default {
   mounted () {
     this.fetchTableDataFromServer()
     this.fetchEventListFromServer()
+    this.fetchUserListFromServer()
     this.handleLocalUrl()
   }
 }
