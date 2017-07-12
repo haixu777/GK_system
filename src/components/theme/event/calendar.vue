@@ -153,7 +153,7 @@
                 <el-table-column label="操作" prop="sample_path">
                   <template scope="scope">
                     <i-button type="success" size="small" icon="android-download">
-                      <a :href="'http://'+ localUrl +':3000/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
+                      <a :href="localUrl +'/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
                     </i-button>
                   </template>
                 </el-table-column>
@@ -232,7 +232,7 @@ export default {
       ],
       control_tableData: [],
       sample_tableData: [],
-      localUrl: '',
+      localUrl: process.env.URL,
       timer: null,
       count: 0,
       modal_eventForm: false,
@@ -556,13 +556,6 @@ export default {
       if (!path) return '#'
       return require('../../../assets/' + path + '.png')
     },
-    handleLocalUrl () {
-      if (process.env.NODE_ENV === 'development') {
-        this.localUrl = '10.10.28.23'
-      } else {
-        this.localUrl = 'localhost'
-      }
-    },
     closeDayListModal (val) {
       if (val === 'close') {
         this.modal_eventForm = false
@@ -575,7 +568,6 @@ export default {
     // this.fetchEventListFromServer()
     this.fetchEventsTreeFromServer()
     this.fetchEventByMonthFromServer()
-    this.handleLocalUrl()
   }
 }
 </script>
