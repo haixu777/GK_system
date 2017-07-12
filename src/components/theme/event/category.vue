@@ -105,6 +105,7 @@
           </category-control>
           <category-sample
            v-if="activeMenu === 'sample'"
+           :showKeyword="1"
            :showEvent="false"
            :eventId="eventForm.id">
           </category-sample>

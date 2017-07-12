@@ -282,6 +282,9 @@ export default {
     },
     showEvent: {
       default: true
+    },
+    showKeyword: {
+      default: 0
     }
   },
   watch: {
@@ -299,7 +302,7 @@ export default {
           sort_order: this.sort_order,
           eventId: this.eventId || this.event_id,
           sample_format: this.sample_format,
-          hasKeyword: this.hasKeyword,
+          hasKeyword: this.showKeyword || this.hasKeyword,
           user_id: this.user_id,
           time_start: this.time_range[0],
           time_end: this.time_range[1]
