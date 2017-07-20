@@ -133,7 +133,7 @@
             <Date-picker type="date" placeholder="选择日期" v-model="extra_item.publish_time"></Date-picker>
           </Form-item>
           <Form-item label="所属事件">
-            <Select v-model="extra_item.event_id" class="modal_select" style="width:200px" filterable>
+            <Select v-model="extra_item.event_id" class="modal_select" filterable>
               <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
             </Select>
           </Form-item>
@@ -178,7 +178,9 @@
         </Form>
       </div>
       <div slot="footer">
-        <Button type="success" size="large" long @click="submitExtra">确认</Button>
+        <Button type="success" size="large" long @click="submitExtra" :loading="!extra_done">
+          {{ extra_done ? '抽取完成' : '抽取中' }}
+        </Button>
       </div>
     </Modal>
   </div>
@@ -197,6 +199,7 @@ export default {
         sort_key: 'upload_date',
         sort_order: 'desc'
       },
+      extra_done: false,
       upload_modal: false,
       extra_modal: false,
       fileList: [],
@@ -263,6 +266,26 @@ export default {
           })
         })
       }
+    },
+    autoExtraByServer (sampleId) {
+      this.extra_item.sample_content = ''
+      this.extra_done = false
+      this.$axios.post('/sample/handleExtra', {
+        id: sampleId
+      }).then((res) => {
+        if (res.data.text.indexOf('extraList') !== -1) {
+          let resObj = JSON.parse(res.data.text)
+          resObj.extraList.forEach((item) => {
+            this.extra_item.sample_content += item.content
+          })
+        } else {
+          this.extra_item.sample_content = res.data.text
+        }
+        this.extra_done = true
+      }).catch((err) => {
+        console.log(err)
+        this.extra_done = true
+      })
     },
     fetchEventListFromServer () {
       this.$axios.get('/control/fetchEventListForControl')
@@ -352,6 +375,7 @@ export default {
       this.extra_item.sample_path = sample.path
       this.extra_item.forensic_date = sample.upload_date
       this.extra_item.publish_time = new Date()
+      this.autoExtraByServer(sample.id)
       this.fetchEventListFromServer()
     },
     multipleExtra (data) {
