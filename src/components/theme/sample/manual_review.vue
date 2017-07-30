@@ -40,8 +40,8 @@
        placeholder="关键词配置"
        style="width:176px;"
        @on-change="fetchTableDataFromServer">
-       <Option value="0">未配置</Option>
-       <Option value="1">已配置</Option>
+       <Option value="0">未配置 - 关键词</Option>
+       <Option value="1">已配置 - 关键词</Option>
       </Select>
       <Select
         v-model="user_id"
@@ -52,6 +52,16 @@
         @on-change="fetchTableDataFromServer">
         <Option v-for="item in userList" :value="item.value" :key="item">{{ item.text }}</Option>
       </Select>
+      <Select
+        v-model="hasPlatform"
+        clearable
+        filterable
+        placeholder="平台配置"
+        style="width:176px;"
+        @on-change="fetchTableDataFromServer">
+        <Option value="0">未配置 - 平台</Option>
+        <Option value="1">已配置 - 平台</Option>
+      </Select>
     </div>
     <el-table
       :data="tableData"
@@ -61,9 +71,9 @@
       <el-table-column type="expand">
         <template scope="props">
           <el-form label-position="left" inline class="sample-table-expand">
-            <el-form-item label="发布网站">
+            <!-- <el-form-item label="发布网站">
               <span>{{ props.row.publish_platform }}</span>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="发布频道">
               <span>{{ props.row.publish_chanel }}</span>
             </el-form-item>
@@ -101,6 +111,7 @@
         </template>
       </el-table-column> -->
       <el-table-column label="事件" prop="event_name" v-if="showEvent" width="200"></el-table-column>
+      <el-table-column label="平台" prop="publish_platform" v-if="showEvent" width="200"></el-table-column>
       <el-table-column label="样本格式" prop="sample_format" width="100"></el-table-column>
       <el-table-column label="关键词" prop="keyword">
         <template scope="scope">
@@ -129,6 +140,7 @@
       @on-change="handlePageChange"
       @on-page-size-change="handlePagesizeChange"
       show-total
+      show-elevator
       size="small"
       show-sizer>
     </Page>
@@ -221,6 +233,7 @@ export default {
       event_id: null,
       sample_format: '',
       hasKeyword: '0',
+      hasPlatform: '0',
       userList: [],
       user_id: null,
       time_range: [],
@@ -303,6 +316,7 @@ export default {
           eventId: this.eventId || this.event_id,
           sample_format: this.sample_format,
           hasKeyword: this.showKeyword || this.hasKeyword,
+          hasPlatform: this.hasPlatform,
           user_id: this.user_id,
           time_start: this.time_range[0],
           time_end: this.time_range[1]

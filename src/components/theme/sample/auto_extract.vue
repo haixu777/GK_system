@@ -273,13 +273,15 @@ export default {
       this.$axios.post('/sample/handleExtra', {
         id: sampleId
       }).then((res) => {
-        if (res.data.text.indexOf('extraList') !== -1) {
-          let resObj = JSON.parse(res.data.text)
-          resObj.extraList.forEach((item) => {
-            this.extra_item.sample_content += item.content
-          })
-        } else {
-          this.extra_item.sample_content = res.data.text
+        if (res.data.success) {
+          if (res.data.text.indexOf('extraList') !== -1) {
+            let resObj = JSON.parse(res.data.text)
+            resObj.extraList.forEach((item) => {
+              this.extra_item.sample_content += item.content
+            })
+          } else {
+            this.extra_item.sample_content = res.data.text
+          }
         }
         this.extra_done = true
       }).catch((err) => {
