@@ -62,6 +62,16 @@
         <Option value="0">未配置 - 平台</Option>
         <Option value="1">已配置 - 平台</Option>
       </Select>
+      <Select
+        v-model="hasContent"
+        clearable
+        filterable
+        placeholder="内容配置"
+        style="width:176px;"
+        @on-change="fetchTableDataFromServer">
+        <Option value="0">未配置 - 内容</Option>
+        <Option value="1">已配置 - 内容</Option>
+      </Select>
     </div>
     <el-table
       :data="tableData"
@@ -234,6 +244,7 @@ export default {
       sample_format: '',
       hasKeyword: '0',
       hasPlatform: '0',
+      hasContent: '0',
       userList: [],
       user_id: null,
       time_range: [],
@@ -317,6 +328,7 @@ export default {
           sample_format: this.sample_format,
           hasKeyword: this.showKeyword || this.hasKeyword,
           hasPlatform: this.hasPlatform,
+          hasContent: this.hasContent,
           user_id: this.user_id,
           time_start: this.time_range[0],
           time_end: this.time_range[1]
