@@ -38,6 +38,7 @@
               <Icon type="bug"></Icon>
               事件关键词
             </Menu-item>
+            <!--
             <Menu-item name="person">
               <Icon type="android-person"></Icon>
               相关人物
@@ -54,6 +55,7 @@
               <Icon type="ios-people"></Icon>
               相关组织
             </Menu-item>
+          -->
             <Menu-item name="control">
               <Icon type="ios-people"></Icon>
               管控记录
