@@ -3,7 +3,7 @@ import Router from 'vue-router'
 // import iView from 'iview'
 import NProgress from 'nprogress'
 
-import Login from '@/components/Login'
+// import Login from '@/components/Login'
 import Home from '@/components/Home'
 
 import Sample from './routesMap/sample'
@@ -23,11 +23,11 @@ const router = new Router({
       path: '/',
       redirect: { name: 'login' }
     },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
-    },
+    // {
+    //   path: '/login',
+    //   name: 'login',
+    //   component: Login
+    // },
     {
       path: '/home',
       name: 'home',
@@ -46,10 +46,10 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // iView.LoadingBar.start()
   NProgress.start()
-  let isLogin = $utils.Cookie.get('login')
+  let isLogin = $utils.Cookie.get('realName')
   if (!isLogin) {
-    if (to.path !== '/login') {
-      return next({path: '/login'})
+    if (to.path !== '/home') {
+      return next({path: '/home'})
     } else {
       next()
     }
