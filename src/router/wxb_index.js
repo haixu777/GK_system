@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import NProgress from 'nprogress'
 
-import Login from '@/components/Login'
+// import Login from '@/components/Login'
 import Calendar from '@/components/theme/event/wxb_index'
 
 import NotFoundComponent from '@/components/notFoundComponent'
@@ -16,12 +16,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: { name: 'login' }
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
+      redirect: { name: 'calendar' }
     },
     {
       path: '/calendar',
@@ -38,10 +33,24 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // iView.LoadingBar.start()
   NProgress.start()
-  let isLogin = $utils.Cookie.get('login')
+  let isLogin = $utils.Cookie.get('realName')
+  console.log(isLogin)
+  function redirect () {
+    let a = document.createElement('a')
+    a.href = 'http://10.136.89.98/logout'
+    a.click()
+  }
+  if (!isLogin) {
+    return redirect()
+  } else {
+    return next()
+  }
+
+  // next()
+  /*
   if (!isLogin) {
     if (to.path !== '/login') {
-      return next({path: '/login'})
+      return next({path: 'http://10.136.89.98/'})
     } else {
       next()
     }
@@ -52,6 +61,7 @@ router.beforeEach((to, from, next) => {
     // }
     next()
   }
+  */
 })
 
 router.afterEach((to, from, next) => {

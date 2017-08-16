@@ -7,6 +7,7 @@
       </Menu-item> -->
       <span style="color:#fff;font-size:20px;font-weight:600;">事件日历系统</span>
       <div class="" style="position:absolute;top:0;right:30px;">
+        <span style="color: #fff;">{{ userName }}</span>
         <i-button type="primary" size="small" @click="logout">注销</i-button>
       </div>
     </Menu>
@@ -23,7 +24,8 @@ const $utils = require('utils')
 export default {
   data () {
     return {
-      activeName: this.$router.currentRoute.name
+      activeName: this.$router.currentRoute.name,
+      userName: null
       /*
       mainTopic_id: '',
       topic1_id: '',
@@ -47,6 +49,12 @@ export default {
     Calendar
   },
   methods: {
+    fetchUserInfoByMenhu () {
+      this.$axios.get('/menhuGroupData')
+        .then((res) => {
+          console.log(res)
+        })
+    },
     handleMenuSelect (path) {
       if (path === 'home') {
         this.$router.push('/' + path)
@@ -58,12 +66,16 @@ export default {
       this.activeName = path
     },
     logout () {
-      this.$router.push('login')
-      $utils.Cookie.del('login')
+      $utils.Cookie.del('realName')
       $utils.Cookie.del('isAdmin')
+      let a = document.createElement('a')
+      a.href = 'http://10.136.89.98/logout'
+      a.click()
     }
   },
   mounted () {
+    this.fetchUserInfoByMenhu()
+    this.userName = decodeURIComponent($utils.Cookie.get('realName'))
   }
 }
 </script>
