@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+const $utils = require('utils')
 
 Vue.use(Vuex)
 
@@ -9,10 +9,11 @@ export default new Vuex.Store({
   },
   mutations: {
     logout () {
-      axios.post('/logout')
-        .then((res) => {
-          console.log(res)
-        })
+      $utils.Cookie.del('realName')
+      $utils.Cookie.del('isAdmin')
+      let a = document.createElement('a')
+      a.href = 'http://10.136.89.98/logout'
+      a.click()
     }
   }
 })
