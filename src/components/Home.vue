@@ -1,5 +1,16 @@
 <template lang="html">
   <div class="home">
+    <Menu mode="horizontal" :theme="'dark'" :active-name="activeName" @on-select="handleMenuSelect">
+      <!-- <Menu-item name="calendar">
+        <Icon type="ios-paper"></Icon>
+        事件日历
+      </Menu-item> -->
+      <span style="color:#fff;font-size:20px;font-weight:600;">数据整理系统</span>
+      <div class="" style="position:absolute;top:0;right:30px;">
+        <span style="color: #fff;">{{ userName }}</span>
+        <i-button type="primary" size="small" @click="logout">注销</i-button>
+      </div>
+    </Menu>
     <div class="theme">
       <template v-for="item in themeList">
         <div class="theme_item" @click="handleThemeSelect(item.path)">
@@ -15,6 +26,7 @@
 </template>
 
 <script>
+const $utils = require('utils')
 export default {
   data () {
     return {
@@ -23,12 +35,19 @@ export default {
         { name: '取证样本', path: 'sample/auto-extract' },
         { name: '管控方案', path: 'control/manual_review' },
         { name: '事件管理', path: 'event/category' }
-      ]
+      ],
+      userName: decodeURIComponent($utils.Cookie.get('realName'))
     }
   },
   methods: {
     handleThemeSelect (path) {
       this.$router.push(path)
+    },
+    handleMenuSelect () {
+      console.log(111)
+    },
+    logout () {
+      this.$store.commit('logout')
     }
   },
   mounted () {
