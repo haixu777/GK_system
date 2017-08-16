@@ -13,6 +13,10 @@
         <Icon type="ios-paper"></Icon>
         事件日历
       </Menu-item>
+      <div class="" style="position:absolute;top:0;right:30px;">
+        <span style="color: #fff;">{{ userName }}</span>
+        <i-button type="primary" size="small" @click="logout">注销</i-button>
+      </div>
     </Menu>
     <div class="event_content clearfix">
       <router-view></router-view>
@@ -25,7 +29,8 @@ const Tree = require('./Tree')
 export default {
   data () {
     return {
-      activeName: this.$router.currentRoute.name
+      activeName: this.$router.currentRoute.name,
+      userName: this.$store.state.userName
       /*
       mainTopic_id: '',
       topic1_id: '',
@@ -95,6 +100,9 @@ export default {
         descript: node.descript,
         harm_level: node.harm_level
       }
+    },
+    logout () {
+      this.$store.commit('logout')
     }
   },
   mounted () {

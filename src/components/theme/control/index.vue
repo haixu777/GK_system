@@ -17,6 +17,10 @@
         <Icon type="settings"></Icon>
         管控方案编辑
       </Menu-item>
+      <div class="" style="position:absolute;top:0;right:30px;">
+        <span style="color: #fff;">{{ userName }}</span>
+        <i-button type="primary" size="small" @click="logout">注销</i-button>
+      </div>
     </Menu>
     <router-view></router-view>
   </div>
@@ -26,7 +30,8 @@
 export default {
   data () {
     return {
-      activeName: this.$router.currentRoute.name
+      activeName: this.$router.currentRoute.name,
+      userName: this.$store.state.userName
     }
   },
   methods: {
@@ -36,6 +41,9 @@ export default {
       } else {
         this.$router.push('/control/' + path)
       }
+    },
+    logout () {
+      this.$store.commit('logout')
     }
   },
   mounted () {

@@ -44,6 +44,7 @@
        <Option value="1">已配置 - 关键词</Option>
       </Select>
       <Select
+        v-if="false"
         v-model="user_id"
         clearable
         filterable
@@ -295,7 +296,8 @@ export default {
         sample_title: '',
         keyword: '',
         url: '',
-        user_id: $utils.Cookie.get('userId')
+        user_id: $utils.Cookie.get('userId'),
+        operator: this.$store.state.userName
       },
       localUrl: process.env.URL
     }
@@ -318,6 +320,7 @@ export default {
   },
   methods: {
     fetchTableDataFromServer () {
+      console.log(this.hasPlatform)
       this.$axios.get('/sample/fetchList', {
         params: {
           currentPage: this.currentPage,
@@ -405,7 +408,8 @@ export default {
         sample_title: item.sample_title,
         keyword: item.keyword,
         url: item.url,
-        user_id: $utils.Cookie.get('userId')
+        user_id: $utils.Cookie.get('userId'),
+        operator: this.$store.state.userName
       }
       this.modal = true
     },

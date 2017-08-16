@@ -6,6 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    userName: decodeURIComponent($utils.Cookie.get('realName'))
   },
   mutations: {
     logout () {

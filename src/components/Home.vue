@@ -26,7 +26,6 @@
 </template>
 
 <script>
-const $utils = require('utils')
 export default {
   data () {
     return {
@@ -36,7 +35,7 @@ export default {
         { name: '管控方案', path: 'control/manual_review' },
         { name: '事件管理', path: 'event/category' }
       ],
-      userName: decodeURIComponent($utils.Cookie.get('realName'))
+      userName: this.$store.state.userName
     }
   },
   methods: {

@@ -44,21 +44,18 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  // iView.LoadingBar.start()
   NProgress.start()
   let isLogin = $utils.Cookie.get('realName')
+  // console.log(isLogin)
+  // function redirect () {
+  //   let a = document.createElement('a')
+  //   a.href = 'http://10.136.89.98/logout'
+  //   a.click()
+  // }
   if (!isLogin) {
-    if (to.path !== '/home') {
-      return next({path: '/home'})
-    } else {
-      next()
-    }
+    return next()
   } else {
-    // if (to.path === '/login') {
-    //   // return next({path: '/login'})
-    //
-    // }
-    next()
+    return next()
   }
 })
 
