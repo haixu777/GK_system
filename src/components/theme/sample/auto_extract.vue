@@ -220,7 +220,8 @@ export default {
         sample_title: '',
         keyword: '',
         url: '',
-        user_id: $utils.Cookie.get('userId')
+        user_id: $utils.Cookie.get('userId'),
+        operator: this.$store.state.userName
       },
       localUrl: process.env.URL
     }

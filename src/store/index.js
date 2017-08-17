@@ -11,7 +11,6 @@ export default new Vuex.Store({
   mutations: {
     logout () {
       $utils.Cookie.del('realName')
-      $utils.Cookie.del('isAdmin')
       let a = document.createElement('a')
       a.href = 'http://10.136.89.98/logout'
       a.click()
