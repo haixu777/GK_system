@@ -223,6 +223,8 @@ export default {
       })
     },
     handleEdit (_event) {
+      let s = _event.control_start_time
+      let e = _event.control_end_time
       this.cancelParentModal()
       this.eventAdd_modal = true
       this.eventForm = {
@@ -236,7 +238,8 @@ export default {
         edit_time: _event.edit_time,
         harm_level: _event.harm_level,
         recurrence: _event.recurrence,
-        alertRange: [_event.control_start_time, _event.control_end_time],
+        // alertRange: [_event.control_start_time, _event.control_end_time],
+        alertRange: [new Date(s.substring(0, 4), (s.substring(4, 6) - 1), s.substring(6, 8)), (new Date(e.substring(0, 4) - 1), e.substring(4, 6), e.substring(6, 8))],
         category: _event.category,
         remark: _event.remark
       }
