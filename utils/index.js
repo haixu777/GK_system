@@ -51,4 +51,14 @@ const Cookie = {
   }
 }
 
-export { formatTime, formatEventLevel, Cookie }
+function formatAccountList (accountList) {
+  var resObj = []
+  for (var i=0; i<accountList.length; i++) {
+    if (accountList[i]['publish_account']) {
+      resObj.push(accountList[i])
+    }
+  }
+  return resObj
+}
+
+export { formatTime, formatEventLevel, Cookie, formatAccountList }
