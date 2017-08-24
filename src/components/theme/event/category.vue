@@ -38,6 +38,10 @@
               <Icon type="bug"></Icon>
               事件关键词
             </Menu-item>
+            <Menu-item name="account">
+              <Icon type="social-twitter"></Icon>
+              相关账号
+            </Menu-item>
             <!--
             <Menu-item name="person">
               <Icon type="android-person"></Icon>
@@ -46,10 +50,6 @@
             <Menu-item name="platform">
               <Icon type="earth"></Icon>
               相关平台
-            </Menu-item>
-            <Menu-item name="account">
-              <Icon type="social-twitter"></Icon>
-              相关账号
             </Menu-item>
             <Menu-item name="group">
               <Icon type="ios-people"></Icon>

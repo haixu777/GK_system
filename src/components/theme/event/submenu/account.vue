@@ -1,12 +1,13 @@
 <template lang="html">
   <div class="">
     <Tag color="yellow" v-for="account in accountList" :key="account">
-      {{ account.name }}
+      {{ account.publish_account }}
     </Tag>
   </div>
 </template>
 
 <script>
+const $utils = require('utils')
 export default {
   data () {
     return {
@@ -26,7 +27,7 @@ export default {
           eventId: eventId
         }
       }).then((res) => {
-        this.accountList = res.data.accountList
+        this.accountList = $utils.formatAccountList(res.data.accountList)
       }).catch((err) => {
         console.log(err)
       })
