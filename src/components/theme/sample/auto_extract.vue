@@ -119,7 +119,7 @@
         </Form>
       </div>
       <div style="text-align:center">
-        <Form :model="extra_item" :label-width="60">
+        <Form ref="extra_item" :model="extra_item" :label-width="60" :rules="formValidate">
           <Form-item label="发布账号">
             <Input v-model="extra_item.publish_account"></Input>
           </Form-item>
@@ -132,7 +132,7 @@
           <Form-item label="发布时间">
             <Date-picker type="date" placeholder="选择日期" v-model="extra_item.publish_time"></Date-picker>
           </Form-item>
-          <Form-item label="所属事件">
+          <Form-item label="所属事件" prop="event_id">
             <Select v-model="extra_item.event_id" class="modal_select" filterable>
               <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
             </Select>
@@ -178,7 +178,7 @@
         </Form>
       </div>
       <div slot="footer">
-        <Button type="success" size="large" long @click="submitExtra" :loading="!extra_done">
+        <Button type="success" size="large" long @click="submitAdd('extra_item')" :loading="!extra_done">
           {{ extra_done ? '抽取完成' : '抽取中' }}
         </Button>
       </div>
@@ -223,7 +223,12 @@ export default {
         user_id: $utils.Cookie.get('userId'),
         operator: this.$store.state.userName
       },
-      localUrl: process.env.URL
+      localUrl: process.env.URL,
+      formValidate: {
+        event_id: [
+          { required: true, message: '请选择事件', trigger: 'blur' }
+        ]
+      }
     }
   },
   methods: {
@@ -386,6 +391,14 @@ export default {
     },
     beforeUpload (file) {
       return this.checkIsExistFromServer(file.name)
+    },
+    submitAdd (name) {
+      if (this.extra_item.event_id) {
+        this.submitExtra()
+      } else {
+        this.$refs[name].validate((valid) => {})
+        this.$Message.error('请输入完整信息')
+      }
     }
   },
   mounted () {

@@ -93,7 +93,7 @@
         <span>管控详情</span>
       </p>
       <div style="text-align:center">
-        <Form :model="control_item" :label-width="60">
+        <Form ref="control_item" :model="control_item" :label-width="60" :rules="ruleValidate">
           <Form-item label="内容">
             <Input v-model="control_item.descript" type="textarea"></Input>
           </Form-item>
@@ -103,7 +103,7 @@
           <Form-item label="操作">
             <Input v-model="control_item.operation"></Input>
           </Form-item>
-          <Form-item label="事件">
+          <Form-item label="事件" prop="_eventId">
             <Select v-model="control_item.eventId" filterable>
               <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
             </Select>
@@ -120,9 +120,9 @@
           <Form-item label="时间">
             <Date-picker type="date" placeholder="选择日期" v-model="control_item.time"></Date-picker>
           </Form-item>
-          <Form-item label="数量">
+          <!-- <Form-item label="数量">
             <Input v-model="control_item.number"></Input>
-          </Form-item>
+          </Form-item> -->
         </Form>
       </div>
       <!-- <div slot="footer">
@@ -141,7 +141,7 @@
           size="large"
           long
           v-else
-          @click="addControlToServer">
+          @click="submitAdd('control_item')">
             确认添加
         </Button>
       </div>
@@ -174,6 +174,11 @@ export default {
         sample_type: '',
         operation: '',
         verify: ''
+      },
+      ruleValidate: {
+        _eventId: [
+          { required: true, message: '请选择事件', trigger: 'blur' }
+        ]
       },
       sampleTypeList: [
         { text: '信息' },
@@ -445,15 +450,23 @@ export default {
       this.control_item = {
         id: '',
         descript: '',
-        number: '',
+        number: 1,
         range: '',
-        time: '',
+        time: new Date(),
         eventId: this.eventId || '',
         sample_type: '',
         operation: '',
         verify: 0
       }
       this.modal = true
+    },
+    submitAdd (name) {
+      if (this.control_item.eventId) {
+        this.addControlToServer()
+      } else {
+        this.$refs[name].validate((valid) => {})
+        this.$Message.error('请输入完整信息')
+      }
     }
   },
   mounted () {
