@@ -4,13 +4,15 @@ import Router from 'vue-router'
 import NProgress from 'nprogress'
 
 // import Login from '@/components/Login'
-import Home from '@/components/Home'
+// import Home from '@/components/Home'
 
-import Sample from './routesMap/sample'
+// import Sample from './routesMap/sample'
 import Events from './routesMap/event'
 import Control from './routesMap/control'
 
 import NotFoundComponent from '@/components/notFoundComponent'
+const sampleAutoExtract = resolve => require(['@/components/theme/sample/auto_extract'], resolve)
+const sampleManualReview = resolve => require(['@/components/theme/sample/manual_review'], resolve)
 
 const $utils = require('utils')
 
@@ -19,21 +21,31 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/',
-      redirect: { name: 'home' }
-    },
+    // {
+    //   path: '/',
+    //   redirect: { name: 'home' }
+    // },
     // {
     //   path: '/login',
     //   name: 'login',
     //   component: Login
     // },
+    // {
+    //   path: '/home',
+    //   name: 'home',
+    //   component: Home
+    // },
+    // Sample,
     {
-      path: '/home',
-      name: 'home',
-      component: Home
+      path: '/sample/auto-extract',
+      name: 'auto-extract',
+      component: sampleAutoExtract
     },
-    Sample,
+    {
+      path: '/sample/manual-review',
+      name: 'manual-review',
+      component: sampleManualReview
+    },
     Control,
     Events,
     {
@@ -46,14 +58,14 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   NProgress.start()
   let isLogin = $utils.Cookie.get('realName')
-  console.log(isLogin)
-  function redirect () {
-    let a = document.createElement('a')
-    a.href = 'http://10.136.89.98/logout'
-    a.click()
-  }
+  // console.log(isLogin)
+  // function redirect () {
+  //   let a = document.createElement('a')
+  //   a.href = 'http://10.136.89.98/logout'
+  //   a.click()
+  // }
   if (!isLogin) {
-    return redirect()
+    return next()
   } else {
     return next()
   }
