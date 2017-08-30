@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="">
-    <Tag color="red" v-for="keyword in keywordsList" :key="keyword.value" closable @on-close="handleDel(keyword)">
+    <Tag color="yellow" v-for="keyword in keywordsList" :key="keyword.value" @on-close="handleDel(keyword)">
       {{ keyword.label }}
     </Tag>
-    <i-button icon="ios-plus" size="small" type="ghost" @click="handleAdd">添加</i-button>
+    <!-- <i-button icon="ios-plus" size="small" type="ghost" @click="handleAdd">添加</i-button> -->
 
     <Modal v-model="modal">
       <p slot="header" style="color:#f60;text-align:center">
