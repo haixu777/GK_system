@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted () {
-    this.fetchUserInfoByMenhu()
+    // this.fetchUserInfoByMenhu()
     this.userName = decodeURIComponent($utils.Cookie.get('realName'))
   }
 }

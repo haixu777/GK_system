@@ -102,7 +102,7 @@
       :width="720"
       :scrollable="true"
       :closable="true">
-      <p slot="header" style="color:#f60;">
+      <p slot="header" style="color:#f60;font-size:16px;font-weight:bold;">
         <Icon type="ios-information"></Icon>
         <span>{{ eventName }}</span>
       </p>
@@ -667,5 +667,21 @@ export default {
   }
   .event_form .details_btn {
     display: none;
+  }
+  .event-box {
+    .default {
+      background-color: #C7E6FD !important;
+    }
+    .yellow {
+      background-color: yellow !important;
+    }
+    .orange {
+      color: #fff !important;
+      background-color: orange !important;
+    }
+    .red {
+      color: #fff !important;
+      background-color: red !important;
+    }
   }
 </style>
