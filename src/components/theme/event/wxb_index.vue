@@ -7,13 +7,21 @@
       </Menu-item> -->
       <span style="color:#fff;font-size:20px;font-weight:600;">事件日历系统</span>
       <div class="" style="position:absolute;top:0;right:30px;">
-        <span style="color: #fff;">{{ userName }}</span>
+        <span style="color: #fff;" >
+          <Icon type="person"></Icon>
+          {{ userAuth + ':' + userName }}
+        </span>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <span style="color: #fff;" >
+          <Icon type="ios-home"></Icon>
+          {{ deptName }}
+        </span>
         <i-button type="primary" size="small" @click="logout">注销</i-button>
       </div>
     </Menu>
     <div class="event_content clearfix">
       <!-- <router-view></router-view> -->
-      <calendar></calendar>
+      <calendar v-if="show"></calendar>
     </div>
   </div>
 </template>
@@ -25,7 +33,12 @@ export default {
   data () {
     return {
       activeName: this.$router.currentRoute.name,
-      userName: null
+      userAuth: unescape($utils.Cookie.get('userAuth')),
+      userName: unescape($utils.Cookie.get('userName')),
+      deptName: unescape($utils.Cookie.get('deptName')),
+      userAccount: null,
+      deptId: null,
+      show: false
       /*
       mainTopic_id: '',
       topic1_id: '',
@@ -49,11 +62,57 @@ export default {
     Calendar
   },
   methods: {
-    fetchUserInfoByMenhu () {
-      this.$axios.get('/menhuGroupData')
-        .then((res) => {
-          console.log(res)
-        })
+    fetchUserInfoByMenhu (cb) {
+      console.log($utils.Cookie.get('ticket'))
+      console.log('unescape: ' + (unescape($utils.Cookie.get('ticket')).replace('%3D', '=')))
+      this.$axios.post('http://10.136.88.96:8080/menhu/authUser/getUserResourceOther', {
+        ticket: (unescape($utils.Cookie.get('ticket'))).replace('%3D', '='),
+        clientIP: '127.0.0.1',
+        appSysID: '236'
+      }).then((res) => {
+        if (res.data.success) {
+          this.userId = res.data.info.userId
+          this.userName = res.data.info.realName
+          this.deptName = res.data.info.deptName
+          this.deptId = res.data.info.deptId
+          this.userAuth = res.data.info.userAuth
+          this.userAccount = res.data.info.userAccount
+          $utils.Cookie.set('userName', res.data.info.realName)
+          $utils.Cookie.set('deptName', res.data.info.deptName)
+          $utils.Cookie.set('userAuth', res.data.info.userAuth)
+          this.show = true
+          cb()
+        } else {
+          this.logoutMsg()
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    logoutMsg () {
+      this.show = false
+      this.$Modal.error({
+        title: '登录信息过期',
+        content: '请注销并重新登录',
+        okText: '注销',
+        onOk: () => {
+          this.logout()
+        }
+      })
+    },
+    syncUserInfoFromServer () {
+      this.$axios.post('/user_wxb/update', {
+        id: this.userId,
+        real_name: this.userName,
+        user_account: this.userAccount,
+        dept_id: this.deptId,
+        dept_name: this.deptName,
+        auth: this.userAuth
+      }).then((res) => {
+        console.log(res)
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     handleMenuSelect (path) {
       if (path === 'home') {
@@ -74,8 +133,13 @@ export default {
     }
   },
   mounted () {
-    // this.fetchUserInfoByMenhu()
-    this.userName = decodeURIComponent($utils.Cookie.get('realName'))
+    if ($utils.Cookie.get('ticket')) {
+      this.fetchUserInfoByMenhu(() => {
+        this.syncUserInfoFromServer()
+      })
+    } else {
+      this.logoutMsg()
+    }
   }
 }
 </script>

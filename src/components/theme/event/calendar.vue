@@ -14,6 +14,14 @@
         </div>
         <div slot="fc-header-right">
           <Select
+            v-model="calendar_conditions.public"
+            style="width: 100px;display: inline-block"
+            placeholder="事件类型"
+            @on-change="fetchEventByMonthFromServer">
+            <Option :value="1">公有事件</Option>
+            <Option :value="0">私有事件</Option>
+          </Select>
+          <Select
             v-model="calendar_conditions.view"
             style="width: 100px;display: inline-block"
             placeholder="视角选择"
@@ -222,7 +230,8 @@ export default {
       collapse: '',
       calendar_conditions: {
         view: 0,
-        recurrence: 0
+        recurrence: 0,
+        public: 1
       },
       timelineList: [],
       control_columns: [
@@ -302,7 +311,8 @@ export default {
       activeTime: null,
       dayList: [],
       activeDay: null,
-      activeProcess: false
+      activeProcess: false,
+      isAuth: false
     }
   },
   watch: {
@@ -391,14 +401,16 @@ export default {
       this.$axios.get('/events/fetchEventByMonth', {
         params: {
           recurrence: this.calendar_conditions.recurrence,
-          view: this.calendar_conditions.view
+          view: this.calendar_conditions.view,
+          public: this.calendar_conditions.public,
+          dept_name: unescape($utils.Cookie.get('deptName'))
         }
       }).then((res) => {
         this.fcEvents = res.data.eventsList
         this.modal_eventForm = false
         this.$Notice.destroy()
         this.fetchEventListByDayFromServer(this.activeDay)
-        this.fetchNoticeFromServer()
+        // this.fetchNoticeFromServer()
       }).catch((err) => {
         console.log(err)
       })
@@ -536,13 +548,13 @@ export default {
       this.count++
       this.timer = setTimeout(() => {
         if (this.count === 2) { // double click: 双击显示以天为单位的事件列表x
-          if (($utils.Cookie.get('isAdmin')).toString() === 'true') { // 管理员用户
+          if (this.isAuth) { // 管理员用户
             this.activeTime = new Date(day)
             this.eventForm.occurrence_time = new Date(day)
             this.eventForm.name = ''
             this.modal_eventForm = true
           } else { // 普通用户
-            console.log(111)
+            console.log('没有权限操作日历')
           }
         } else { // click: 显示事件
           this.activeDay = day
@@ -568,6 +580,13 @@ export default {
     // this.fetchEventListFromServer()
     this.fetchEventsTreeFromServer()
     this.fetchEventByMonthFromServer()
+    this.fetchNoticeFromServer()
+    let auth = unescape($utils.Cookie.get('userAuth'))
+    if (auth === '管理员' || auth === '高级用户') {
+      this.isAuth = true
+    } else {
+      this.isAuth = false
+    }
   }
 }
 </script>

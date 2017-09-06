@@ -30,8 +30,8 @@
       </el-table-column>
       <el-table-column prop="" label="操作">
         <template scope="scope">
-          <Button type="error" size="small" @click="handleDel(scope.row.name, scope.row.id)">删除</Button>
-          <Button type="primary" size="small" @click="handleEdit(scope.row)">编辑</Button>
+          <Button type="error" size="small" @click="handleDel(scope.row.name, scope.row.id)" :disabled="!handleAuthEdit(scope.row.dept_name)">删除</Button>
+          <Button type="primary" size="small" @click="handleEdit(scope.row)" :disabled="!handleAuthEdit(scope.row.dept_name)">编辑</Button>
         </template>
       </el-table-column>
     </el-table>
@@ -89,6 +89,16 @@
               </Radio>
               <Radio label="3">
                 <span>其他</span>
+              </Radio>
+            </Radio-group>
+          </Form-item>
+          <Form-item label="归属" prop="dept_name" v-if="isAuth">
+            <Radio-group v-model="eventForm.dept_name">
+              <Radio label="1" :disabled="privateUser">
+                <span>私有事件</span>
+              </Radio>
+              <Radio label="0" :disabled="privateUser">
+                <span>公有事件</span>
               </Radio>
             </Radio-group>
           </Form-item>
@@ -162,9 +172,12 @@ export default {
         recurrence: 0,
         alertRange: [],
         category: 1,
-        remark: ''
+        remark: '',
+        dept_name: 1
       },
-      isEdit: false
+      isEdit: false,
+      isAuth: false,
+      privateUser: false
     }
   },
   props: ['time', 'treeData'],
@@ -208,7 +221,8 @@ export default {
         recurrence: this.eventForm.recurrence,
         alertRange: this.eventForm.alertRange,
         category: this.eventForm.category,
-        remark: this.eventForm.remark
+        remark: this.eventForm.remark,
+        dept_name: Number(this.eventForm.dept_name) ? unescape($utils.Cookie.get('deptName')) : '公有'
       }).then((res) => {
         this.eventAdd_modal = false
         this.cancelEventAdd()
@@ -287,7 +301,8 @@ export default {
         recurrence: 0,
         alertRange: [],
         category: 1,
-        remark: ''
+        remark: '',
+        dept_name: 1
       }
       this.$emit('closeDayListModal', 'show')
     },
@@ -305,7 +320,8 @@ export default {
         recurrence: 0,
         alertRange: [],
         category: 1,
-        remark: ''
+        remark: '',
+        dept_name: 1
       }
       this.cancelParentModal()
       this.eventAdd_modal = true
@@ -313,10 +329,31 @@ export default {
     },
     handleRate (val) {
       console.log(`handle rate: ${val}`)
+    },
+    handleAuthEdit (deptName) {
+      let auth = unescape($utils.Cookie.get('userAuth'))
+      let res = false
+      if (auth === '管理员') {
+        res = true
+      } else if ((deptName === unescape($utils.Cookie.get('deptName')) && (auth !== '普通用户'))) {
+        res = true
+      }
+      return res
     }
   },
   mounted () {
     this.fetchEventListFromServer()
+    let auth = unescape($utils.Cookie.get('userAuth'))
+    if (auth === '管理员' || auth === '高级用户') {
+      this.isAuth = true
+    } else {
+      this.isAuth = false
+    }
+    if (auth === '高级用户') {
+      this.privateUser = true
+    } else {
+      this.privateUser = false
+    }
   }
 }
 </script>

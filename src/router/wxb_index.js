@@ -7,7 +7,7 @@ import Calendar from '@/components/theme/event/wxb_index'
 
 import NotFoundComponent from '@/components/notFoundComponent'
 
-const $utils = require('utils')
+// const $utils = require('utils')
 
 Vue.use(Router)
 
@@ -33,18 +33,21 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // iView.LoadingBar.start()
   NProgress.start()
-  let isLogin = $utils.Cookie.get('realName')
-  console.log(isLogin)
+  next()
+  /*
+  let ticket = $utils.Cookie.get('ticket')
+  console.log(ticket)
   function redirect () {
     let a = document.createElement('a')
     a.href = 'http://10.136.89.98/logout'
     a.click()
   }
-  if (!isLogin) {
-    return redirect()
+  if (!ticket) {
+    return next()
   } else {
     return next()
   }
+  */
 
   // next()
   /*
