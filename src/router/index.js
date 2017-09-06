@@ -45,14 +45,14 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  let isLogin = $utils.Cookie.get('realName')
-  console.log(isLogin)
+  let ticket = $utils.Cookie.get('ticket')
+  console.log(ticket)
   function redirect () {
     let a = document.createElement('a')
     a.href = 'http://10.136.89.98/logout'
     a.click()
   }
-  if (!isLogin) {
+  if (!ticket) {
     return redirect()
   } else {
     return next()
