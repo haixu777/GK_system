@@ -355,7 +355,9 @@ export default {
       this.$axios.get('/events/fetchByDay', {
         params: {
           month: ((time).getMonth() + 1),
-          day: (time).getDate()
+          day: (time).getDate(),
+          public: this.calendar_conditions.public,
+          dept_name: unescape($utils.Cookie.get('deptName'))
         }
       }).then((res) => {
         this.dayList = res.data.eventsList.map((item) => {
@@ -450,7 +452,11 @@ export default {
       }
     },
     fetchNoticeFromServer () {
-      this.$axios.get('/events/notice')
+      this.$axios.get('/events/notice', {
+        params: {
+          dept_name: unescape($utils.Cookie.get('deptName'))
+        }
+      })
         .then((res) => {
           let noticeList = res.data.noticeList
           noticeList.forEach((item, i) => {
