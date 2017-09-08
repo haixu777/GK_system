@@ -128,6 +128,28 @@
               <process-upload :eventId="eventId" v-if="activeProcess"></process-upload>
             </div>
           </Panel>
+          <Panel name="account">
+            相关账号
+            <div slot="content" class="clearfix">
+              <el-table
+                :data="account_tableData"
+                border
+                style="width: 99%">
+                <el-table-column label="名称" prop="publish_account">
+                </el-table-column>
+                <el-table-column label="平台" prop="publish_platform">
+                </el-table-column>
+              </el-table>
+            </div>
+          </Panel>
+          <Panel name="keywords">
+            相关关键词
+            <div slot="content">
+              <Tag color="yellow" v-for="keyword in keywordList" :key="keyword.id">
+                {{ keyword.keyword }}
+              </Tag>
+            </div>
+          </Panel>
           <Panel name="timeline">
             管控历史
             <div slot="content">
@@ -241,6 +263,8 @@ export default {
       ],
       control_tableData: [],
       sample_tableData: [],
+      account_tableData: [],
+      keywordList: [],
       localUrl: process.env.URL,
       timer: null,
       count: 0,
@@ -326,6 +350,10 @@ export default {
         this.fetchTimelineFromServer()
       } else if (value === 'process') {
         this.activeProcess = true
+      } else if (value === 'account') {
+        this.fetchAccountFromServer()
+      } else if (value === 'keywords') {
+        this.fetchKeywordListFromServer()
       } else {
         this.activeProcess = false
       }
@@ -395,6 +423,28 @@ export default {
         this.sample_tableData.forEach((item) => {
           item['forensic_date'] = $utils.formatTime(item['forensic_date'])
         })
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    fetchAccountFromServer () {
+      this.$axios.get('/sample/fetchAccountByEventId', {
+        params: {
+          id: this.eventId
+        }
+      }).then((res) => {
+        this.account_tableData = res.data.accountList
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    fetchKeywordListFromServer () {
+      this.$axios.get('/sample/fetchKeywordByEventId', {
+        params: {
+          id: this.eventId
+        }
+      }).then((res) => {
+        this.keywordList = res.data.keywordList
       }).catch((err) => {
         console.log(err)
       })

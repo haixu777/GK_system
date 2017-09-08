@@ -63,8 +63,6 @@ export default {
   },
   methods: {
     fetchUserInfoByMenhu (cb) {
-      console.log($utils.Cookie.get('ticket'))
-      console.log('unescape: ' + (unescape($utils.Cookie.get('ticket')).replace('%3D', '=')))
       this.$axios.post('http://10.136.88.96:8080/menhu/authUser/getUserResourceOther', {
         ticket: (unescape($utils.Cookie.get('ticket'))).replace('%3D', '='),
         clientIP: '127.0.0.1',
@@ -128,7 +126,10 @@ export default {
       $utils.Cookie.del('realName')
       $utils.Cookie.del('isAdmin')
       let a = document.createElement('a')
-      a.href = 'http://10.136.89.98/logout'
+      // 测试环境
+      // a.href = 'http://10.136.89.98/logout'
+      // 正式环境
+      a.href = 'http://10.136.89.74/logout'
       a.click()
     }
   },

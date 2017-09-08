@@ -192,7 +192,8 @@ export default {
       this.$axios.get('/events/fetchByDay', {
         params: {
           month: ((this.time).getMonth() + 1),
-          day: (this.time).getDate()
+          day: (this.time).getDate(),
+          dept_name: unescape($utils.Cookie.get('deptName'))
         }
       }).then((res) => {
         // this.eventList = res.data.eventsList

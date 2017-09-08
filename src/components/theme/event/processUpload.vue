@@ -42,7 +42,7 @@ export default {
   methods: {
     fetchProcessImageFromServer () {
       if (!this.eventId) return
-      this.isAdmin = $utils.Cookie.get('isAdmin').toString() === 'true'
+      this.isAdmin = unescape($utils.Cookie.get('userAuth')) === '管理员'
       this.$axios.get('events/process_image', {
         params: {
           eventId: this.eventId
