@@ -145,7 +145,7 @@
           <Panel name="keywords">
             相关关键词
             <div slot="content">
-              <Tag color="yellow" v-for="keyword in keywordList" :key="keyword.id">
+              <Tag color="yellow" type="border" v-for="keyword in keywordList" :key="keyword.id">
                 {{ keyword.keyword }}
               </Tag>
             </div>
