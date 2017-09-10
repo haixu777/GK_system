@@ -135,7 +135,7 @@
                 :data="account_tableData"
                 border
                 style="width: 99%">
-                <el-table-column label="名称" prop="publish_account">
+                <el-table-column label="账号名" prop="publish_account">
                 </el-table-column>
                 <el-table-column label="平台" prop="publish_platform">
                 </el-table-column>
