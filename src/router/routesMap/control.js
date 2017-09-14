@@ -2,6 +2,7 @@ const Control = resolve => require(['@/components/theme/control'], resolve)
 const autoExtract = resolve => require(['@/components/theme/control/auto_extract'], resolve)
 const dataEntry = resolve => require(['@/components/theme/control/data_entry'], resolve)
 const manualReview = resolve => require(['@/components/theme/control/manual_review'], resolve)
+const accountHandle = resolve => require(['@/components/theme/control/account_handle'], resolve)
 
 export default {
   path: '/control',
@@ -22,6 +23,11 @@ export default {
       path: 'manual_review',
       name: 'manual_review',
       component: manualReview
+    },
+    {
+      path: 'account_handle',
+      name: 'account_handle',
+      component: accountHandle
     }
   ]
 }

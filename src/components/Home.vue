@@ -41,12 +41,12 @@ export default {
   },
   methods: {
     fetchUserInfoFromMenhu () {
-      this.$axios.post('http://10.136.88.96:8081/api/authUser/getUserResourceOther', {
-        ticket: $utils.Cookie.get('ticket'),
+      this.$axios.post('http://10.136.88.96:8080/menhu/authUser/getUserResourceOther', {
+        ticket: unescape($utils.Cookie.get('ticket')),
         clientIP: '127.0.0.1',
         appSysID: '237'
       }).then((res) => {
-        console.log(res)
+        console.log(res.data)
       }).catch((err) => {
         console.log(err)
       })
