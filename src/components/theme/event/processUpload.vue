@@ -12,7 +12,7 @@
       <i v-else class="el-icon-plus uploader-icon"></i>
     </el-upload>
     <div v-else style="position:relative;">
-      <Button v-if="isAdmin" size="small" type="warning" style="position:absolute;right:0;top:2px;" icon="ios-trash" @click="delImage"></Button>
+      <Button size="small" type="warning" style="position:absolute;right:0;top:2px;" icon="ios-trash" @click="delImage"></Button>
       <vue-images :imgs="[{imageUrl: imageUrl}]" showclosebutton modalclose>
       </vue-images>
     </div>
@@ -80,11 +80,11 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file) {
-      const isAdmin = $utils.Cookie.get('isAdmin').toString() === 'true'
-      if (!isAdmin) {
-        this.$Message.error('无法上传：非管理员用户')
-        return false
-      }
+      // const isAdmin = $utils.Cookie.get('isAdmin').toString() === 'true'
+      // if (!isAdmin) {
+      //   this.$Message.error('无法上传：非管理员用户')
+      //   return false
+      // }
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG) {

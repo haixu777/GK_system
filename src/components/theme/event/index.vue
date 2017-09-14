@@ -9,10 +9,10 @@
         <Icon type="ios-paper"></Icon>
         事件分类
       </Menu-item>
-      <Menu-item name="calendar">
+      <!-- <Menu-item name="calendar">
         <Icon type="ios-paper"></Icon>
         事件日历
-      </Menu-item>
+      </Menu-item> -->
       <div class="" style="position:absolute;top:0;right:30px;">
         <span style="color: #fff;">{{ userName }}</span>
         <i-button type="primary" size="small" @click="logout">注销</i-button>

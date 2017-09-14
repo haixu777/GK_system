@@ -6,13 +6,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userName: decodeURIComponent($utils.Cookie.get('realName'))
+    userName: unescape($utils.Cookie.get('userName'))
   },
   mutations: {
     logout () {
       $utils.Cookie.del('realName')
       let a = document.createElement('a')
-      a.href = 'http://10.136.89.98/logout'
+      a.href = 'http://10.136.89.74/logout'
       a.click()
     }
   }

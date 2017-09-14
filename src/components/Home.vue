@@ -36,19 +36,61 @@ export default {
         { name: '管控方案', path: 'control/manual_review' },
         { name: '事件管理', path: 'event/category' }
       ],
-      userName: this.$store.state.userName
+      userName: this.$store.state.userName,
+      userAuth: unescape($utils.Cookie.get('userAuth')),
+      deptName: unescape($utils.Cookie.get('deptName')),
+      userAccount: null,
+      deptId: null,
+      show: false
     }
   },
   methods: {
-    fetchUserInfoFromMenhu () {
+    fetchUserInfoByMenhu (cb) {
       this.$axios.post('http://10.136.88.96:8080/menhu/authUser/getUserResourceOther', {
-        ticket: unescape($utils.Cookie.get('ticket')),
+        ticket: (unescape($utils.Cookie.get('ticket'))).replace('%3D', '='),
         clientIP: '127.0.0.1',
         appSysID: '237'
       }).then((res) => {
-        console.log(res.data)
+        if (res.data.success) {
+          this.userId = res.data.info.userId
+          this.userName = res.data.info.realName
+          this.deptName = res.data.info.deptName
+          this.deptId = res.data.info.deptId
+          this.userAuth = res.data.info.userAuth
+          this.userAccount = res.data.info.userAccount
+          $utils.Cookie.set('userName', res.data.info.realName)
+          $utils.Cookie.set('deptName', res.data.info.deptName)
+          $utils.Cookie.set('userAuth', res.data.info.userAuth)
+          cb()
+        } else {
+          this.logoutMsg()
+        }
       }).catch((err) => {
         console.log(err)
+      })
+    },
+    syncUserInfoFromServer () {
+      this.$axios.post('/user_wxb/update', {
+        id: this.userId,
+        real_name: this.userName,
+        user_account: this.userAccount,
+        dept_id: this.deptId,
+        dept_name: this.deptName,
+        auth: this.userAuth
+      }).then((res) => {
+        console.log(res)
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    logoutMsg () {
+      this.$Modal.error({
+        title: '登录信息过期',
+        content: '请注销并重新登录',
+        okText: '注销',
+        onOk: () => {
+          this.logout()
+        }
       })
     },
     handleThemeSelect (path) {
@@ -63,7 +105,13 @@ export default {
   },
   mounted () {
     this.$Notice.destroy()
-    this.fetchUserInfoFromMenhu()
+    if ($utils.Cookie.get('ticket')) {
+      this.fetchUserInfoByMenhu(() => {
+        this.syncUserInfoFromServer()
+      })
+    } else {
+      this.logoutMsg()
+    }
   }
 }
 </script>
