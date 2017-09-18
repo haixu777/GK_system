@@ -20,7 +20,7 @@
 </template>
 
 <script>
-const $utils = require('utils')
+// const $utils = require('utils')
 const vueImages = require('vue-images')
 export default {
   data () {
@@ -42,7 +42,7 @@ export default {
   methods: {
     fetchProcessImageFromServer () {
       if (!this.eventId) return
-      this.isAdmin = $utils.Cookie.get('isAdmin').toString() === 'true'
+      // this.isAdmin = $utils.Cookie.get('isAdmin').toString() === 'true'
       this.$axios.get('events/process_image', {
         params: {
           eventId: this.eventId
