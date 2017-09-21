@@ -32,9 +32,9 @@ export default {
     return {
       activeName: '',
       themeList: [
-        { name: '取证样本', path: 'sample/auto-extract' },
+        { name: '事件管理', path: 'event/category' },
         { name: '管控方案', path: 'control/manual_review' },
-        { name: '事件管理', path: 'event/category' }
+        { name: '取证样本', path: 'sample/auto-extract' }
       ],
       userName: this.$store.state.userName,
       userAuth: unescape($utils.Cookie.get('userAuth')),
