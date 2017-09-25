@@ -78,6 +78,7 @@ export default {
           $utils.Cookie.set('userName', res.data.info.realName)
           $utils.Cookie.set('deptName', res.data.info.deptName)
           $utils.Cookie.set('userAuth', res.data.info.userAuth)
+          $utils.Cookie.set('userId', res.data.info.userId)
           this.show = true
           cb()
         } else {

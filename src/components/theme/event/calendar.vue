@@ -14,6 +14,14 @@
         </div>
         <div slot="fc-header-right">
           <Select
+            v-model="calendar_conditions.tag_id"
+            style="width: 100px;display: inline-block"
+            placeholder="标签筛选"
+            clearable
+            @on-change="fetchEventByMonthFromServer">
+            <Option :value="tag.id" v-for="tag in tagList" :key="tag.id">{{ tag.name }}</Option>
+          </Select>
+          <Select
             v-model="calendar_conditions.public"
             style="width: 100px;display: inline-block"
             placeholder="事件类型"
@@ -70,6 +78,13 @@
           </el-form-item>
           <el-form-item label="备注">
             <span>{{ item.remark ? item.remark : '暂无' }}</span>
+          </el-form-item>
+          <el-form-item label="标签">
+            <!-- <span>{{ item.tags.length ? item.tags : '暂无' }}</span> -->
+            <span>
+              <Tag v-for="tag in item.tags" color="red" :key="tag.id" closable @on-close="tagDel(tag.id, item.id)">{{tag.label}}</Tag>
+              <Icon type="plus-circled" style="font-size:18px;" @click.native="handleTagAdd(item.id)"></Icon>
+            </span>
           </el-form-item>
         </el-form>
       </div>
@@ -253,7 +268,8 @@ export default {
       calendar_conditions: {
         view: 0,
         recurrence: 0,
-        public: 1
+        public: 1,
+        tag_id: ''
       },
       timelineList: [],
       control_columns: [
@@ -336,7 +352,9 @@ export default {
       dayList: [],
       activeDay: null,
       activeProcess: false,
-      isAuth: false
+      isAuth: false,
+      tagList: [],
+      inputTag: ''
     }
   },
   watch: {
@@ -385,7 +403,9 @@ export default {
           month: ((time).getMonth() + 1),
           day: (time).getDate(),
           public: this.calendar_conditions.public,
-          dept_name: unescape($utils.Cookie.get('deptName'))
+          dept_name: unescape($utils.Cookie.get('deptName')),
+          user_id: unescape($utils.Cookie.get('userId')),
+          tag_id: this.calendar_conditions.tag_id
         }
       }).then((res) => {
         this.dayList = res.data.eventsList.map((item) => {
@@ -455,7 +475,9 @@ export default {
           recurrence: this.calendar_conditions.recurrence,
           view: this.calendar_conditions.view,
           public: this.calendar_conditions.public,
-          dept_name: unescape($utils.Cookie.get('deptName'))
+          dept_name: unescape($utils.Cookie.get('deptName')),
+          // user_id: unescape($utils.Cookie.get('userId')),
+          tag_id: this.calendar_conditions.tag_id
         }
       }).then((res) => {
         this.fcEvents = res.data.eventsList
@@ -489,6 +511,17 @@ export default {
           desc: str[0]
         })
         this.fetchEventByMonthFromServer()
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    fetchTagListFromServer () {
+      this.$axios.get('/tag/list', {
+        params: {
+          userId: unescape($utils.Cookie.get('userId'))
+        }
+      }).then((res) => {
+        this.tagList = res.data.tagList
       }).catch((err) => {
         console.log(err)
       })
@@ -630,6 +663,87 @@ export default {
       } else {
         this.modal_eventForm = true
       }
+    },
+    tagToServer (userId, eventId, tag) {
+      this.$axios.post('/tag/bind', {
+        userId: userId,
+        eventId: eventId,
+        tag: tag
+      }).then((res) => {
+        if (res.data.success) {
+          this.$Message.success(res.data.msg)
+          this.fetchEventByMonthFromServer()
+          this.fetchTagListFromServer()
+        } else {
+          this.$Message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    handleTagAdd (eventId) {
+      this.$Modal.confirm({
+        width: 168,
+        render: (h) => {
+          return h('Input', {
+            props: {
+              value: this.inputTag,
+              autofocus: true,
+              placeholder: '请输入标签'
+            },
+            on: {
+              input: (val) => {
+                this.inputTag = val
+              }
+            }
+          })
+        },
+        onOk: () => {
+          if (!this.inputTag) {
+            this.$Message.error('添加失败，标签不能为空')
+          } else if (this.inputTag.indexOf(' ') !== -1) {
+            this.$Message.error('添加失败，标签不能包含空格')
+          } else {
+            this.tagToServer(unescape($utils.Cookie.get('userId')), eventId, this.inputTag)
+          }
+          this.inputTag = ''
+        },
+        onCancel: () => {
+          this.$Message.info('用户添加取消')
+          this.inputTag = ''
+        }
+      })
+    },
+    tagUnbindToserver (tagId, eventId) {
+      this.$axios.post('/tag/unbind', {
+        tagId: tagId,
+        eventId: eventId,
+        userId: unescape($utils.Cookie.get('userId'))
+      }).then((res) => {
+        if (res.data.success) {
+          this.$Message.success(res.data.msg)
+          this.fetchEventByMonthFromServer()
+          this.fetchTagListFromServer()
+        } else {
+          this.$Message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    tagDel (tagId, eventId) {
+      this.$Modal.confirm({
+        title: '确定删除吗',
+        content: '<p>系统将自动删除该事件下的标签</p>',
+        okText: '删除',
+        cancelText: 'Cancel',
+        onOk: () => {
+          this.tagUnbindToserver(tagId, eventId)
+        },
+        onCancel: () => {
+          this.$Message.info('用户取消操作')
+        }
+      })
     }
   },
   mounted () {
@@ -637,6 +751,7 @@ export default {
     this.fetchEventsTreeFromServer()
     this.fetchEventByMonthFromServer()
     this.fetchNoticeFromServer()
+    this.fetchTagListFromServer()
     let auth = unescape($utils.Cookie.get('userAuth'))
     if (auth === '管理员' || auth === '高级用户') {
       this.isAuth = true
