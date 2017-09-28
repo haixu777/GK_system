@@ -3,7 +3,9 @@ import Router from 'vue-router'
 import NProgress from 'nprogress'
 
 // import Login from '@/components/Login'
-import Calendar from '@/components/theme/event/wxb_index'
+// import index from '@/components/theme/event/wxb_index'
+import Calendar from '@/components/theme/event/calendar'
+import MyTags from '@/components/theme/event/myTags'
 
 import NotFoundComponent from '@/components/notFoundComponent'
 
@@ -16,12 +18,16 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: { name: 'calendar' }
+      redirect: '/calendar'
     },
     {
       path: '/calendar',
-      name: 'calendar',
       component: Calendar
+    },
+    {
+      path: '/mytags',
+      name: 'mytag',
+      component: MyTags
     },
     {
       path: '*',

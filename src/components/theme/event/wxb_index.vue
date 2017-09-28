@@ -5,6 +5,9 @@
         <Icon type="ios-paper"></Icon>
         事件日历
       </Menu-item> -->
+      <div class="" style="position:absolute;top:0;left:30px;">
+        <i-button type="primary" size="small" @click="handleMytag">我的标签</i-button>
+      </div>
       <span style="color:#fff;font-size:20px;font-weight:600;">事件日历系统</span>
       <div class="" style="position:absolute;top:0;right:30px;">
         <span style="color: #fff;" >
@@ -20,8 +23,8 @@
       </div>
     </Menu>
     <div class="event_content clearfix">
-      <!-- <router-view></router-view> -->
-      <calendar v-if="show"></calendar>
+      <router-view></router-view>
+      <!-- <calendar></calendar> -->
     </div>
   </div>
 </template>
@@ -123,6 +126,9 @@ export default {
     handleSubMenuSelect (path) {
       this.activeName = path
     },
+    handleMytag () {
+      console.log(this.$router)
+    },
     logout () {
       $utils.Cookie.del('realName')
       $utils.Cookie.del('isAdmin')
@@ -135,13 +141,13 @@ export default {
     }
   },
   mounted () {
-    if ($utils.Cookie.get('ticket')) {
-      this.fetchUserInfoByMenhu(() => {
-        this.syncUserInfoFromServer()
-      })
-    } else {
-      this.logoutMsg()
-    }
+    // if ($utils.Cookie.get('ticket')) {
+    //   this.fetchUserInfoByMenhu(() => {
+    //     this.syncUserInfoFromServer()
+    //   })
+    // } else {
+    //   this.logoutMsg()
+    // }
   }
 }
 </script>

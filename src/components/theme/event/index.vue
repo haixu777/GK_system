@@ -15,7 +15,7 @@
       </Menu-item>
     </Menu>
     <div class="event_content clearfix">
-      <router-view></router-view>
+      <!-- <router-view></router-view> -->
     </div>
   </div>
 </template>

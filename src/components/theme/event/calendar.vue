@@ -19,7 +19,16 @@
             placeholder="标签筛选"
             clearable
             @on-change="fetchEventByMonthFromServer">
-            <Option :value="tag.id" v-for="tag in tagList" :key="tag.id">{{ tag.name }}</Option>
+            <!-- <Option :value="tag.id" v-for="tag in tagList" :key="tag.id">{{ tag.name }}</Option> -->
+            <OptionGroup label="个人">
+              <Option :value="tag.id" v-for="tag in tagList.personalList" :key="tag.id">{{ tag.name }}</Option>
+            </OptionGroup>
+            <OptionGroup label="组内">
+              <Option :value="tag.id" v-for="tag in tagList.groupList" :key="tag.id">{{ tag.name }}</Option>
+            </OptionGroup>
+            <OptionGroup label="全局">
+              <Option :value="tag.id" v-for="tag in tagList.globalList" :key="tag.id">{{ tag.name }}</Option>
+            </OptionGroup>
           </Select>
           <Select
             v-model="calendar_conditions.public"
@@ -80,7 +89,6 @@
             <span>{{ item.remark ? item.remark : '暂无' }}</span>
           </el-form-item>
           <el-form-item label="标签">
-            <!-- <span>{{ item.tags.length ? item.tags : '暂无' }}</span> -->
             <span>
               <Tag v-for="tag in item.tags" color="red" :key="tag.id" closable @on-close="tagDel(tag.id, item.id)">{{tag.label}}</Tag>
               <Icon type="plus-circled" style="font-size:18px;" @click.native="handleTagAdd(item.id)"></Icon>
@@ -89,6 +97,31 @@
         </el-form>
       </div>
     </div>
+
+    <Modal v-model="tagBindModal" :width="200">
+      <p slot="header" style="color:#f60;font-weight:bold;">
+        <!-- <Icon type="ios-information"></Icon> -->
+        <span>{{ '标签添加' }}</span>
+      </p>
+      <Select
+        v-model="tagBindValue"
+        placeholder="标签筛选"
+        @on-change="">
+        <!-- <Option :value="tag.id" v-for="tag in tagList" :key="tag.id">{{ tag.name }}</Option> -->
+        <OptionGroup label="个人">
+          <Option :value="tag.id" v-for="tag in tagBindList.personalList" :key="tag.id" :disabled="tag.disabled">{{ tag.name }}</Option>
+        </OptionGroup>
+        <OptionGroup label="组内">
+          <Option :value="tag.id" v-for="tag in tagBindList.groupList" :key="tag.id" :disabled="tag.disabled">{{ tag.name }}</Option>
+        </OptionGroup>
+        <OptionGroup label="全局">
+          <Option :value="tag.id" v-for="tag in tagBindList.globalList" :key="tag.id" :disabled="tag.disabled">{{ tag.name }}</Option>
+        </OptionGroup>
+      </Select>
+      <div slot="footer">
+        <i-button type="primary" long @click="tagToServer(tagBindValue, tagBindEventId)">添加</i-button>
+      </div>
+    </Modal>
       <!--
       <Date-picker
         type="daterange"
@@ -354,7 +387,10 @@ export default {
       activeProcess: false,
       isAuth: false,
       tagList: [],
-      inputTag: ''
+      tagBindValue: '',
+      tagBindModal: false,
+      tagBindList: [],
+      tagBindEventId: null
     }
   },
   watch: {
@@ -482,7 +518,7 @@ export default {
       }).then((res) => {
         this.fcEvents = res.data.eventsList
         this.modal_eventForm = false
-        this.$Notice.destroy()
+        // this.$Notice.destroy()
         this.fetchEventListByDayFromServer(this.activeDay)
         // this.fetchNoticeFromServer()
       }).catch((err) => {
@@ -515,13 +551,18 @@ export default {
         console.log(err)
       })
     },
-    fetchTagListFromServer () {
+    fetchTagListFromServer (shouldBind, auth) {
       this.$axios.get('/tag/list', {
         params: {
-          userId: unescape($utils.Cookie.get('userId'))
+          userId: unescape($utils.Cookie.get('userId')),
+          dept_name: unescape($utils.Cookie.get('deptName'))
         }
       }).then((res) => {
-        this.tagList = res.data.tagList
+        if (shouldBind) {
+          this.tagBindList = $utils.formatTagList(res.data.tagList, shouldBind, auth)
+        } else {
+          this.tagList = $utils.formatTagList(res.data.tagList)
+        }
       }).catch((err) => {
         console.log(err)
       })
@@ -559,17 +600,19 @@ export default {
               let controlDom = ''
               let now = new Date()
               let itemStart = new Date(item.control_start_time)
-              let timeStart = now.getTime() - itemStart.getTime()
+              let timeStart = now.getTime() - itemStart.getTime() // 取整
               let itemEnd = new Date(item.control_end_time)
               let timeEnd = now.getTime() - itemEnd.getTime()
               if (timeStart < 0) {
                 controlDom = `距离管控: <span style="color:#f40;">${Math.abs(Math.floor(timeStart / (1000 * 60 * 60 * 24)))}</span> 天`
               }
+              /*
               if (timeEnd > 0) {
                 controlDom = `管控结束: <span style="color:#f40;">${Math.abs(parseInt(timeEnd / (1000 * 60 * 60 * 24)))}</span> 天`
               }
-              if (timeStart > 0 && timeEnd < 0) {
-                controlDom = `已经管控: <span style="color:#f40;">${Math.abs(parseInt(timeStart / (1000 * 60 * 60 * 24)))}</span> 天`
+              */
+              if (timeStart > 0 && timeEnd < 0) { // 考虑=的情况 , 天数+1
+                controlDom = `处于管控: 第<span style="color:#f40;">${Math.abs(parseInt(timeStart / (1000 * 60 * 60 * 24)))}</span> 天`
               }
 
               // Notice
@@ -664,16 +707,15 @@ export default {
         this.modal_eventForm = true
       }
     },
-    tagToServer (userId, eventId, tag) {
+    tagToServer (tagId, eventId) {
       this.$axios.post('/tag/bind', {
-        userId: userId,
-        eventId: eventId,
-        tag: tag
+        tagId: tagId,
+        eventId: eventId
       }).then((res) => {
         if (res.data.success) {
           this.$Message.success(res.data.msg)
-          this.fetchEventByMonthFromServer()
-          this.fetchTagListFromServer()
+          this.tagBindModal = false
+          this.fetchEventListByDayFromServer(this.activeDay)
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -682,13 +724,17 @@ export default {
       })
     },
     handleTagAdd (eventId) {
+      this.tagBindModal = true
+      this.tagBindEventId = eventId
+      this.fetchTagListFromServer(true, unescape($utils.Cookie.get('userAuth')))
+      /*
       this.$Modal.confirm({
         width: 168,
         render: (h) => {
-          return h('Input', {
+          return h('Select', {
             props: {
-              value: this.inputTag,
-              autofocus: true,
+              value: eventId,
+              // autofocus: true,
               placeholder: '请输入标签'
             },
             on: {
@@ -713,6 +759,7 @@ export default {
           this.inputTag = ''
         }
       })
+      */
     },
     tagUnbindToserver (tagId, eventId) {
       this.$axios.post('/tag/unbind', {
@@ -873,5 +920,8 @@ export default {
       color: #fff !important;
       background-color: red !important;
     }
+  }
+  .ivu-select-group-title {
+    text-align: left;
   }
 </style>

@@ -14,9 +14,6 @@ function formatEventLevel (level) {
   } else {
     var arr = level.split(',')
     var res = []
-    // arr.forEach((level) => {
-    //   res.push(Number(level))
-    // })
     arr.forEach((function(level) {
       res.push(Number(level))
     }))
@@ -61,4 +58,48 @@ function formatAccountList (accountList) {
   return resObj
 }
 
-export { formatTime, formatEventLevel, Cookie, formatAccountList }
+function formatTagList (tagList, shouldBind, auth) {
+  var personal = []
+  var group = []
+  var _global = []
+  if (shouldBind) {// 绑定tag使用
+    tagList.forEach(function(tag) {
+      if (tag.domain == '全局') {
+        if (auth.indexOf('管理员') !== -1) {
+          _global.push(tag)
+        } else {
+          tag.disabled = true
+          _global.push(tag)
+        }
+      } else if (tag.domain == '组内') {
+        if (auth.indexOf('管理员') !== -1 || auth.indexOf('高级') !== -1) {
+          group.push(tag)
+        } else {
+          tag.disabled = true
+          group.push(tag)
+        }
+      } else if (tag.domain == '个人') {
+        personal.push(tag)
+      }
+    })
+  } else {// 查看tagList使用
+    tagList.forEach(function(tag)  {
+      if (tag.domain == '全局') {
+        _global.push(tag)
+      } else if (tag.domain == '组内') {
+        group.push(tag)
+      } else if (tag.domain == '个人') {
+        personal.push(tag)
+      }
+    })
+  }
+  var resObj = {
+    personalList: personal,
+    groupList: group,
+    globalList: _global
+  }
+  return resObj
+  // return {personal, group, _global}
+}
+
+export { formatTime, formatEventLevel, Cookie, formatAccountList, formatTagList }
