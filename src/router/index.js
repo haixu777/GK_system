@@ -46,14 +46,14 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   NProgress.start()
   let ticket = $utils.Cookie.get('ticket')
-  // console.log(ticket)
-  // function redirect () {
-  //   let a = document.createElement('a')
-  //   a.href = 'http://10.136.89.98/logout'
-  //   a.click()
-  // }
+  function redirect () {
+    let a = document.createElement('a')
+    a.href = 'http://10.136.89.74/logout'
+    // a.href = 'http://www.baidu.com'
+    a.click()
+  }
   if (!ticket) {
-    return next()
+    return redirect()
   } else {
     return next()
   }
