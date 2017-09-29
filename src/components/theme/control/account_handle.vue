@@ -66,7 +66,7 @@
           <FormItem label="平台" prop="platform">
             <Input v-model="formValidate.platform" placeholder="请输入平台"></Input>
           </FormItem>
-          <FormItem label="操作" prop="operation">
+          <FormItem label="动作" prop="operation">
             <Input v-model="formValidate.operation" placeholder="请输入操作"></Input>
           </FormItem>
         </Form>
@@ -98,11 +98,11 @@ export default {
           key: 'platform'
         },
         {
-          title: '操作',
+          title: '动作',
           key: 'operation'
         },
         {
-          title: 'action',
+          title: '操作',
           render: (h, params) => {
             return h('div', [
               h('Button', {
