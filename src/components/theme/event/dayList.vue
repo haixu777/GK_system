@@ -30,8 +30,8 @@
       </el-table-column>
       <el-table-column prop="" label="操作">
         <template scope="scope">
-          <Button type="error" size="small" @click="handleDel(scope.row.name, scope.row.id)" :disabled="!handleAuthEdit(scope.row.dept_name)">删除</Button>
-          <Button type="primary" size="small" @click="handleEdit(scope.row)" :disabled="!handleAuthEdit(scope.row.dept_name)">编辑</Button>
+          <Button type="error" size="small" @click="handleDel(scope.row.name, scope.row.id)" :disabled="handleAuthEdit(scope.row.dept_name)">删除</Button>
+          <Button type="primary" size="small" @click="handleEdit(scope.row)" :disabled="handleAuthEdit(scope.row.dept_name)">编辑</Button>
         </template>
       </el-table-column>
     </el-table>
@@ -333,11 +333,11 @@ export default {
     },
     handleAuthEdit (deptName) {
       let auth = unescape($utils.Cookie.get('userAuth'))
-      let res = false
+      let res = true
       if (auth === '管理员') {
-        res = true
+        res = false
       } else if ((deptName === unescape($utils.Cookie.get('deptName')) && (auth !== '普通用户'))) {
-        res = true
+        res = false
       }
       return res
     }
