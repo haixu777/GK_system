@@ -8,7 +8,7 @@
       <Button type="ghost" icon="ios-cloud-upload-outline" size="small">上传文件</Button>
     </Upload> -->
     <Button type="ghost" icon="ios-cloud-upload-outline" size="small" @click="handleUpload">上传文件</Button>
-    <i-button type="primary" icon="settings" size="small">批量抽取</i-button>
+    <!-- <i-button type="primary" icon="settings" size="small">批量抽取</i-button> -->
     <el-table
       :data="tableData"
       style="width: 100%;text-align: left;margin: 0;"
