@@ -36,7 +36,7 @@
             placeholder="事件类型"
             @on-change="fetchEventByMonthFromServer">
             <Option :value="1">公有事件</Option>
-            <Option :value="0">私有事件</Option>
+            <Option :value="0">组内事件</Option>
           </Select>
           <Select
             v-model="calendar_conditions.view"

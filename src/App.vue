@@ -10,7 +10,7 @@
           {{ !taggleView ? '我的日历' : '我的标签' }}
         </i-button>
       </div>
-      <span style="color:#fff;font-size:20px;font-weight:600;">事件日历系统</span>
+      <span style="color:#fff;font-size:20px;font-weight:600;">舆情事件日历系统</span>
       <div class="" style="position:absolute;top:0;right:30px;">
         <span style="color: #fff;" >
           <Icon type="person"></Icon>

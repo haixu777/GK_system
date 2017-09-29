@@ -95,7 +95,7 @@
           <Form-item label="归属" prop="dept_name" v-if="isAuth">
             <Radio-group v-model="eventForm.dept_name">
               <Radio label="1" :disabled="privateUser">
-                <span>私有事件</span>
+                <span>组内事件</span>
               </Radio>
               <Radio label="0" :disabled="privateUser">
                 <span>公有事件</span>

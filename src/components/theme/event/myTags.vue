@@ -50,7 +50,7 @@
               <Radio label="组内" :disabled="auth.indexOf('普通') !== -1">
                 <span>组内</span>
               </Radio>
-              <Radio label="全局" :disabled="(auth.indexOf('高级') !== -1) || (auth.indexOf('个人') !== -1)">
+              <Radio label="全局" :disabled="(auth.indexOf('高级') !== -1) || (auth.indexOf('普通') !== -1)">
                 <span>全局</span>
               </Radio>
             </RadioGroup>
@@ -78,7 +78,7 @@ export default {
           width: 60
         },
         {
-          title: 'domain',
+          title: '范围',
           key: 'domain'
         },
         {
