@@ -599,10 +599,13 @@ export default {
               // 管控事件DOM控制
               let controlDom = ''
               let now = new Date()
+              now.setHours(0)
+              now.setMinutes(0)
+              now.setSeconds(0)
               let itemStart = new Date(item.control_start_time)
               let timeStart = now.getTime() - itemStart.getTime() // 取整
-              let itemEnd = new Date(item.control_end_time)
-              let timeEnd = now.getTime() - itemEnd.getTime()
+              // let itemEnd = new Date(item.control_end_time)
+              // let timeEnd = now.getTime() - itemEnd.getTime()
               if (timeStart < 0) {
                 controlDom = `距离管控: <span style="color:#f40;">${Math.abs(Math.floor(timeStart / (1000 * 60 * 60 * 24)))}</span> 天`
               }
@@ -611,8 +614,8 @@ export default {
                 controlDom = `管控结束: <span style="color:#f40;">${Math.abs(parseInt(timeEnd / (1000 * 60 * 60 * 24)))}</span> 天`
               }
               */
-              if (timeStart > 0 && timeEnd < 0) { // 考虑=的情况 , 天数+1
-                controlDom = `处于管控: 第<span style="color:#f40;">${Math.abs(parseInt(timeStart / (1000 * 60 * 60 * 24)))}</span> 天`
+              if (timeStart >= 0) { // 考虑=的情况 , 天数+1
+                controlDom = `处于管控: 第<span style="color:#f40;">${Math.abs(parseInt(timeStart / (1000 * 60 * 60 * 24)) + 1)}</span> 天`
               }
 
               // Notice
