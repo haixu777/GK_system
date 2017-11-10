@@ -70,7 +70,7 @@ export default {
   methods: {
     fetchUserInfoByMenhu (cb) {
       this.$axios.post('http://10.136.88.96:8080/menhu/authUser/getUserResourceOther', {
-        ticket: (unescape($utils.Cookie.get('ticket'))).replace('%3D', '='),
+        ticket: (unescape($utils.Cookie.get('ticket'))).replace(/%3D/g, '='),
         clientIP: '127.0.0.1',
         appSysID: '236'
       }).then((res) => {
