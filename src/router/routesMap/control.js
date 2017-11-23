@@ -3,6 +3,7 @@ const autoExtract = resolve => require(['@/components/theme/control/auto_extract
 const dataEntry = resolve => require(['@/components/theme/control/data_entry'], resolve)
 const manualReview = resolve => require(['@/components/theme/control/manual_review'], resolve)
 const accountHandle = resolve => require(['@/components/theme/control/account_handle'], resolve)
+const taizhang = resolve => require(['@/components/theme/control/taizhang'], resolve)
 
 export default {
   path: '/control',
@@ -28,6 +29,11 @@ export default {
       path: 'account_handle',
       name: 'account_handle',
       component: accountHandle
+    },
+    {
+      path: 'taizhang',
+      name: 'taizhang',
+      component: taizhang
     }
   ]
 }
