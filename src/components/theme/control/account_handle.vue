@@ -73,7 +73,7 @@
       </div>
       <div slot="footer">
         <Button v-if="!isAdd" type="success" size="large" long @click="updateToServer">确认</Button>
-        <Button v-else type="success" size="large" long @click="addToServer">确认</Button>
+        <Button v-else type="success" size="large" long @click="addToServer('formValidate')">确认</Button>
       </div>
     </Modal>
   </div>
@@ -204,21 +204,27 @@ export default {
       this.isAdd = true
       this.modal = true
     },
-    addToServer () {
-      this.$axios.post('/handleAccount/add', {
-        name: this.formValidate.name,
-        platform: this.formValidate.platform,
-        operation: this.formValidate.operation
-      }).then((res) => {
-        if (res.data.success) {
-          this.modal = false
-          this.$Message.success(res.data.msg)
-          this.fetchAccountList()
+    addToServer (formValidate) {
+      this.$refs[formValidate].validate((valid) => {
+        if (valid) {
+          this.$axios.post('/handleAccount/add', {
+            name: this.formValidate.name,
+            platform: this.formValidate.platform,
+            operation: this.formValidate.operation
+          }).then((res) => {
+            if (res.data.success) {
+              this.modal = false
+              this.$Message.success(res.data.msg)
+              this.fetchAccountList()
+            } else {
+              this.$Message.error('新增账号失败')
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
         } else {
-          this.$Message.error('新增账号失败')
+          this.$Message.error('请输入完整信息')
         }
-      }).catch((err) => {
-        console.log(err)
       })
     },
     delFromServer (id) {

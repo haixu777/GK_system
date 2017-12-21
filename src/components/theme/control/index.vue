@@ -25,6 +25,10 @@
         <Icon type="settings"></Icon>
         台账历史
       </Menu-item>
+      <Menu-item name="statistics">
+        <Icon type="settings"></Icon>
+        统计汇总
+      </Menu-item>
       <div class="" style="position:absolute;top:0;right:30px;">
         <span style="color: #fff;">{{ userName }}</span>
         <i-button type="primary" size="small" @click="logout">注销</i-button>

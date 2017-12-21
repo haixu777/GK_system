@@ -93,22 +93,22 @@
         <span>管控详情</span>
       </p>
       <div style="text-align:center">
-        <Form ref="control_item" :model="control_item" :label-width="60" :rules="ruleValidate">
-          <Form-item label="内容">
+        <Form ref="control_item" :model="control_item" :label-width="80" :rules="ruleValidate">
+          <Form-item label="内容" prop="descript">
             <Input v-model="control_item.descript" type="textarea"></Input>
           </Form-item>
-          <Form-item label="范围">
+          <Form-item label="范围" prop="range">
             <Input v-model="control_item.range"></Input>
           </Form-item>
-          <Form-item label="操作">
+          <Form-item label="操作" prop="operation">
             <Input v-model="control_item.operation"></Input>
           </Form-item>
-          <Form-item label="事件" prop="_eventId">
+          <Form-item label="事件" prop="">
             <Select v-model="control_item.eventId" filterable>
               <Option v-for="item in eventList" :value="item.value" :key="item">{{ item.text }}</Option>
             </Select>
           </Form-item>
-          <Form-item label="样本类型">
+          <Form-item label="样本类型" prop="">
             <Select v-model="control_item.sample_type" placeholder="请选择样本类型" filterable>
               <!-- <Option value="文本">文本</Option>
               <Option value="图片">图片</Option>
@@ -117,7 +117,7 @@
               <Option v-for="type in sampleTypeList" :value="type.text" :key="type.text">{{ type.text }}</Option>
             </Select>
           </Form-item>
-          <Form-item label="时间">
+          <Form-item label="时间" prop="">
             <Date-picker type="date" placeholder="选择日期" v-model="control_item.time"></Date-picker>
           </Form-item>
           <!-- <Form-item label="数量">
@@ -178,6 +178,21 @@ export default {
       ruleValidate: {
         _eventId: [
           { required: true, message: '请选择事件', trigger: 'blur' }
+        ],
+        descript: [
+          { required: true, message: '内容不能为空', trigger: 'blur' }
+        ],
+        range: [
+          { required: true, message: '范围不能为空', trigger: 'blur' }
+        ],
+        operation: [
+          { required: true, message: '操作不能为空', trigger: 'blur' }
+        ],
+        sample_type: [
+          { required: true, message: '样本类型不能为空', trigger: 'blur' }
+        ],
+        time: [
+          { required: true, message: '时间不能为空', trigger: 'change' }
         ]
       },
       sampleTypeList: [
@@ -461,12 +476,25 @@ export default {
       this.modal = true
     },
     submitAdd (name) {
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          if (!this.control_item.eventId || !this.control_item.time || !this.control_item.sample_type) {
+            this.$Message.error('请输入完整信息')
+          } else {
+            this.addControlToServer()
+          }
+        } else {
+          this.$Message.error('请输入完整信息')
+        }
+      })
+      /*
       if (this.control_item.eventId) {
         this.addControlToServer()
       } else {
         this.$refs[name].validate((valid) => {})
         this.$Message.error('请输入完整信息')
       }
+      */
     }
   },
   mounted () {

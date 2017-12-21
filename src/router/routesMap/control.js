@@ -4,6 +4,7 @@ const dataEntry = resolve => require(['@/components/theme/control/data_entry'], 
 const manualReview = resolve => require(['@/components/theme/control/manual_review'], resolve)
 const accountHandle = resolve => require(['@/components/theme/control/account_handle'], resolve)
 const taizhang = resolve => require(['@/components/theme/control/taizhang'], resolve)
+const statistics = resolve => require(['@/components/theme/control/statistics'], resolve)
 
 export default {
   path: '/control',
@@ -34,6 +35,11 @@ export default {
       path: 'taizhang',
       name: 'taizhang',
       component: taizhang
+    },
+    {
+      path: 'statistics',
+      name: 'statistics',
+      component: statistics
     }
   ]
 }
