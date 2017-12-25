@@ -94,6 +94,10 @@
       </p>
       <div style="text-align:center">
         <Form ref="control_item" :model="control_item" :label-width="80" :rules="ruleValidate">
+          <Form-item label="文本处理区">
+            <Input v-model="control_text" type="textarea"></Input>
+            <i-button type="primary" size="small" @click="controlTextExtra" :loading="extraLoading">抽取</i-button>
+          </Form-item>
           <Form-item label="内容" prop="descript">
             <Input v-model="control_item.descript" type="textarea"></Input>
           </Form-item>
@@ -102,6 +106,9 @@
           </Form-item>
           <Form-item label="操作" prop="operation">
             <Input v-model="control_item.operation"></Input>
+          </Form-item>
+          <Form-item label="数量" prop="number">
+            <Input v-model="control_item.number" :number="true"></Input>
           </Form-item>
           <Form-item label="事件" prop="">
             <Select v-model="control_item.eventId" filterable>
@@ -163,6 +170,8 @@ export default {
       time_range: new Date(),
       event_id: null,
       verify: '',
+      extraLoading: false,
+      control_text: '',
       control_item: {
         id: '',
         descript: '',
@@ -326,22 +335,26 @@ export default {
         })
     },
     addControlToServer () {
-      this.$axios.post('/control/add', this.control_item)
-        .then((res) => {
-          this.$Notice.success({
-            title: '成功',
-            desc: res.data.msg,
-            duration: 2
+      if (Number(this.control_item.number)) {
+        this.$axios.post('/control/add', this.control_item)
+          .then((res) => {
+            this.$Notice.success({
+              title: '成功',
+              desc: res.data.msg,
+              duration: 2
+            })
+            this.fetchTableDataFromServer()
+            this.modal = false
+          }).catch((err) => {
+            this.$Notice.error({
+              title: '删除失败',
+              desc: `失败原因: ${err}`,
+              duration: 2
+            })
           })
-          this.fetchTableDataFromServer()
-          this.modal = false
-        }).catch((err) => {
-          this.$Notice.error({
-            title: '删除失败',
-            desc: `失败原因: ${err}`,
-            duration: 2
-          })
-        })
+      } else {
+        this.$Message.error('请输入正确数量')
+      }
     },
     updateControlToServer () {
       this.control_item.verify = 1
@@ -448,6 +461,26 @@ export default {
           this.fetchTableDataFromServer()
         }
       })
+    },
+    controlTextExtra () {
+      this.extraLoading = true
+      this.$axios.post('http://10.136.88.96:8080/api/res/tic', {text: this.control_text})
+        .then((res) => {
+          if (!res.data.length) {
+            this.$Message.error('抽取失败，文本内无匹配项')
+          } else {
+            this.$Message.success('抽取完成')
+            this.control_item.number = res.data[0].num
+            this.control_item.sample_type = res.data[0].type.replace(/(^\s+)|(\s+$)/g, '').split(' ')[0]
+            this.control_item.range = res.data[0].GKarea.split(' ')[0]
+            this.control_item.descript = res.data[0].content
+            this.control_item.operation = res.data[0].operation.split(' ')[0]
+          }
+          this.extraLoading = false
+        }).catch((err) => {
+          console.log(err)
+          this.extraLoading = false
+        })
     },
     handleTableSort (sort) {
       console.log(sort)

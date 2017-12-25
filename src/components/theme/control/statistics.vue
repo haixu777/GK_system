@@ -19,14 +19,37 @@
             </el-tree>
           </div>
         </div>
-        <div class="statistics_content">
+        <div class="" style="display:inline-block;width:50%;float:left;margin-left:20px;">
+          <el-table
+            border
+            stripe
+            max-height="500"
+            :data="statisticsData">
+            <el-table-column
+              prop="control_operation"
+              label="操作"
+              width="">
+            </el-table-column>
+            <el-table-column
+              prop="sample_type"
+              label="类型"
+              width="">
+            </el-table-column>
+            <el-table-column
+              prop="control_number"
+              width=""
+              label="数量">
+            </el-table-column>
+          </el-table>
+        </div>
+        <!-- <div class="statistics_content">
           <div class="time_item" v-for="content, title in statisticsData" v-if="!emptyCheck(content) && title">
             <span style="color: #f40;">{{ title }}</span>
             <div class="" v-for="a,b in content" style="">
               {{ b }} : {{ a }}
             </div>
           </div>
-        </div>
+        </div> -->
       </TabPane>
       <TabPane label="时间纬度" icon="social-windows" style="text-align:center;">
         <DatePicker
@@ -37,12 +60,38 @@
           style="width: 200px;text-align:center;">
         </DatePicker>
         <div class="event_statistics" style="text-align:left;">
-          <div class="time_item" v-for="content, title in statisticsTimeData" v-if="!emptyCheck(content) && title">
+          <div class="time_item timeRange_item" v-for="item in statisticsTimeData" v-if="!emptyCheck(item.control)">
+            <div style="border-bottom:1px solid #000; color:#f40;">{{ item.name }}</div>
+            <div class="">
+              <el-table
+                border
+                stripe
+                max-height="350"
+                :data="item.control">
+                <el-table-column
+                  prop="control_operation"
+                  label="操作"
+                  width="">
+                </el-table-column>
+                <el-table-column
+                  prop="sample_type"
+                  label="类型"
+                  width="100">
+                </el-table-column>
+                <el-table-column
+                  prop="control_number"
+                  width="70"
+                  label="数量">
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <!-- <div class="time_item" v-for="content, title in statisticsTimeData" v-if="!emptyCheck(content) && title">
             <span style="color:#f40;">{{ title }}</span>
             <div class="" v-for="a,b in content" style="">
               {{ b }} : {{ a }}
             </div>
-          </div>
+          </div> -->
         </div>
       </TabPane>
     </Tabs>
@@ -91,6 +140,7 @@ export default {
           eventId: id
         }
       }).then((res) => {
+        /*
         let temp = {}
         if (res.data.data) {
           res.data.data.map((d) => { // 初始化操作名
@@ -107,6 +157,30 @@ export default {
           })
         }
         this.statisticsData = temp
+        */
+        let result = []
+        let temp = []
+        res.data.data.forEach((item) => {
+          item.control_operation = item.control_operation.replace(/(^\s+)|(\s+$)/g, '')
+          if (item.control_number === 0) item.control_number = 1
+        })
+        res.data.data.forEach((item) => {
+          if (item.control_operation) {
+            if (item.sample_type) {
+              let skey = item.control_operation + item.sample_type.replace(/(^\s+)|(\s+$)/g, '')
+              if (typeof temp[skey] === 'undefined') {
+                temp[skey] = item
+              } else {
+                temp[skey].control_number += item.control_number
+              }
+            }
+          }
+        })
+        for (var prop in temp) {
+          result.push(temp[prop])
+        }
+        this.statisticsData = result
+        console.log(this.statisticsData)
       }).catch((err) => {
         console.log(err)
       })
@@ -118,22 +192,36 @@ export default {
           time_end: timeRange[1]
         }
       }).then((res) => {
-        let temp = {}
-        if (res.data.data) {
-          res.data.data.map((d) => { // 初始化操作名
-            temp[d.control_operation.replace(/(^\s+)|(\s+$)/g, '')] = {}
+        res.data.data.forEach((item) => {
+          if (!this.emptyCheck(item.control_programs)) {
+            item.control_programs.forEach((control) => {
+              control.control_operation = control.control_operation.replace(/(^\s+)|(\s+$)/g, '')
+              if (control.control_number === 0) control.control_number = 1
+            })
+          }
+        })
+        res.data.data.forEach((item) => {
+          let temp = []
+          let result = []
+          item.control_programs.forEach((control, index) => {
+            if (control.control_operation) {
+              if (control.sample_type) {
+                let skey = control.control_operation + control.sample_type.replace(/(^\s+)|(\s+$)/g, '')
+                if (typeof temp[skey] === 'undefined') {
+                  temp[skey] = control
+                } else {
+                  temp[skey].control_number += control.control_number
+                }
+              }
+            }
           })
-          res.data.data.map((d) => { // 初始化操作样本
-            if (!d.sample_type) return
-            temp[d.control_operation.replace(/(^\s+)|(\s+$)/g, '')][d.sample_type] = 0
-          })
-          res.data.data.map((d) => { // 数量相加，如果数量为空，重置为1
-            if (!d.sample_type) return
-            if (!d.control_number) d.control_number = 1
-            temp[d.control_operation.replace(/(^\s+)|(\s+$)/g, '')][d.sample_type] += d.control_number
-          })
-        }
-        this.statisticsTimeData = temp
+
+          for (var prop in temp) {
+            result.push(temp[prop])
+          }
+          item.control = result
+        })
+        this.statisticsTimeData = res.data.data
       }).catch((err) => {
         console.log(err)
       })
@@ -161,6 +249,7 @@ export default {
   .statistics {
     box-sizing: border-box;
     text-align: left;
+    min-width: 1024px;
     .time_item {
       position: relative;
       display: inline-block;
@@ -168,6 +257,21 @@ export default {
       border-radius: 5px;
       border: 1px solid #dfe6ec;
       padding: 10px 20px;
+      margin: 5px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .timeRange_item {
+      width: 31%;
+      min-width: 31%;
+    }
+    .op_item {
+      position: relative;
+      display: inline-block;
+      background: #eee;
+      border-radius: 5px;
+      border: 1px solid #dfe6ec;
+      padding: 5px;
       margin: 5px;
       text-align: left;
       vertical-align: top;
