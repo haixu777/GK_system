@@ -15,7 +15,7 @@
       </Menu-item> -->
       <Menu-item name="manual_review">
         <Icon type="settings"></Icon>
-        管控方案编辑
+        管控历史
       </Menu-item>
       <Menu-item name="account_handle">
         <Icon type="settings"></Icon>

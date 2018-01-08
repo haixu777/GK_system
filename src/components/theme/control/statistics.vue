@@ -1,5 +1,8 @@
 <template lang="html">
   <div class="statistics clearfix" style="padding: 10px;">
+    <BackTop :height="100" :bottom="200">
+      <div class="top">返回顶端</div>
+    </BackTop>
     <Tabs>
       <TabPane label="事件纬度" icon="social-apple">
         <div class="event_statistics">
@@ -52,13 +55,19 @@
         </div> -->
       </TabPane>
       <TabPane label="时间纬度" icon="social-windows" style="text-align:center;">
-        <DatePicker
+        <!-- <DatePicker
           type="daterange"
           placement="bottom"
           placeholder="时间范围选择"
           @on-change="fetchStatisticsFromServerByTime"
           style="width: 200px;text-align:center;">
-        </DatePicker>
+        </DatePicker> -->
+        <el-date-picker
+          v-model="timeRange"
+          type="daterange"
+          @change="fetchStatisticsFromServerByTime"
+          placeholder="选择时间范围">
+        </el-date-picker>
         <div class="event_statistics" style="text-align:left;">
           <div class="time_item timeRange_item" v-for="item in statisticsTimeData" v-if="!emptyCheck(item.control)">
             <div style="border-bottom:1px solid #000; color:#f40;">{{ item.name }}</div>
@@ -110,7 +119,8 @@ export default {
       treeData: [],
       filterText: '',
       statisticsData: [],
-      statisticsTimeData: []
+      statisticsTimeData: [],
+      timeRange: ''
     }
   },
   components: {
@@ -135,6 +145,7 @@ export default {
         })
     },
     fetchStatisticsFromServerByEventId (id) {
+      console.log(this)
       this.$axios.get('/control/statisticsByEventId', {
         params: {
           eventId: id
@@ -161,12 +172,14 @@ export default {
         let result = []
         let temp = []
         res.data.data.forEach((item) => {
+          if (!item.control_operation) return
           item.control_operation = item.control_operation.replace(/(^\s+)|(\s+$)/g, '')
           if (item.control_number === 0) item.control_number = 1
         })
         res.data.data.forEach((item) => {
           if (item.control_operation) {
             if (item.sample_type) {
+              if (!item.sample_type) return
               let skey = item.control_operation + item.sample_type.replace(/(^\s+)|(\s+$)/g, '')
               if (typeof temp[skey] === 'undefined') {
                 temp[skey] = item
@@ -186,15 +199,31 @@ export default {
       })
     },
     fetchStatisticsFromServerByTime (timeRange) {
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+              'class': 'demo-spin-icon-load',
+              props: {
+                type: 'load-c',
+                size: 18
+              }
+            }),
+            h('div', '数据生成中，请耐心等待...')
+          ])
+        }
+      })
+      let timeArr = timeRange.split(' - ')
       this.$axios.get('/control/statisticsByTime', {
         params: {
-          time_start: timeRange[0],
-          time_end: timeRange[1]
+          time_start: timeArr[0],
+          time_end: timeArr[1]
         }
       }).then((res) => {
         res.data.data.forEach((item) => {
           if (!this.emptyCheck(item.control_programs)) {
             item.control_programs.forEach((control) => {
+              if (!control.control_programs) return
               control.control_operation = control.control_operation.replace(/(^\s+)|(\s+$)/g, '')
               if (control.control_number === 0) control.control_number = 1
             })
@@ -222,8 +251,10 @@ export default {
           item.control = result
         })
         this.statisticsTimeData = res.data.data
+        this.$Spin.hide()
       }).catch((err) => {
         console.log(err)
+        this.$Spin.hide()
       })
     },
     handleMenuSelect (name) {
@@ -323,5 +354,19 @@ export default {
       z-index: 1;
     }
   }
-
+  .demo-spin-icon-load {
+    animation: ani-demo-spin 1s linear infinite;
+  }
+  @keyframes ani-demo-spin {
+    from { transform: rotate(0deg);}
+    50%  { transform: rotate(180deg);}
+    to   { transform: rotate(360deg);}
+  }
+  .top{
+    padding: 10px;
+    background: rgba(0, 153, 229, .7);
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+  }
 </style>

@@ -51,10 +51,10 @@
           <el-tooltip
             class="my_tooltip"
             effect="dark"
-            :content="scope.row.control_descript"
+            :content="scope.row.control_descript ? scope.row.control_descript : '无内容'"
             placement="bottom"
             :openDelay="300">
-            <Tag>{{ scope.row.control_descript.substring(0, 6) + '...' }}</Tag>
+            <Tag>{{ scope.row.control_descript ? scope.row.control_descript.substring(0, 6) + '...' : '无内容' }}</Tag>
           </el-tooltip>
         </template>
       </el-table-column>

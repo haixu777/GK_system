@@ -26,7 +26,8 @@ import {
   Loading,
   Upload,
   Tooltip,
-  Rate
+  Rate,
+  DatePicker
 } from 'element-ui'
 
 Vue.use(Tree)
@@ -42,6 +43,7 @@ Vue.use(Pagination)
 Vue.use(Upload)
 Vue.use(Tooltip)
 Vue.use(Rate)
+Vue.use(DatePicker)
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
