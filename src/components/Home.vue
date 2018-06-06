@@ -34,7 +34,8 @@ export default {
       themeList: [
         { name: '事件管理', path: 'event/category' },
         { name: '管控方案', path: 'control/manual_review' },
-        { name: '取证样本', path: 'sample/auto-extract' }
+        { name: '取证样本', path: 'sample/auto-extract' },
+        { name: '数量统计', path: 'total' }
       ],
       userName: this.$store.state.userName,
       userAuth: unescape($utils.Cookie.get('userAuth')),

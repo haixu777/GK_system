@@ -9,6 +9,7 @@ import Home from '@/components/Home'
 import Sample from './routesMap/sample'
 import Events from './routesMap/event'
 import Control from './routesMap/control'
+import Total from './routesMap/total'
 
 import NotFoundComponent from '@/components/notFoundComponent'
 
@@ -36,6 +37,7 @@ const router = new Router({
     Sample,
     Control,
     Events,
+    Total,
     {
       path: '*',
       component: NotFoundComponent
