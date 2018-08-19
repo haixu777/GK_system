@@ -33,6 +33,7 @@
 
 <script>
 // const Calendar = require('@/components/theme/event/calendar')
+const isDev = process.env.NODE_ENV === 'development'
 const $utils = require('utils')
 export default {
   data () {
@@ -150,12 +151,16 @@ export default {
     }
   },
   mounted () {
-    if ($utils.Cookie.get('ticket')) {
-      this.fetchUserInfoByMenhu(() => {
-        this.syncUserInfoFromServer()
-      })
+    if (!isDev) {
+      if ($utils.Cookie.get('ticket')) {
+        this.fetchUserInfoByMenhu(() => {
+          this.syncUserInfoFromServer()
+        })
+      } else {
+        this.logoutMsg()
+      }
     } else {
-      this.logoutMsg()
+      this.show = true
     }
   }
 }
