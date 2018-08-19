@@ -1,24 +1,22 @@
 <template lang="html">
-  <div class="home">
-    <Menu mode="horizontal" :theme="'dark'" :active-name="activeName" @on-select="handleMenuSelect">
-      <!-- <Menu-item name="calendar">
-        <Icon type="ios-paper"></Icon>
-        事件日历
-      </Menu-item> -->
-      <span style="color:#fff;font-size:20px;font-weight:600;">数据整理系统</span>
-      <div class="" style="position:absolute;top:0;right:30px;">
-        <span style="color: #fff;">{{ userName }}</span>
-        <i-button type="primary" size="small" @click="logout">注销</i-button>
+  <div class="home_container">
+    <div class="title">
+      <div class="logout_btn" @click="logout">
+        <img src="../assets/back.png" width="25" height="25" alt="logout">
+        <span style="display:inline-block;margin-left:5px;">注销</span>
       </div>
-    </Menu>
-    <div class="theme">
+      <div class="username">
+        {{ userName }}
+      </div>
+    </div>
+    <div class="sysName">
+      数据整理系统
+    </div>
+    <div class="main">
       <template v-for="item in themeList">
         <div class="theme_item" @click="handleThemeSelect(item.path)">
-          <Card style="width:200px">
-            <div style="text-align:center">
-              <h3>{{ item.name }}</h3>
-            </div>
-          </Card>
+          <img class="item_bg" :src="item.img"></img>
+          <div class="item_text">{{ item.name }}</div>
         </div>
       </template>
     </div>
@@ -27,15 +25,16 @@
 
 <script>
 const $utils = require('utils')
+const isDev = process.env.NODE_ENV === 'development'
 export default {
   data () {
     return {
       activeName: '',
       themeList: [
-        { name: '事件管理', path: 'event/category' },
-        { name: '管控方案', path: 'control/manual_review' },
-        { name: '取证样本', path: 'sample/auto-extract' },
-        { name: '数量统计', path: 'total' }
+        { name: '事件管理', path: 'event/category', img: require('assets/event.png') },
+        { name: '管控方案', path: 'control/data_entry', img: require('assets/control.png') },
+        { name: '取证样本', path: 'sample/auto-extract', img: require('assets/sample.png') },
+        { name: '数量统计', path: 'total', img: require('assets/total.png') }
       ],
       userName: this.$store.state.userName,
       userAuth: unescape($utils.Cookie.get('userAuth')),
@@ -106,29 +105,81 @@ export default {
   },
   mounted () {
     this.$Notice.destroy()
-    if ($utils.Cookie.get('ticket')) {
-      this.fetchUserInfoByMenhu(() => {
-        this.syncUserInfoFromServer()
-      })
-    } else {
-      this.logoutMsg()
+    if (!isDev) {
+      if ($utils.Cookie.get('ticket')) {
+        this.fetchUserInfoByMenhu(() => {
+          this.syncUserInfoFromServer()
+        })
+      } else {
+        this.logoutMsg()
+      }
     }
   }
 }
 </script>
 
 <style lang="scss">
-  .home {
-    height: 100%;
-    .theme {
-      margin-top: 200px;
-      .theme_item {
-        display: inline-block;
-        margin: 10px;
-        :hover {
-          cursor: pointer;
-        }
+.home_container {
+  height: 100%;
+  background: #2a91f1;
+  background-image: url('../assets/bg.png');
+  .title {
+    height: 40px;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+    padding: 30px;
+    font-size: 20px;
+    color: #fff;
+    font-weight: bolder;
+    .logout_btn {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+  }
+  .sysName {
+    text-align: center;
+    color: #fff;
+    font-size: 30px;
+    font-weight: bolder;
+    letter-spacing: 3px;
+    margin-top: 50px;
+  }
+  .main {
+    height: 300px;
+    width: 80%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-around;
+    .theme_item {
+      height: 100%;
+      width: 230px;
+      border: 1px solid #90abcf;
+      background: #fff;
+      box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      &:hover {
+        border: 2px solid gray;
+      }
+      .item_bg {
+        display: block;
+        height: 130px;
+        margin: 0 auto;
+        margin-top: 40px;
+      }
+      .item_text {
+        font-size: 20px;
+        font-weight: bolder;
+        margin-top: 30px;
+        color: #515151;
       }
     }
   }
+}
 </style>

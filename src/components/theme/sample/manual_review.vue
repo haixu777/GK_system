@@ -21,7 +21,7 @@
         @on-clear="handleClearTimeRange"
         @on-ok="fetchTableDataFromServer">
       </Date-picker>
-      <Select
+      <!-- <Select
         v-model="sample_format"
         clearable
         filterable
@@ -33,8 +33,8 @@
         <Option value="视频">视频</Option>
         <Option value="html">html</Option>
         <Option value="pdf">pdf</Option>
-      </Select>
-      <Select
+      </Select> -->
+      <!-- <Select
        v-model="hasKeyword"
        clearable
        placeholder="关键词配置"
@@ -42,8 +42,8 @@
        @on-change="fetchTableDataFromServer">
        <Option value="0">未配置 - 关键词</Option>
        <Option value="1">已配置 - 关键词</Option>
-      </Select>
-      <Select
+      </Select> -->
+      <!-- <Select
         v-if="false"
         v-model="user_id"
         clearable
@@ -52,8 +52,8 @@
         style="width:176px;"
         @on-change="fetchTableDataFromServer">
         <Option v-for="item in userList" :value="item.value" :key="item">{{ item.text }}</Option>
-      </Select>
-      <Select
+      </Select> -->
+      <!-- <Select
         v-model="hasPlatform"
         clearable
         filterable
@@ -62,8 +62,8 @@
         @on-change="fetchTableDataFromServer">
         <Option value="0">未配置 - 平台</Option>
         <Option value="1">已配置 - 平台</Option>
-      </Select>
-      <Select
+      </Select> -->
+      <!-- <Select
         v-model="hasContent"
         clearable
         filterable
@@ -72,11 +72,12 @@
         @on-change="fetchTableDataFromServer">
         <Option value="0">未配置 - 内容</Option>
         <Option value="1">已配置 - 内容</Option>
-      </Select>
+      </Select> -->
     </div>
     <el-table
       :data="tableData"
       border
+      stripe
       @sort-change="handleSortChange"
       style="width: 100%;text-align: left;margin: 0;">
       <el-table-column type="expand">
@@ -106,6 +107,7 @@
           </el-form>
         </template>
       </el-table-column>
+      <el-table-column type="index" width="70" label="序号"></el-table-column>
       <el-table-column label="取证时间" prop="forensic_date" width="130" sortable></el-table-column>
       <!-- <el-table-column label="发布网站" prop="publish_platform" width="130"></el-table-column> -->
       <!-- <el-table-column label="发布频道" prop="publish_chanel" width="130"></el-table-column> -->
@@ -130,13 +132,11 @@
         </template>
       </el-table-column>
       <el-table-column label="操作时间" prop="update_time" width="130" sortable></el-table-column>
-      <el-table-column label="操作人" prop="operator" width="130"></el-table-column>
+      <!-- <el-table-column label="操作人" prop="operator" width="130"></el-table-column> -->
       <el-table-column label="操作">
         <template scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
-          <i-button type="success" icon="android-download" size="small">
-            <a :href="localUrl +'/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
-          </i-button>
+          <a class="download_btn ivu-btn ivu-btn-success ivu-btn-small" :href="localUrl +'/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
           <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
         </template>
       </el-table-column>
@@ -156,13 +156,16 @@
       show-sizer>
     </Page>
 
-    <Modal v-model="modal">
+    <Modal v-model="modal" width="600">
       <p slot="header" style="color:#f60;text-align:center">
         <Icon type="information-circled"></Icon>
         <span>样本详情</span>
       </p>
       <div style="text-align:center">
-        <Form :model="sampleItem" :label-width="60">
+        <Form :model="sampleItem" :label-width="80">
+          <Form-item label="样本内容">
+            <Input v-model="sampleItem.sample_content" :rows="5" type="textarea"></Input>
+          </Form-item>
           <Form-item label="发布账号">
             <Input v-model="sampleItem.publish_account"></Input>
           </Form-item>
@@ -206,9 +209,6 @@
           <Form-item label="样本标题">
             <Input v-model="sampleItem.sample_title"></Input>
           </Form-item>
-          <Form-item label="样本内容">
-            <Input v-model="sampleItem.sample_content" type="textarea"></Input>
-          </Form-item>
           <!-- <Form-item label="样本路径">
             <Input v-model="sampleItem.sample_path"></Input>
           </Form-item> -->
@@ -233,7 +233,18 @@ const $utils = require('utils')
 export default {
   data () {
     return {
-      tableData: [],
+      tableData: [
+        {
+          forensic_date: '加载中...',
+          sample_title: '加载中...',
+          event_name: '加载中...',
+          publish_platform: '加载中...',
+          sample_format: '加载中...',
+          update_time: '加载中...',
+          operator: '加载中...',
+          keyword: null
+        }
+      ],
       perItem: 15,
       currentPage: 1,
       sort_key: 'forensic_date',
@@ -243,9 +254,9 @@ export default {
       eventList: [],
       event_id: null,
       sample_format: '',
-      hasKeyword: '0',
-      hasPlatform: '0',
-      hasContent: '0',
+      hasKeyword: '',
+      hasPlatform: '',
+      hasContent: '',
       userList: [],
       user_id: null,
       time_range: [],
@@ -517,5 +528,13 @@ export default {
 .el-tooltip__popper {
   width: 200px;
   background-color: rgba(70,76,91,.9) !important;
+}
+.download_btn {
+  color: #fff;
+  background-color: #19be6b;
+  border-color: #19be6b;
+  padding: 2px 7px;
+  font-size: 12px;
+  border-radius: 3px;
 }
 </style>

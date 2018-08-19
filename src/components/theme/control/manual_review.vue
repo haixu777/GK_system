@@ -15,7 +15,7 @@
         filterable
         placeholder="事件筛选"
         clearable
-        style="width:176px;"
+        style="width:300px;"
         @on-change="fetchTableDataFromServer">
         <Option v-for="item in eventList" :value="item.value" :key="item">
           {{ item.text }}
@@ -35,18 +35,21 @@
       <i-button
         type="primary"
         icon="plus"
-        size="small"
+        class="right"
         @click="handleAdd">
         管控记录添加
       </i-button>
     </div>
     <el-table
+      stripe
+      border
       :data="tableData"
       @sort-change="handleTableSort"
       style="width:100%;text-align:left;">
-      <el-table-column label="管控日期" prop="control_time" sortable></el-table-column>
-      <el-table-column label="管控范围" prop="control_range"></el-table-column>
-      <el-table-column label="管控内容">
+      <el-table-column label="序号" type="index" width="70"></el-table-column>
+      <el-table-column label="管控日期" prop="control_time" width="130" sortable></el-table-column>
+      <el-table-column label="操作" prop="control_operation" width="90" sortable></el-table-column>
+      <!-- <el-table-column label="管控内容">
         <template scope="scope">
           <el-tooltip
             class="my_tooltip"
@@ -57,17 +60,19 @@
             <Tag>{{ scope.row.control_descript ? scope.row.control_descript.substring(0, 6) + '...' : '无内容' }}</Tag>
           </el-tooltip>
         </template>
-      </el-table-column>
-      <el-table-column label="类型" prop="sample_type"></el-table-column>
-      <el-table-column label="数量" prop="control_number" sortable></el-table-column>
-      <el-table-column label="事件" prop="event" v-if="showEvent"></el-table-column>
+      </el-table-column> -->
+      <el-table-column label="管控内容" prop="control_descript"></el-table-column>
+      <el-table-column label="管控范围" prop="control_range" width="130"></el-table-column>
+      <el-table-column label="类型" prop="sample_type" width="100"></el-table-column>
+      <el-table-column label="数量" prop="control_number" width="90" sortable></el-table-column>
+      <el-table-column label="事件" prop="event" v-if="showEvent" width="180"></el-table-column>
       <el-table-column label="状态" v-if="false">
         <template scope="scope">
           <Tag color="green" v-if="scope.row.verify">已校验</Tag>
           <Tag color="yellow" v-else>未校验</Tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="150">
         <template scope="scope">
           <i-button type="primary" size="small" @click="handleControlDetail(scope.row)">编辑</i-button>
           <i-button type="error" size="small" @click="handleDel(scope.row)">删除</i-button>
@@ -87,19 +92,19 @@
       show-sizer>
     </Page>
 
-    <Modal v-model="modal" style="modal_container">
+    <Modal v-model="modal" style="modal_container" width="800">
       <p slot="header" style="color:#f60;text-align:center">
         <Icon type="information-circled"></Icon>
         <span>管控详情</span>
       </p>
       <div style="text-align:center">
-        <Form ref="control_item" :model="control_item" :label-width="80" :rules="ruleValidate">
-          <Form-item label="文本处理区">
+        <Form ref="control_item" :model="control_item" :label-width="90" :rules="ruleValidate">
+          <!-- <Form-item label="文本处理区">
             <Input v-model="control_text" type="textarea"></Input>
             <i-button type="primary" size="small" @click="controlTextExtra" :loading="extraLoading">抽取</i-button>
-          </Form-item>
+          </Form-item> -->
           <Form-item label="内容" prop="descript">
-            <Input v-model="control_item.descript" type="textarea"></Input>
+            <Input v-model="control_item.descript" :rows="4" type="textarea"></Input>
           </Form-item>
           <Form-item label="范围" prop="range">
             <Input v-model="control_item.range"></Input>
@@ -286,7 +291,20 @@ export default {
           }
         }
       ],
-      tableData: [],
+      tableData: [
+        {
+          control_descript: '加载中...',
+          // control_id: 31264,
+          control_number: '1',
+          control_operation: '加载中...',
+          control_range: '加载中...',
+          control_time: '加载中...',
+          event: '加载中...',
+          event_id: null,
+          sample_type: '加载中...',
+          verify: 0
+        }
+      ],
       eventList: [
         { value: 111, label: 'asdad' },
         { value: 222, label: 'qqq' },
@@ -561,5 +579,8 @@ export default {
 .el-tooltip__popper {
   width: 200px;
   background-color: rgba(70,76,91,.9) !important;
+}
+.right {
+  float: right;
 }
 </style>

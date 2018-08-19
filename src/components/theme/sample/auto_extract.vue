@@ -7,23 +7,40 @@
       @on-success="handleUploadSuccess">
       <Button type="ghost" icon="ios-cloud-upload-outline" size="small">上传文件</Button>
     </Upload> -->
-    <Button type="ghost" icon="ios-cloud-upload-outline" size="small" @click="handleUpload">上传文件</Button>
+    <!-- <Button type="ghost" icon="ios-cloud-upload-outline" size="small" @click="handleUpload">上传文件</Button> -->
     <!-- <i-button type="primary" icon="settings" size="small">批量抽取</i-button> -->
+    <div class="upload_container">
+      <Upload
+        multiple
+        type="drag"
+        :before-upload="beforeUpload"
+        :on-success="handleUploadSuccess"
+        :action="localUrl +'/sample/upload'">
+        <div style="padding: 20px 0" class="btn_upload">
+          <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+          <p>样本上传区</p>
+          <p>点击此区域上传文件</p>
+        </div>
+      </Upload>
+    </div>
     <el-table
       :data="tableData"
+      border
       style="width: 100%;text-align: left;margin: 0;"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortChange">
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="上传时间" prop="upload_date" sortable></el-table-column>
-        <el-table-column label="文件名" prop="name"></el-table-column>
+        <el-table-column type="index" width="70" label="序号"></el-table-column>
+        <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+        <el-table-column label="上传时间" prop="upload_date" width="120" sortable></el-table-column>
+        <el-table-column label="文件名" prop="name" width="300"></el-table-column>
         <el-table-column label="文件路径" prop="path"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="300">
           <template scope="scope">
             <i-button type="primary" size="small" icon="hammer" @click="handleSampleExtra(scope.row)">抽取</i-button>
-            <i-button type="success" size="small" icon="android-download">
+            <!-- <i-button type="success" size="small" icon="android-download">
               <a :href="localUrl + '/sample/autoDownload?id='+scope.row.id" style="color:#fff;" download>下载</a>
-            </i-button>
+            </i-button> -->
+            <a class="ivu-btn ivu-btn-success ivu-btn-small" :href="localUrl + '/sample/autoDownload?id='+scope.row.id" style="color:#fff;" download>下载</a>
             <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>
           </template>
         </el-table-column>
@@ -75,51 +92,16 @@
       </div>
     </Modal>
 
-    <Modal v-model="extra_modal">
-      <p slot="header" style="color:#f60;text-align:center">
+    <Modal v-model="extra_modal" width="600">
+      <p slot="header" style="color:#f60;text-align:center;font-size:18px;">
         <Icon type="information-circled"></Icon>
-        <span>抽取确认</span>
+        <span>{{ extra_done ? '抽取完成' : '正在抽取...' }}</span>
       </p>
-      <div style="text-align:center" v-if="false">
-        <Form :model="extra_item" :label-width="60">
-          <Form-item label="岗位">
-            <Input v-model="extra_item.post"></Input>
-          </Form-item>
-          <Form-item label="url">
-            <Input v-model="extra_item.url"></Input>
-          </Form-item>
-          <Form-item label="发布平台">
-            <Input v-model="extra_item.platform"></Input>
-          </Form-item>
-          <Form-item label="发布频道">
-            <Input v-model="extra_item.chanel"></Input>
-          </Form-item>
-          <Form-item label="发布时间">
-            <Date-picker type="date" placeholder="选择日期" style="" v-model="extra_item.publish_time"></Date-picker>
-          </Form-item>
-          <Form-item label="发布账号">
-            <Input v-model="extra_item.publish_account"></Input>
-          </Form-item>
-          <Form-item label="样本标题">
-            <Input v-model="extra_item.title"></Input>
-          </Form-item>
-          <Form-item label="样本内容">
-            <Input v-model="extra_item.content"></Input>
-          </Form-item>
-          <Form-item label="所属事件">
-            <Select v-model="extra_item.eventId"
-              filterable
-              placeholder="事件筛选"
-              clearable>
-              <Option v-for="item in eventList" :value="item.value" :key="item">
-                {{ item.text }}
-              </Option>
-            </Select>
-          </Form-item>
-        </Form>
-      </div>
       <div style="text-align:center">
-        <Form ref="extra_item" :model="extra_item" :label-width="60" :rules="formValidate">
+        <Form ref="extra_item" :model="extra_item" :label-width="90" :rules="formValidate">
+          <Form-item label="样本内容">
+            <Input v-model="extra_item.sample_content" :rows="5" type="textarea"></Input>
+          </Form-item>
           <Form-item label="发布账号">
             <Input v-model="extra_item.publish_account"></Input>
           </Form-item>
@@ -163,9 +145,6 @@
           <Form-item label="样本标题">
             <Input v-model="extra_item.sample_title"></Input>
           </Form-item>
-          <Form-item label="样本内容">
-            <Input v-model="extra_item.sample_content" type="textarea"></Input>
-          </Form-item>
           <!-- <Form-item label="样本路径">
             <Input v-model="sampleItem.sample_path"></Input>
           </Form-item> -->
@@ -179,7 +158,7 @@
       </div>
       <div slot="footer">
         <Button type="success" size="large" long @click="submitAdd('extra_item')" :loading="!extra_done">
-          {{ extra_done ? '抽取完成' : '抽取中' }}
+          导入
         </Button>
       </div>
     </Modal>
@@ -408,4 +387,18 @@ export default {
 </script>
 
 <style lang="css">
+.upload_container {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.btn_upload {
+  border: 1px solid #57a3f3;
+  background: #409EFF;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bolder;
+}
+.ivu-icon-ios-cloud-upload {
+  color: #fff !important;
+}
 </style>

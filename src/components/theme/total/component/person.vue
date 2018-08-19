@@ -1,8 +1,9 @@
 <template lang="html">
-  <div class="person">
-    <Tag color="yellow" v-for="person, index in content" :key="index">
-      {{ person.name }}
-    </Tag>
+  <div class="website">
+    <div class="person" style="text-align:right;">
+      <Page :current="currentPage" :total="total" :page-size="50" show-total @on-change="handlePageClick"></Page>
+    </div>
+    <Table stripe border size="small" :columns="columns" :data="content" ref="table"></Table>
   </div>
 </template>
 
@@ -10,6 +11,19 @@
 export default {
   data () {
     return {
+      columns: [
+        {
+          title: '序号',
+          type: 'index',
+          width: 70,
+          align: 'center'
+        },
+        {
+          title: '名字',
+          key: 'name'
+        }
+      ],
+      currentPage: 1
     }
   },
   props: {
@@ -20,6 +34,14 @@ export default {
           { name: 'test' }
         ]
       }
+    },
+    total: {
+      type: Number
+    }
+  },
+  methods: {
+    handlePageClick (currentPage) {
+      this.$emit('pageClick', 'person', currentPage)
     }
   }
 }

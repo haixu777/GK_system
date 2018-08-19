@@ -1,8 +1,9 @@
 <template lang="html">
-  <div class="anli">
-    <Tag color="yellow" v-for="_event, index in content" :key="index">
-      {{ _event.name }}
-    </Tag>
+  <div class="website">
+    <div class="events" style="text-align:right;">
+      <Page :current="currentPage" :total="total" :page-size="50" show-total @on-change="handlePageClick"></Page>
+    </div>
+    <Table stripe border size="small" :columns="columns" :data="content" ref="table"></Table>
   </div>
 </template>
 
@@ -10,6 +11,19 @@
 export default {
   data () {
     return {
+      columns: [
+        {
+          title: '序号',
+          type: 'index',
+          width: 70,
+          align: 'center'
+        },
+        {
+          title: '名字',
+          key: 'name'
+        }
+      ],
+      currentPage: 1
     }
   },
   props: {
@@ -20,6 +34,14 @@ export default {
           { name: 'test' }
         ]
       }
+    },
+    total: {
+      type: Number
+    }
+  },
+  methods: {
+    handlePageClick (currentPage) {
+      this.$emit('pageClick', 'events', currentPage)
     }
   }
 }

@@ -15,6 +15,8 @@ import NotFoundComponent from '@/components/notFoundComponent'
 
 const $utils = require('utils')
 
+const isDev = process.env.NODE_ENV === 'development'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -45,19 +47,24 @@ const router = new Router({
   ]
 })
 
+function redirect () {
+  let a = document.createElement('a')
+  a.href = 'http://10.136.89.74/logout'
+  a.click()
+}
+
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  let ticket = $utils.Cookie.get('ticket')
-  function redirect () {
-    let a = document.createElement('a')
-    a.href = 'http://10.136.89.74/logout'
-    // a.href = 'http://www.baidu.com'
-    a.click()
-  }
-  if (!ticket) {
-    return redirect()
-  } else {
+  if (isDev) { // 开发模式，无需验证ticket
     return next()
+  } else { // 部署模式
+    let ticket = $utils.Cookie.get('ticket')
+    // 判断是否有ticket
+    if (ticket) {
+      return next()
+    } else {
+      return redirect()
+    }
   }
 })
 

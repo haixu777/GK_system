@@ -1,6 +1,9 @@
 <template lang="html">
   <div class="control">
-    <Table border size="small" :columns="columns" :data="content" ref="table"></Table>
+    <div class="page" style="text-align:right;">
+      <Page :current="currentPage" :total="total" :page-size="50" show-total @on-change="handlePageClick"></Page>
+    </div>
+    <Table border stripe size="small" :columns="columns" :data="content" ref="table"></Table>
   </div>
 </template>
 
@@ -10,16 +13,16 @@ export default {
     return {
       columns: [
         {
+          title: '序号',
+          type: 'index',
+          width: 70,
+          align: 'center'
+        },
+        {
           title: '动作',
+          width: 100,
+          align: 'center',
           key: 'control_operation'
-        },
-        {
-          title: '数量',
-          key: 'control_number'
-        },
-        {
-          title: '类型',
-          key: 'sample_type'
         },
         {
           title: '描述',
@@ -27,9 +30,24 @@ export default {
         },
         {
           title: '所属事件',
-          key: 'name'
+          key: 'name',
+          width: 200,
+          align: 'center'
+        },
+        {
+          title: '类型',
+          key: 'sample_type',
+          width: 100,
+          align: 'center'
+        },
+        {
+          title: '数量',
+          key: 'control_number',
+          width: 80,
+          align: 'center'
         }
-      ]
+      ],
+      currentPage: 1
     }
   },
   props: {
@@ -41,11 +59,19 @@ export default {
         ]
       }
     },
+    total: {
+      type: Number
+    },
     loading: {
       type: Boolean,
       default: function () {
         return true
       }
+    }
+  },
+  methods: {
+    handlePageClick (currentPage) {
+      this.$emit('pageClick', 'control', currentPage)
     }
   }
 }

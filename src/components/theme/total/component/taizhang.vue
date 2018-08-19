@@ -1,6 +1,9 @@
 <template lang="html">
   <div class="taizhang">
-    <Table border size="small" :columns="columns" :data="content" ref="table"></Table>
+    <div class="page" style="text-align:right;">
+      <Page :current="currentPage" :total="total" :page-size="50" show-total @on-change="handlePageClick"></Page>
+    </div>
+    <Table border stripe size="small" :columns="columns" :data="content" ref="table"></Table>
   </div>
 </template>
 
@@ -10,13 +13,21 @@ export default {
     return {
       columns: [
         {
-          title: '内容',
-          key: 'content'
+          title: '序号',
+          type: 'index',
+          width: 70,
+          align: 'center'
         },
         {
-          title: '所属事件',
-          key: 'name'
+          title: '内容',
+          key: 'content'
         }
+        // {
+        //   title: '所属事件',
+        //   key: 'name',
+        //   width: 200,
+        //   align: 'center'
+        // }
       ]
     }
   },
@@ -28,6 +39,14 @@ export default {
           { name: 'test' }
         ]
       }
+    },
+    total: {
+      type: Number
+    }
+  },
+  methods: {
+    handlePageClick (currentPage) {
+      this.$emit('pageClick', 'taizhang', currentPage)
     }
   }
 }

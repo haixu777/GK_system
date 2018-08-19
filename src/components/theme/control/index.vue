@@ -5,14 +5,10 @@
         <Icon type="ios-home"></Icon>
         首页
       </Menu-item>
-      <!-- <Menu-item name="data_entry">
+      <Menu-item name="data_entry">
         <Icon type="ios-paper"></Icon>
-        管控方案编辑
-      </Menu-item> -->
-      <!-- <Menu-item name="auto_extract">
-        <Icon type="ios-people"></Icon>
-        管控方案编辑
-      </Menu-item> -->
+        数据录入和清理
+      </Menu-item>
       <Menu-item name="manual_review">
         <Icon type="settings"></Icon>
         管控历史

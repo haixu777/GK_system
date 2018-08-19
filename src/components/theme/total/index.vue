@@ -15,7 +15,7 @@
       </div>
     </Menu>
     <div class="content">
-      <div class="condition_container">
+      <div class="condition_container" v-if="false">
         <Select v-model="event_id"
           filterable
           placeholder="事件筛选"
@@ -51,7 +51,10 @@
         </button>
       </div>
       <div class="item_content" style="text-align:left;">
-        <component v-bind:is="activeItem" :content="content"></component>
+        <!-- 利用iview的table的exportCsv函数做数据导出 无需显示 -->
+        <Table :columns="exportColumns" :data="exportData" ref="totalExport" v-show="false"></Table>
+        <i-button type="success" size="large" icon="ios-cloud-download" style="position:absolute;" @click="totalExport()">统计量导出</i-button>
+        <component v-bind:is="activeItem" :content="content" :total="activeTotal" v-on:pageClick="pageClick"></component>
       </div>
     </div>
   </div>
@@ -69,7 +72,11 @@ export default {
       eventList: [],
       event_id: null,
       time_range: [],
-      content: null,
+      content: [
+        { keyword: '毛主席', name: '毛泽东' },
+        { keyword: '老毛', name: '毛泽东' }
+      ],
+      activeTotal: null,
       countList: [
         { name: '关键词', key: 'keyword', num: null },
         { name: '样本', key: 'sample', num: null },
@@ -81,6 +88,32 @@ export default {
         { name: '案例', key: 'anli', num: null },
         { name: '台账', key: 'taizhang', num: null },
         { name: '方案', key: 'control', num: null }
+      ],
+      exportColumns: [
+        { key: '关键词' },
+        { key: '样本' },
+        { key: '账号' },
+        { key: '个人' },
+        { key: '网站' },
+        { key: '群体' },
+        { key: '事件' },
+        { key: '案例' },
+        { key: '台账' },
+        { key: '方案' }
+      ],
+      exportData: [
+        {
+          '关键词': 0,
+          '样本': 0,
+          '账号': 0,
+          '个人': 0,
+          '网站': 0,
+          '群体': 0,
+          '事件': 0,
+          '案例': 0,
+          '台账': 0,
+          '方案': 0
+        }
       ]
     }
   },
@@ -110,6 +143,7 @@ export default {
     handleItemClick (item) {
       this.activeClassName = item.name
       this.activeItem = item.key
+      this.activeTotal = item.num
       this.fetchCountItem(item.key)
     },
     countClear () {
@@ -117,6 +151,20 @@ export default {
         item.num = null
       })
       this.content = []
+      this.exportData = [
+        {
+          '关键词': 0,
+          '样本': 0,
+          '账号': 0,
+          '个人': 0,
+          '网站': 0,
+          '群体': 0,
+          '事件': 0,
+          '案例': 0,
+          '台账': 0,
+          '方案': 0
+        }
+      ]
     },
     fetchEventList () {
       this.$axios.get('/control/fetchEventListForControl')
@@ -126,15 +174,20 @@ export default {
           console.log(err)
         })
     },
-    fetchCountItem (key) {
-      this.content = []
-
+    fetchCountItem (key, page) {
+      // this.content = []
+      // console.log(key, page)
+      // let currentPage = 1
+      // if (page) {
+      //   currentPage = page.currentPage
+      // }
       this.$axios.get('/total/item', {
         params: {
           key: key,
           eventId: this.event_id,
           time_start: this.time_range[0],
-          time_end: this.time_range[1]
+          time_end: this.time_range[1],
+          currentPage: page
         }
       }).then((res) => {
         this.content = res.data.data
@@ -160,13 +213,51 @@ export default {
             num = res.data.data
           }
           this.countList[index].num = num
+          // 给统计导出csv赋值
+          this.exportData[0][this.countList[index].name] = num
+          if (this.activeItem === this.countList[index].key) {
+            this.activeTotal = this.countList[index].num
+          }
         }).catch((err) => {
           console.log(err)
         })
       })
-      if (this.activeItem) {
-        this.fetchCountItem(this.activeItem)
+      if (!this.activeItem) {
+        this.handleItemClick({
+          name: '关键词',
+          key: 'keyword',
+          num: 100
+        })
+      } else {
+        this.fetchCountItem(this.activeItem, 1)
       }
+    },
+    pageClick (key, page) {
+      this.fetchCountItem(key, page)
+    },
+    loadingShow () {
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+              'class': 'demo-spin-icon-load',
+              props: {
+                type: 'load-c',
+                size: 18
+              }
+            }),
+            h('div', '数据加载中，请耐心等待...')
+          ])
+        }
+      })
+    },
+    loadingHide () {
+      this.$Spin.hide()
+    },
+    totalExport () {
+      this.$refs.totalExport.exportCsv({
+        filename: 'The original data'
+      })
     }
   },
   mounted () {

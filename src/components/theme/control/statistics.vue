@@ -18,32 +18,21 @@
               style="min-width: 120px;"
               ref="tree"
               @node-click="handleEventClick"
+              :empty-text="'事件加载中...'"
               :highlight-current="true">
             </el-tree>
           </div>
         </div>
-        <div class="" style="display:inline-block;width:50%;float:left;margin-left:20px;">
-          <el-table
-            border
-            stripe
-            max-height="500"
-            :data="statisticsData">
-            <el-table-column
-              prop="control_operation"
-              label="操作"
-              width="">
-            </el-table-column>
-            <el-table-column
-              prop="sample_type"
-              label="类型"
-              width="">
-            </el-table-column>
-            <el-table-column
-              prop="control_number"
-              width=""
-              label="数量">
-            </el-table-column>
-          </el-table>
+        <div class="" style="display:inline-block;float:left;width:73%;margin-left:20px;">
+          <el-date-picker
+            v-model="eventTimeRange"
+            type="daterange"
+            range-separator="至"
+            placeholder="时间区间"
+            @change="fetchStatisticsFromServerByEventId">
+          </el-date-picker>
+          <hr>
+          <Table width="" height="" border stripe :columns="statisticsColumns" :data="statisticsData"></Table>
         </div>
         <!-- <div class="statistics_content">
           <div class="time_item" v-for="content, title in statisticsData" v-if="!emptyCheck(content) && title">
@@ -108,6 +97,7 @@
 </template>
 
 <script>
+import { formatTotalControl } from 'utils'
 export default {
   data () {
     return {
@@ -118,9 +108,12 @@ export default {
       },
       treeData: [],
       filterText: '',
+      statisticsColumns: [],
       statisticsData: [],
       statisticsTimeData: [],
-      timeRange: ''
+      timeRange: '',
+      eventTimeRange: '',
+      eventId: ''
     }
   },
   components: {
@@ -144,56 +137,17 @@ export default {
           console.log(err)
         })
     },
-    fetchStatisticsFromServerByEventId (id) {
-      console.log(this)
+    fetchStatisticsFromServerByEventId () {
       this.$axios.get('/control/statisticsByEventId', {
         params: {
-          eventId: id
+          eventId: this.eventId,
+          timeStart: this.eventTimeRange[0],
+          timeEnd: this.eventTimeRange[1]
         }
       }).then((res) => {
-        /*
-        let temp = {}
-        if (res.data.data) {
-          res.data.data.map((d) => { // 初始化操作名
-            temp[d.control_operation.replace(/(^\s+)|(\s+$)/g, '')] = {}
-          })
-          res.data.data.map((d) => { // 初始化操作样本
-            if (!d.sample_type) return
-            temp[d.control_operation.replace(/(^\s+)|(\s+$)/g, '')][d.sample_type] = 0
-          })
-          res.data.data.map((d) => { // 数量相加，如果数量为空，重置为1
-            if (!d.sample_type) return
-            if (!d.control_number) d.control_number = 1
-            temp[d.control_operation.replace(/(^\s+)|(\s+$)/g, '')][d.sample_type] += d.control_number
-          })
-        }
-        this.statisticsData = temp
-        */
-        let result = []
-        let temp = []
-        res.data.data.forEach((item) => {
-          if (!item.control_operation) return
-          item.control_operation = item.control_operation.replace(/(^\s+)|(\s+$)/g, '')
-          if (item.control_number === 0) item.control_number = 1
-        })
-        res.data.data.forEach((item) => {
-          if (item.control_operation) {
-            if (item.sample_type) {
-              if (!item.sample_type) return
-              let skey = item.control_operation + item.sample_type.replace(/(^\s+)|(\s+$)/g, '')
-              if (typeof temp[skey] === 'undefined') {
-                temp[skey] = item
-              } else {
-                temp[skey].control_number += item.control_number
-              }
-            }
-          }
-        })
-        for (var prop in temp) {
-          result.push(temp[prop])
-        }
-        this.statisticsData = result
-        console.log(this.statisticsData)
+        let total = formatTotalControl(res.data.data[0])
+        this.statisticsData = total.data
+        this.statisticsColumns = total.columns
       }).catch((err) => {
         console.log(err)
       })
@@ -261,7 +215,8 @@ export default {
       this.activeMenu = name
     },
     handleEventClick (e) {
-      this.fetchStatisticsFromServerByEventId(e.id)
+      this.eventId = e.id
+      this.fetchStatisticsFromServerByEventId()
     },
     emptyCheck (content) {
       for (var key in content) {

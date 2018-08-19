@@ -11,11 +11,11 @@
       </Menu-item> -->
       <Menu-item name="auto-extract">
         <Icon type="ios-people"></Icon>
-        待处理文件列表
+        数据录入和清理
       </Menu-item>
       <Menu-item name="manual-review">
         <Icon type="settings"></Icon>
-        抽取结果列表
+        取证样本列表
       </Menu-item>
       <div class="" style="position:absolute;top:0;right:30px;">
         <span style="color: #fff;">{{ userName }}</span>

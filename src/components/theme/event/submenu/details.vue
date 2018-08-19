@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="">
-    <Form ref="eventForm" :model="eventForm" :label-width="80">
+    <Form class="form" ref="eventForm" :model="eventForm" :label-width="80">
       <Form-item label="名称" prop="name">
         <Input v-model="eventForm.name" placeholder="请输入名称"></Input>
       </Form-item>
@@ -8,6 +8,7 @@
         <Input
           v-model="eventForm.descript"
           placeholder="请描述简介"
+          :rows="5"
           type="textarea"></Input>
       </Form-item>
       <Form-item label="危害等级" prop="harm_level">
@@ -47,7 +48,12 @@
         </Radio-group>
       </Form-item>
       <Form-item label="发生时间" prop="occurrence_time">
-        <Date-picker type="date" placeholder="选择日期" style="" v-model="eventForm.occurrence_time"></Date-picker>
+        <!-- <Date-picker type="date" placeholder="选择日期" style="" v-model="eventForm.occurrence_time"></Date-picker> -->
+        <el-date-picker
+          v-model="eventForm.occurrence_time"
+          type="date"
+          placeholder="发生时间">
+        </el-date-picker>
       </Form-item>
       <Form-item label="预警时间">
         <Date-picker
@@ -174,4 +180,7 @@ export default {
 </script>
 
 <style lang="css">
+.form .ivu-form-item-content {
+  width: 500px !important;
+}
 </style>

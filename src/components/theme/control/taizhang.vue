@@ -15,8 +15,8 @@
           </Option>
         </Select>
       </div>
-      <div class="" style="">
-        <Button type="success" icon="ios-plus" size="small" @click="handleAdd">添加</Button>
+      <div class="" style="float:right;">
+        <Button type="success" icon="ios-plus" @click="handleAdd">添加</Button>
       </div>
     </div>
     <!-- <Table stripe border :columns="columns" :data="taizhangList"></Table> -->
@@ -33,6 +33,7 @@
           </el-form>
         </template>
       </el-table-column>
+      <el-table-column type="index" label="序号" width="70"></el-table-column>
       <!-- <el-table-column
         width="70"
         type="index">
@@ -85,13 +86,13 @@
       show-sizer>
     </Page>
 
-    <Modal v-model="modal" width="300" @on-cancel="$refs['formValidate'].resetFields()">
+    <Modal v-model="modal" width="800" @on-cancel="$refs['formValidate'].resetFields()">
       <p slot="header" style="color:#f60;text-align:center">
         <Icon type="information-circled"></Icon>
         <span>{{ isAdd ? '台账添加' : '台账编辑' }}</span>
       </p>
       <div style="text-align:center">
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
           <FormItem label="时间" prop="time">
             <Date-picker type="date" placeholder="选择日期" v-model="formValidate.time"></Date-picker>
           </FormItem>
@@ -101,7 +102,7 @@
             </Select>
           </Form-item>
           <FormItem label="内容" prop="content">
-            <Input v-model="formValidate.content" placeholder="请输入内容" type="textarea"></Input>
+            <Input v-model="formValidate.content" :rows="6" placeholder="请输入内容" type="textarea"></Input>
           </FormItem>
           <FormItem label="管控目标" prop="target">
             <Input v-model="formValidate.target" placeholder="请输入管控目标"></Input>
@@ -120,11 +121,19 @@
 export default {
   data () {
     return {
-      taizhangList: [],
+      taizhangList: [
+        {
+          time: '加载中...',
+          event: '加载中...',
+          target: '加载中...',
+          content: '加载中...'
+        }
+      ],
       columns: [
         {
           type: 'index',
-          width: 60
+          title: '序号',
+          width: 70
         },
         {
           title: '时间',
@@ -240,9 +249,9 @@ export default {
         // this.accountList = res.data.data.accountList
         this.totalItem = res.data.data.totalItem
         this.taizhangList = res.data.data.taizhangList
-        this.taizhangList.forEach((item) => {
-          console.log(item.content.split(/\n/))
-        })
+        // this.taizhangList.forEach((item) => {// ?这是干嘛的？？date 2018-06-09
+        //   // console.log(item.content.split(/\n/))
+        // })
         // this.fetchPlatformList()
         // this.fetchActionList()
       }).catch((err) => {
@@ -408,7 +417,7 @@ export default {
   text-align: left;
 }
 .my-table-expand label {
-  width: 65px;
+  width: 75px;
   color: #f40;
 }
 .my-table-expand .el-form-item {

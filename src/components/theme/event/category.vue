@@ -4,7 +4,7 @@
       <i-button
         type="primary"
         icon="ios-plus"
-        size="small"
+        style="width:100%;"
         @click="handleEventAdd">
           添加
       </i-button>
@@ -16,9 +16,11 @@
         :data="treeData"
         :props="defaultProps"
         :filter-node-method="filterNode"
+        :render-content="renderTree"
         style="min-width: 120px;"
         ref="tree"
         @node-click="handleEventClick"
+        :empty-text="'事件加载中...'"
         :highlight-current="true">
       </el-tree>
     </div>
@@ -114,7 +116,7 @@
       </div>
     </div>
 
-    <Modal v-model="eventAdd_modal" width="400">
+    <Modal v-model="eventAdd_modal" width="800">
       <p slot="header" style="color:#39f;text-align:center">
         <Icon type="information-circled"></Icon>
         <span>事件添加</span>
@@ -128,6 +130,7 @@
             <Input
               v-model="eventForm.descript"
               placeholder="请描述简介"
+              :rows="4"
               type="textarea"></Input>
           </Form-item>
           <!--
@@ -168,7 +171,12 @@
             </Radio-group>
           </Form-item>
           <Form-item label="发生时间" prop="occurrence_time">
-            <Date-picker type="date" placeholder="选择日期" style="" v-model="eventForm.occurrence_time"></Date-picker>
+            <!-- <Date-picker type="date" placeholder="选择日期" style="" v-model="eventForm.occurrence_time"></Date-picker> -->
+            <el-date-picker
+              v-model="eventForm.occurrence_time"
+              type="date"
+              placeholder="发生时间">
+            </el-date-picker>
           </Form-item>
           <Form-item label="预警时间">
             <Date-picker
@@ -297,6 +305,20 @@ export default {
         .then((res) => {
           this.treeData = res.data.tree
           this.eventForm.id = null
+          this.handleEventClick({
+            id: 1,
+            name: '自然灾害及公共安全事件',
+            parent_id: null,
+            descript: null,
+            occurrence_time: null,
+            type: 0,
+            level: '0',
+            recurrence: 0,
+            harm_level: 1,
+            alertRange: [],
+            category: 1,
+            remark: ''
+          })
         }).catch((err) => {
           console.log(err)
         })
@@ -328,7 +350,6 @@ export default {
       }).catch((err) => {
         console.log(err)
       })
-      console.log(this.eventForm.occurrence_time)
     },
     handleEventAdd () {
       this.eventAdd_modal = true
@@ -354,6 +375,23 @@ export default {
     },
     handleMenuSelect (name) {
       this.activeMenu = name
+    },
+    renderTree (h, { node, data, store }) {
+      if (data.disabled) {
+        return (
+          <span class="">
+            <i class="ivu-icon ivu-icon-document"></i>
+            <span style="margin-left:5px;">{data.name}</span>
+          </span>
+        )
+      } else {
+        return (
+          <span class="">
+            <i class="ivu-icon ivu-icon-folder"></i>
+            <span style="margin-left:5px;">{data.name}</span>
+          </span>
+        )
+      }
     }
   },
   mounted () {

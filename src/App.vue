@@ -27,10 +27,15 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 100%;
+  font-size: 16px;
   /*background: url('./assets/bg.jpg');*/
 }
 .ivu-menu-dark {
   background: #464c5b !important;
+}
+.ivu-menu-item {
+  font-size: 18px !important;
 }
 .clearfix {
   overflow:auto;

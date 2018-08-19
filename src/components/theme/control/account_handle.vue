@@ -35,8 +35,8 @@
           <Button slot="append" icon="ios-search" @click="fetchAccountList"></Button>
         </Input>
       </div>
-      <div class="" style="margin-left:300px;">
-        <Button type="success" icon="ios-plus" size="small" @click="handleAdd">添加</Button>
+      <div class="" style="float:right;">
+        <Button type="success" icon="ios-plus" @click="handleAdd">添加</Button>
       </div>
     </div>
     <Table stripe border :columns="columns" :data="accountList"></Table>
@@ -59,7 +59,7 @@
         <span>{{ isAdd ? '账号添加' : '账号编辑' }}</span>
       </p>
       <div style="text-align:center">
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
           <FormItem label="账号名称" prop="name">
             <Input v-model="formValidate.name" placeholder="请输入账号名称"></Input>
           </FormItem>
@@ -83,11 +83,18 @@
 export default {
   data () {
     return {
-      accountList: [],
+      accountList: [
+        {
+          name: '加载中...',
+          platform: '加载中...',
+          operation: '加载中...'
+        }
+      ],
       columns: [
         {
           type: 'index',
-          width: 60
+          title: '序号',
+          width: 70
         },
         {
           title: '账号名称',

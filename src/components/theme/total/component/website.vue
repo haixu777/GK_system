@@ -1,6 +1,9 @@
 <template lang="html">
   <div class="website">
-    <Table border size="small" :columns="columns" :data="content" ref="table"></Table>
+    <div class="page" style="text-align:right;">
+      <Page :current="currentPage" :total="total" :page-size="50" show-total @on-change="handlePageClick"></Page>
+    </div>
+    <Table stripe border size="small" :columns="columns" :data="content" ref="table"></Table>
   </div>
 </template>
 
@@ -10,14 +13,23 @@ export default {
     return {
       columns: [
         {
-          title: '网站名称',
-          key: 'publish_platform'
+          title: '序号',
+          type: 'index',
+          width: 70,
+          align: 'center'
         },
         {
-          title: '所属事件',
-          key: 'name'
+          title: '网站名称',
+          // width: 130,
+          // align: 'center',
+          key: 'publish_platform'
         }
-      ]
+        // {
+        //   title: '所属事件',
+        //   key: 'name'
+        // }
+      ],
+      currentPage: 1
     }
   },
   props: {
@@ -28,6 +40,14 @@ export default {
           { name: 'test' }
         ]
       }
+    },
+    total: {
+      type: Number
+    }
+  },
+  methods: {
+    handlePageClick (currentPage) {
+      this.$emit('pageClick', 'website', currentPage)
     }
   }
 }
