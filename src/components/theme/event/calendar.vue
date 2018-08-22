@@ -50,7 +50,7 @@
             <el-rate
               v-if="item.harm_level"
               style="line-height: 46px;"
-              v-model="(item.harm_level)"
+              v-model="item.harm_level"
               disabled
               :max="3"
               text-color="#ff9900">
@@ -151,7 +151,7 @@
                 <el-table-column label="取证时间" prop="forensic_date">
                 </el-table-column>
                 <el-table-column label="操作" prop="sample_path">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <i-button type="success" size="small" icon="android-download">
                       <a :href="localUrl + '/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
                     </i-button>

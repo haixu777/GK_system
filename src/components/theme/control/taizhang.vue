@@ -25,7 +25,7 @@
       border
       style="width: 100%;text-align:left;">
       <el-table-column type="expand">
-        <template scope="props">
+        <template slot-scope="props">
           <el-form label-position="left" inline class="my-table-expand">
             <el-form-item :label="'第'+(++index)+'阶段'" v-for="content, index in taizhangProcess(props.row.content)" :key="index">
               <span>{{ content }}</span>
@@ -50,7 +50,7 @@
       </el-table-column>
       <el-table-column
         label="摘要">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span style="margin-left: 10px">{{ taizhangProcess(scope.row.content, true) }}</span>
         </template>
       </el-table-column>
@@ -60,7 +60,7 @@
         prop="target">
       </el-table-column>
       <el-table-column label="操作" width="200">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button
             size="small"
             type="primary"

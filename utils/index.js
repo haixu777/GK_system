@@ -61,26 +61,40 @@ function formatAccountList (accountList) {
   return resObj
 }
 
+function myTrim(operation,x) {
+  var res = ''
+  if (x) {
+    res = x.replace(/^\s+|\s+$/gm, '')
+  } else {
+    if (operation === 'type') {
+      res = '综合'
+    } else if (operation === 'control'){
+      res = '查删'
+    }
+  }
+  return res
+}
+
 /*
  * 统计管控总数，用递归遍历整个tree，最终输出一个可以利用iView展示的Table
  * 输入：某一跟节点事件
  * 输出：叶子节点管控条目总和
 */
 function formatTotalControl (tree) {
-  let aOperation = {}
-  let aContent = {}
-  let isFirstime = true
+  var aOperation = {}
+  var aContent = {}
+  var isFirstime = true
 
   // 获取单个节点
   function traverseNode (node) {
-    node.control_programs.forEach((control) => {
+    node.control_programs.forEach(function(control) {
       if (isFirstime) {
-        aOperation[control.control_operation.trim()] = 1
-        aContent[control.sample_type.trim()] = 1
+        aOperation[myTrim('control', control.control_operation)] = 1
+        aContent[myTrim('type', control.sample_type)] = 1
       } else {
-        for (let i = 0; i < data.length; i++) {
-          for (let j = 0; j < thead.length; j++) {
-            if (control.control_operation.trim() === data[i].operation && control.sample_type === thead[j].key)
+        for (var i = 0; i < data.length; i++) {
+          for (var j = 1; j < thead.length; j++) {
+            if (myTrim('control', control.control_operation) === data[i].operation && myTrim('type', control.sample_type) === thead[j].key)
               data[i][thead[j].key] += control.control_number
           }
         }
@@ -93,35 +107,32 @@ function formatTotalControl (tree) {
     if (!node) return
     traverseNode(node)
     if (node.children && node.children.length > 0) {
-      for (let i = 0; i < node.children.length; i++) {
+      for (var i = 0; i < node.children.length; i++) {
         traverseTree(node.children[i])
       }
     }
   }
   traverseTree(tree)
 
-  let thead = [{title: ' ', key: 'operation'}]
-  let data = []
+  var thead = [{title: ' ', key: 'operation'}]
+  var data = []
 
-  for (let prop in aContent) {
+  for (var prop in aContent) {
     thead.push({
       title: prop,
       key: prop
     })
   }
-
-  for (let prop in aOperation) {
+  for (var prop in aOperation) {
     data.push({
       operation: prop
     })
   }
-
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 1; j < thead.length; j++) {
+  for (var i = 0; i < data.length; i++) {
+    for (var j = 1; j < thead.length; j++) {
       data[i][thead[j].key] = 0
     }
   }
-
   isFirstime = false
   traverseTree(tree)
 

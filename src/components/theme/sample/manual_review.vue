@@ -81,7 +81,7 @@
       @sort-change="handleSortChange"
       style="width: 100%;text-align: left;margin: 0;">
       <el-table-column type="expand">
-        <template scope="props">
+        <template slot-scope="props">
           <el-form label-position="left" inline class="sample-table-expand">
             <!-- <el-form-item label="发布网站">
               <span>{{ props.row.publish_platform }}</span>
@@ -127,14 +127,14 @@
       <el-table-column label="平台" prop="publish_platform" v-if="showEvent" width="200"></el-table-column>
       <el-table-column label="样本格式" prop="sample_format" width="100"></el-table-column>
       <el-table-column label="关键词" prop="keyword">
-        <template scope="scope">
+        <template slot-scope="scope">
           <Tag v-for="item in handleKeyword(scope.row.keyword)" :key="item">{{ item }}</Tag>
         </template>
       </el-table-column>
       <el-table-column label="操作时间" prop="update_time" width="130" sortable></el-table-column>
       <!-- <el-table-column label="操作人" prop="operator" width="130"></el-table-column> -->
       <el-table-column label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <i-button type="primary" size="small" icon="hammer" @click="handleSampleDetail(scope.row)">编辑</i-button>
           <a class="download_btn ivu-btn ivu-btn-success ivu-btn-small" :href="localUrl +'/sample/download?id='+scope.row.id" style="color:#fff;" download>下载</a>
           <i-button type="error" size="small" icon="ios-trash" @click="handleDel(scope.row)">删除</i-button>

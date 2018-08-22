@@ -5,9 +5,9 @@
       <el-table-column prop="name" label="事件名"></el-table-column>
       <!-- <el-table-column prop="descript" label="事件描述"></el-table-column> -->
       <el-table-column label="危害等级">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-rate
-            v-model="(scope.row.harm_level)"
+            v-model="scope.row.harm_level"
             disabled
             :max="3"
             text-color="#ff9900"
@@ -19,17 +19,17 @@
       <!-- <el-table-column prop="control_start_time" label="管控开始时间"></el-table-column> -->
       <!-- <el-table-column prop="control_end_time" label="管控结束时间"></el-table-column> -->
       <el-table-column label="管控时间" width="180">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span>{{ scope.row.control_start_time ? (scope.row.control_start_time + ' - ' + scope.row.control_end_time) : '暂无' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span>{{ scope.row.remark ? scope.row.remark : '暂无' }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="" label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <Button type="error" size="small" @click="handleDel(scope.row.name, scope.row.id)">删除</Button>
           <Button type="primary" size="small" @click="handleEdit(scope.row)">编辑</Button>
         </template>

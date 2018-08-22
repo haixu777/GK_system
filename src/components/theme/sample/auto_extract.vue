@@ -35,7 +35,7 @@
         <el-table-column label="文件名" prop="name" width="300"></el-table-column>
         <el-table-column label="文件路径" prop="path"></el-table-column>
         <el-table-column label="操作" width="300">
-          <template scope="scope">
+          <template slot-scope="scope">
             <i-button type="primary" size="small" icon="hammer" @click="handleSampleExtra(scope.row)">抽取</i-button>
             <!-- <i-button type="success" size="small" icon="android-download">
               <a :href="localUrl + '/sample/autoDownload?id='+scope.row.id" style="color:#fff;" download>下载</a>

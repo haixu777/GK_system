@@ -67,13 +67,13 @@
       <el-table-column label="数量" prop="control_number" width="90" sortable></el-table-column>
       <el-table-column label="事件" prop="event" v-if="showEvent" width="180"></el-table-column>
       <el-table-column label="状态" v-if="false">
-        <template scope="scope">
+        <template slot-scope="scope">
           <Tag color="green" v-if="scope.row.verify">已校验</Tag>
           <Tag color="yellow" v-else>未校验</Tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="150">
-        <template scope="scope">
+        <template slot-scope="scope">
           <i-button type="primary" size="small" @click="handleControlDetail(scope.row)">编辑</i-button>
           <i-button type="error" size="small" @click="handleDel(scope.row)">删除</i-button>
         </template>
